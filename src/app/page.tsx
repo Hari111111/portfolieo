@@ -18,7 +18,7 @@ export default function Home() {
       <Progresswork isColorMode={false} />
       <Services />
       <Resume />
-      <Portfolio />
+      {/* <Portfolio /> */}
     </main>
   )
 }

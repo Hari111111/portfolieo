@@ -21,8 +21,8 @@ const page = () => {
         breadcrumbLinks={breadcrumbLinks}
       />
       <ContactInfo />
-      <ContactForm />
-      <Location />
+      {/* <ContactForm /> */}
+      {/* <Location /> */}
     </>
   );
 };
