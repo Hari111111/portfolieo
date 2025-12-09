@@ -1,4 +1,5 @@
 "use client";
+import { SessionProvider } from "next-auth/react";
 import React from "react";
 
 export default function SessionProviderComp({
@@ -10,7 +11,7 @@ export default function SessionProviderComp({
 }) {
   return (
     <>
-      {children}
+      <SessionProvider session={session}>{children}</SessionProvider>
     </>
   );
 }
