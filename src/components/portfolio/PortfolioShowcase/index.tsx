@@ -1,10 +1,23 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Icon } from '@iconify/react'
 import Image from 'next/image'
 import { getImgPath } from '@/utils/image'
+import { getPortfolioData } from '@/app/api/users/portfolio.services'
 
 const PortfolioShowcase = () => {
+    const [portfolioData, setPortfolioData] = useState<any>([]);
+    useEffect(() => {
+        const fetchPortfolio = async () => {
+            try {
+                const response = await getPortfolioData();
+                setPortfolioData(response.data);
+            } catch (error) {
+                console.error("Error fetching portfolio data:", error);
+            }
+        };
+        fetchPortfolio();
+    }, []);
     const projects = [
         {
             title: 'E-Commerce Platform',

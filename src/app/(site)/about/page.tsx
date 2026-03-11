@@ -5,7 +5,8 @@ import { Metadata } from "next";
 import Counter from "@/components/Home/Counter";
 import Progresswork from "@/components/Home/WorkProgress";
 export const metadata: Metadata = {
-  title: "About | Hari Mishra",
+  title: "About Hari Mishra | MERN Stack Developer & Software Engineer",
+  description: "Learn more about Hari Mishra, a BTech Graduate and experienced MERN Stack Developer dedicated to creating innovative web solutions and high-quality software.",
 };
 
 const page = () => {

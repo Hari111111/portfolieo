@@ -5,7 +5,8 @@ import React from "react";
 import HeroSub from "@/components/SharedComponent/HeroSub";
 import { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "Contact | Hari Mishra",
+  title: "Contact Hari Mishra | Let's Build Something Great Together",
+  description: "Get in touch with Hari Mishra for web development projects, collaborations, or any inquiries regarding MERN stack development and UI/UX design.",
 };
 
 const page = () => {
