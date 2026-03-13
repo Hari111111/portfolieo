@@ -1,9 +1,8 @@
-import React, { FC } from "react";
+import React from "react";
 import Image from "next/image";
 import { Blog } from "@/types/blog";
 import { format } from "date-fns";
 import Link from "next/link";
-
 const BlogCard = ({ blog }: { blog: Blog }) => {
     const { title, image, description, createdAt, slug, category } = blog;
     return (

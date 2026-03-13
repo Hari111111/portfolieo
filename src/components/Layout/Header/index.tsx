@@ -78,13 +78,13 @@ const Header: React.FC = () => {
 
   return (
     <header
-      className={`fixed h-20 top-0 z-50 w-full transition-all ${sticky
-          ? 'shadow-lg bg-white dark:bg-darklight dark:shadow-dark-md border-b border-border dark:border-dark_border'
-          : 'shadow-none bg-white dark:bg-transparent backdrop-blur-md border-b border-border/40 dark:border-transparent'
+      className={`fixed h-20 top-0 z-50 w-full transition-all duration-500 ${sticky
+          ? 'shadow-lg bg-white/95 dark:bg-darklight/95 backdrop-blur-md border-b border-border dark:border-dark_border'
+          : 'bg-white/80 dark:bg-transparent backdrop-blur-md border-b border-white/5 dark:border-transparent'
         }`}>
-      <div className='container mx-auto max-w-6xl flex items-center justify-between px-6 h-full'>
+      <div className='container mx-auto max-w-7xl flex items-center justify-between px-6 h-full'>
         <Logo />
-        <nav className='hidden lg:flex grow items-center justify-center gap-6'>
+        <nav className='hidden lg:flex grow items-center justify-center gap-6 xl:gap-8'>
           {headerData.map((item, index) => (
             <HeaderLink key={index} item={item} />
           ))}

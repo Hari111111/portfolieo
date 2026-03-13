@@ -1,6 +1,7 @@
 "use client"
 import { useState } from 'react';
 import Link from 'next/link';
+import { Icon } from '@iconify/react';
 import { HeaderItem } from '../../../../types/menu';
 import { usePathname } from 'next/navigation';
 
@@ -23,13 +24,18 @@ const HeaderLink: React.FC<{ item: HeaderItem }> = ({ item }) => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <Link href={item.href} className={`text-base flex py-2 font-normal hover:text-primary dark:hover:text-primary text-black dark:text-white  ${path === item.href ? 'text-primary dark:text-primary!' : '  '} ${path.startsWith("/blog") && item.href==="/blog"?"text-primary! dark:text-primary!":null} ${path.startsWith("/portfolio") && item.href==="/portfolio"?"text-primary! dark:text-primary!":null}`}>
+      <Link 
+        href={item.href} 
+        className={`text-[15px] flex items-center py-2 font-bold tracking-tight transition-all relative group
+          ${path === item.href ? 'text-primary' : 'text-midnight_text/80 dark:text-white/80 hover:text-primary dark:hover:text-primary'}
+          ${(path.startsWith("/blog") && item.href==="/blog") || (path.startsWith("/portfolio") && item.href==="/portfolio") ? "text-primary": null}`}
+      >
         {item.label}
         {item.submenu && (
-          <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
-            <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m7 10l5 5l5-5" />
-          </svg>
+          <Icon icon="solar:alt-arrow-down-bold" className="ml-1 text-xs opacity-50 group-hover:rotate-180 transition-transform duration-300" />
         )}
+        {/* Animated Underline */}
+        <span className={`absolute bottom-1 left-0 h-[2px] bg-primary transition-all duration-300 rounded-full ${path === item.href ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
       </Link>
       {submenuOpen && (
         <div

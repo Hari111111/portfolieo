@@ -257,18 +257,18 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </section>
 
                 <div className="grid grid-cols-2 gap-12">
-                  <section>
-                      <h2 className="text-xs font-black uppercase tracking-[0.3em] text-black border-l-4 border-black pl-3 mb-6">Expertise</h2>
-                      <div className="text-[13px] leading-loose text-gray-700">
-                          {data.skills.join(' • ')}
-                      </div>
-                  </section>
-                  <section>
-                      <h2 className="text-xs font-black uppercase tracking-[0.3em] text-black border-l-4 border-black pl-3 mb-6">Languages</h2>
-                      <div className="text-[13px] leading-loose text-gray-700">
-                          {data.languages.join(', ')}
-                      </div>
-                  </section>
+                    <section>
+                        <h2 className="text-xs font-black uppercase tracking-[0.3em] text-black border-l-4 border-black pl-3 mb-6">Expertise</h2>
+                        <div className="text-[13px] leading-loose text-gray-700">
+                            {data.skills.join(' • ')}
+                        </div>
+                    </section>
+                    <section>
+                        <h2 className="text-xs font-black uppercase tracking-[0.3em] text-black border-l-4 border-black pl-3 mb-6">Languages</h2>
+                        <div className="text-[13px] leading-loose text-gray-700">
+                            {data.languages.join(', ')}
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>
@@ -356,16 +356,16 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
 
     return (
         <div id="resume-content" className="bg-[#1a1a1a] text-white p-0 min-h-[1123px] w-[794px] mx-auto shadow-2xl flex flex-col font-sans">
-             {/* Diagonal Header */}
-             <div className="bg-primary p-16 relative overflow-hidden">
+            {/* Diagonal Header */}
+            <div className="bg-primary p-16 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20"></div>
                 <div className="relative z-10">
-                    <h1 className="text-6xl font-black italic uppercase tracking-tighter leading-none mb-2">{firstName}<br/>{lastName}</h1>
+                    <h1 className="text-6xl font-black italic uppercase tracking-tighter leading-none mb-2">{firstName}<br />{lastName}</h1>
                     <p className="text-xl font-bold bg-black text-white px-4 py-1 inline-block uppercase tracking-widest">{data.personalInfo.jobTitle}</p>
                 </div>
-             </div>
+            </div>
 
-             <div className="flex grow">
+            <div className="flex grow">
                 {/* Left Column */}
                 <div className="w-[35%] bg-[#222] p-10 space-y-12 border-r border-white/5">
                     <section>
@@ -389,25 +389,25 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                     <section>
                         <h2 className="text-primary text-xs font-black uppercase tracking-[0.4em] mb-6">Languages</h2>
                         <div className="space-y-2">
-                             {data.languages.map((lang, i) => (
+                            {data.languages.map((lang, i) => (
                                 <div key={i} className="flex items-center gap-3">
                                     <div className="w-2 h-2 bg-primary rounded-full"></div>
                                     <span className="text-[10px] font-black uppercase tracking-widest">{lang}</span>
                                 </div>
-                             ))}
+                            ))}
                         </div>
                     </section>
                 </div>
 
                 {/* Right Column */}
                 <div className="w-[65%] bg-[#1a1a1a] p-12 space-y-12">
-                     <section>
+                    <section>
                         <div className="flex items-center gap-4 mb-6">
                             <h2 className="text-lg font-black uppercase italic tracking-widest text-primary">Experience</h2>
                             <div className="h-[1px] bg-white/10 grow"></div>
                         </div>
                         <div className="space-y-8">
-                             {data.experience.map((exp, i) => (
+                            {data.experience.map((exp, i) => (
                                 <div key={i} className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-1 before:h-1 before:bg-primary">
                                     <div className="flex justify-between items-baseline mb-2">
                                         <h3 className="text-base font-bold text-white italic uppercase tracking-tighter">{exp.position}</h3>
@@ -416,11 +416,11 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                                     <p className="text-[10px] text-primary uppercase font-black tracking-widest mb-2">{exp.company}</p>
                                     <p className="text-[13px] opacity-70 leading-relaxed font-light">{exp.description}</p>
                                 </div>
-                             ))}
+                            ))}
                         </div>
-                     </section>
+                    </section>
 
-                     <section>
+                    <section>
                         <div className="flex items-center gap-4 mb-6">
                             <h2 className="text-lg font-black uppercase italic tracking-widest text-primary">Education</h2>
                             <div className="h-[1px] bg-white/10 grow"></div>
@@ -433,9 +433,9 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                                 </div>
                             ))}
                         </div>
-                     </section>
+                    </section>
                 </div>
-             </div>
+            </div>
         </div>
     )
 }
@@ -445,7 +445,7 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
         <div id="resume-content" className="bg-white text-slate-800 p-0 min-h-[1123px] w-[794px] mx-auto shadow-2xl flex flex-col font-sans border border-slate-200">
             {/* Top Header Bar */}
             <div className="h-4 bg-slate-900 w-full"></div>
-            
+
             <div className="p-12 pb-6 border-b border-slate-100 flex justify-between items-start">
                 <div>
                     <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">{data.personalInfo.fullName}</h1>

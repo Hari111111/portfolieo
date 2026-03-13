@@ -5,6 +5,7 @@ import { getBlogs } from '@/app/api/users/blog.services'
 import { Blog } from '@/types/blog'
 import BlogCard from '@/components/SharedComponent/Blog/blogCard'
 import Link from 'next/link'
+import { setBlogCache } from '@/utils/blogCache'
 
 const RecentBlogs = () => {
     const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -16,6 +17,7 @@ const RecentBlogs = () => {
                 const response = await getBlogs();
                 const data = response.data || response;
                 setBlogs(data.slice(0, 3)); // Only show top 3 for home page
+                setBlogCache(data); // Populate cache with all blogs for seamless navigation
             } catch (error) {
                 console.error("Error fetching recent blogs:", error);
             } finally {
