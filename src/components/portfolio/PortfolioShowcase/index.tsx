@@ -2,120 +2,25 @@
 import React, { useEffect, useState } from 'react'
 import { Icon } from '@iconify/react'
 import Image from 'next/image'
-import { getImgPath } from '@/utils/image'
-import { getPortfolioData } from '@/app/api/users/portfolio.services'
+import { getProjects } from '@/app/api/users/project.services'
 
 const PortfolioShowcase = () => {
-    const [portfolioData, setPortfolioData] = useState<any>([]);
+    const [projects, setProjects] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
-        const fetchPortfolio = async () => {
+        const fetchProjects = async () => {
             try {
-                const response = await getPortfolioData();
-                setPortfolioData(response.data);
+                const response = await getProjects();
+                setProjects(response.data || response);
             } catch (error) {
-                console.error("Error fetching portfolio data:", error);
+                console.error("Error fetching projects:", error);
+            } finally {
+                setLoading(false);
             }
         };
-        fetchPortfolio();
+        fetchProjects();
     }, []);
-    const projects = [
-        {
-            title: 'E-Commerce Platform',
-            category: 'Full Stack Web Application',
-            description: 'A comprehensive e-commerce solution built with MERN stack featuring user authentication, product management, shopping cart, payment integration, and admin dashboard.',
-            technologies: ['MongoDB', 'Express.js', 'React.js', 'Node.js', 'Stripe', 'JWT'],
-            features: [
-                'User authentication & authorization',
-                'Product catalog with search & filters',
-                'Shopping cart & checkout system',
-                'Payment gateway integration',
-                'Admin panel for inventory management',
-                'Order tracking & email notifications'
-            ],
-            image: '/images/portfolio/ecommerce.jpg',
-            color: 'from-blue-500 to-purple-600'
-        },
-        {
-            title: 'Task Management System',
-            category: 'Web Application',
-            description: 'A collaborative task management tool enabling teams to organize projects, assign tasks, track progress, and communicate effectively in real-time.',
-            technologies: ['React.js', 'Node.js', 'MongoDB', 'Socket.io', 'Express.js', 'Redux'],
-            features: [
-                'Real-time collaboration with Socket.io',
-                'Kanban board interface',
-                'Task assignments and deadlines',
-                'Team chat & notifications',
-                'Progress tracking & analytics',
-                'Role-based access control'
-            ],
-            image: '/images/portfolio/taskmanager.jpg',
-            color: 'from-green-500 to-teal-600'
-        },
-        {
-            title: 'Social Media Dashboard',
-            category: 'Analytics Platform',
-            description: 'An analytics dashboard for social media management with data visualization, post scheduling, engagement metrics, and multi-platform integration.',
-            technologies: ['Next.js', 'Node.js', 'MongoDB', 'Chart.js', 'REST APIs'],
-            features: [
-                'Multi-platform integration',
-                'Interactive data visualizations',
-                'Post scheduling & automation',
-                'Engagement analytics & insights',
-                'Custom report generation',
-                'Real-time metrics tracking'
-            ],
-            image: '/images/portfolio/analytics.jpg',
-            color: 'from-pink-500 to-rose-600'
-        },
-        {
-            title: 'RESTful API Services',
-            category: 'Backend Development',
-            description: 'Developed multiple scalable RESTful APIs serving various applications with robust authentication, data validation, and comprehensive documentation.',
-            technologies: ['Node.js', 'Express.js', 'MongoDB', 'JWT', 'Swagger', 'Postman'],
-            features: [
-                'JWT-based authentication',
-                'Input validation & sanitization',
-                'Error handling & logging',
-                'API documentation with Swagger',
-                'Rate limiting & security',
-                'Database optimization'
-            ],
-            image: '/images/portfolio/api.jpg',
-            color: 'from-orange-500 to-amber-600'
-        },
-        {
-            title: 'Real Estate Listing Platform',
-            category: 'Full Stack Application',
-            description: 'A property listing platform with advanced search filters, virtual tours, booking system, and integrated map views for buyers and sellers.',
-            technologies: ['React.js', 'Node.js', 'MongoDB', 'Google Maps API', 'Cloudinary'],
-            features: [
-                'Property listing & management',
-                'Advanced search & filters',
-                'Interactive map integration',
-                'Image gallery & virtual tours',
-                'Booking & inquiry system',
-                'User reviews & ratings'
-            ],
-            image: '/images/portfolio/realestate.jpg',
-            color: 'from-indigo-500 to-blue-600'
-        },
-        {
-            title: 'Blog & Content Management',
-            category: 'CMS Platform',
-            description: 'A modern content management system with rich text editor, media management, SEO optimization, and role-based publishing workflow.',
-            technologies: ['Next.js', 'MongoDB', 'Express.js', 'TinyMCE', 'AWS S3'],
-            features: [
-                'Rich text editor for content creation',
-                'Media library & management',
-                'SEO optimization tools',
-                'Draft & publish workflow',
-                'Multi-author support',
-                'Categories & tags system'
-            ],
-            image: '/images/portfolio/cms.jpg',
-            color: 'from-cyan-500 to-blue-600'
-        }
-    ]
 
     const stats = [
         { icon: 'solar:star-bold', value: '20+', label: 'Projects Delivered', color: 'text-yellow-500' },
@@ -134,6 +39,21 @@ const PortfolioShowcase = () => {
         { name: 'Tailwind CSS', icon: 'simple-icons:tailwindcss', color: 'text-cyan-500' },
         { name: 'Git', icon: 'simple-icons:git', color: 'text-orange-600' },
     ]
+
+    const colors = [
+        'from-blue-500 to-purple-600',
+        'from-green-500 to-teal-600',
+        'from-pink-500 to-rose-600',
+        'from-orange-500 to-amber-600',
+        'from-indigo-500 to-blue-600',
+        'from-cyan-500 to-blue-600'
+    ];
+
+    if (loading) return (
+        <div className="flex justify-center items-center py-20 bg-white dark:bg-darklight min-h-[50vh]">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+    );
 
     return (
         <section className='bg-white dark:bg-darklight py-16 md:py-24'>
@@ -210,57 +130,79 @@ const PortfolioShowcase = () => {
                                 data-aos-delay={index * 100}
                             >
                                 <div className='grid md:grid-cols-2 gap-0'>
-                                    {/* Project Image/Placeholder */}
-                                    <div className={`bg-gradient-to-br ${project.color} p-12 flex items-center justify-center order-2 md:order-1`}>
-                                        <div className='text-white text-center'>
-                                            <Icon icon='solar:layers-minimalistic-bold' className='text-8xl mb-4 opacity-50' />
-                                            <h4 className='text-2xl font-bold'>{project.title}</h4>
+                                    {/* Project Image */}
+                                    <div className={`bg-gradient-to-br ${colors[index % colors.length]} p-0 flex items-center justify-center order-2 md:order-1 relative min-h-[300px]`}>
+                                        {project.image ? (
+                                            <Image 
+                                                src={project.image} 
+                                                alt={project.title} 
+                                                fill 
+                                                className="object-cover opacity-80 hover:opacity-100 transition-opacity"
+                                            />
+                                        ) : (
+                                            <div className='text-white text-center p-12'>
+                                                <Icon icon='solar:layers-minimalistic-bold' className='text-8xl mb-4 opacity-50' />
+                                                <h4 className='text-2xl font-bold'>{project.title}</h4>
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 bg-black/20 hover:bg-transparent transition-all flex items-center justify-center gap-4 opacity-0 hover:opacity-100">
+                                            {project.liveUrl && (
+                                                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="p-3 bg-white rounded-full text-midnight_text hover:bg-primary hover:text-white transition-colors">
+                                                    <Icon icon="solar:link-bold" className="text-xl" />
+                                                </a>
+                                            )}
+                                            {project.githubUrl && (
+                                                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="p-3 bg-white rounded-full text-midnight_text hover:bg-primary hover:text-white transition-colors">
+                                                    <Icon icon="simple-icons:github" className="text-xl" />
+                                                </a>
+                                            )}
                                         </div>
                                     </div>
 
                                     {/* Project Details */}
                                     <div className='p-8 order-1 md:order-2'>
                                         <div className='mb-4'>
+                                            {project.featured && (
+                                                <span className='inline-block px-3 py-1 bg-yellow-400/20 text-yellow-600 dark:text-yellow-400 rounded-full text-xs font-semibold mb-3 mr-2'>
+                                                    ⭐ Featured
+                                                </span>
+                                            )}
                                             <span className='inline-block px-3 py-1 bg-primary/20 text-primary rounded-full text-xs font-medium mb-3'>
-                                                {project.category}
+                                                Full Stack Project
                                             </span>
                                             <h4 className='text-2xl font-bold text-midnight_text dark:text-white mb-3'>
                                                 {project.title}
                                             </h4>
-                                            <p className='text-grey dark:text-white/70 mb-4'>{project.description}</p>
+                                            <p className='text-grey dark:text-white/70 mb-4 line-clamp-3'>{project.description}</p>
                                         </div>
 
-                                        <div className='mb-4'>
+                                        <div className='mb-6'>
                                             <h5 className='font-semibold text-midnight_text dark:text-white text-sm mb-3'>
-                                                Key Features:
-                                            </h5>
-                                            <div className='grid grid-cols-1 gap-2'>
-                                                {project.features.slice(0, 4).map((feature, idx) => (
-                                                    <div key={idx} className='flex items-start gap-2'>
-                                                        <Icon
-                                                            icon='solar:check-circle-bold'
-                                                            className='text-success mt-0.5 flex-shrink-0'
-                                                        />
-                                                        <p className='text-grey dark:text-white/70 text-sm'>{feature}</p>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <h5 className='font-semibold text-midnight_text dark:text-white text-sm mb-3'>
-                                                Technologies:
+                                                Technologies & Tools:
                                             </h5>
                                             <div className='flex flex-wrap gap-2'>
-                                                {project.technologies.map((tech, idx) => (
+                                                {project.technologies && project.technologies.map((tech: string, idx: number) => (
                                                     <span
                                                         key={idx}
-                                                        className='px-3 py-1 bg-border dark:bg-dark_border rounded-full text-xs text-midnight_text dark:text-white'
+                                                        className='px-3 py-1 bg-border/50 dark:bg-dark_border/50 rounded-full text-xs text-midnight_text dark:text-white'
                                                     >
                                                         {tech}
                                                     </span>
                                                 ))}
                                             </div>
+                                        </div>
+
+                                        <div className="flex gap-4">
+                                            {project.liveUrl && (
+                                                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary font-semibold text-sm hover:underline">
+                                                    Live Demo <Icon icon="solar:arrow-right-up-bold" />
+                                                </a>
+                                            )}
+                                            {project.githubUrl && (
+                                                <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-grey dark:text-white/50 font-semibold text-sm hover:underline">
+                                                    Source Code <Icon icon="simple-icons:github" />
+                                                </a>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -288,3 +230,4 @@ const PortfolioShowcase = () => {
 }
 
 export default PortfolioShowcase
+

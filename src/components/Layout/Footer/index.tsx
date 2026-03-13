@@ -170,6 +170,11 @@ const Footer: FC = () => {
                 Contact
               </Link>
             </li>
+            <li className='text-base text-grey dark:text-white/50'>
+              <Link href='/resume-builder' className='hover:text-primary'>
+                Resume Builder
+              </Link>
+            </li>
           </ul>
         </div>
         <div>

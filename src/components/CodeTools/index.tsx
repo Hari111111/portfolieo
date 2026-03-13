@@ -2,8 +2,9 @@
 
 import React, { useState, useRef } from "react";
 import imageCompression from 'browser-image-compression';
+import bcrypt from 'bcryptjs';
 
-type ToolType = "json" | "base64" | "password" | "regex" | "compressor" | "bg-remover";
+type ToolType = "json" | "base64" | "password" | "bcrypt" | "regex" | "compressor" | "bg-remover";
 
 export default function CodeTools() {
   const [activeTool, setActiveTool] = useState<ToolType>("json");
@@ -284,6 +285,7 @@ export default function CodeTools() {
           <button className={`tool-nav-item ${activeTool === "bg-remover" ? "active" : ""}`} onClick={() => setActiveTool("bg-remover")}>BG Remover</button>
           <button className={`tool-nav-item ${activeTool === "base64" ? "active" : ""}`} onClick={() => setActiveTool("base64")}>Base64 Tool</button>
           <button className={`tool-nav-item ${activeTool === "password" ? "active" : ""}`} onClick={() => setActiveTool("password")}>Password Gen</button>
+          <button className={`tool-nav-item ${activeTool === "bcrypt" ? "active" : ""}`} onClick={() => setActiveTool("bcrypt")}>Bcrypt Tool</button>
           <button className={`tool-nav-item ${activeTool === "regex" ? "active" : ""}`} onClick={() => setActiveTool("regex")}>Regex Tester</button>
         </nav>
 
@@ -293,6 +295,7 @@ export default function CodeTools() {
           {activeTool === "bg-remover" && <BgRemover />}
           {activeTool === "base64" && <Base64Tool />}
           {activeTool === "password" && <PasswordGenerator />}
+          {activeTool === "bcrypt" && <BcryptTool />}
           {activeTool === "regex" && <RegexTester />}
         </main>
       </div>
@@ -434,11 +437,21 @@ function BgRemover() {
     try {
       // Import dynamically to avoid SSR issues and heavy bundle on main page
       const { removeBackground } = await import('@imgly/background-removal');
-      const blob = await removeBackground(file);
+      
+      const config = {
+        publicPath: `${window.location.origin}/imgly-assets/`,
+        model: 'small',
+        debug: true,
+        progress: (handle: string, current: number, total: number) => {
+          console.log(`Loading ${handle}: ${Math.round((current / total) * 100)}%`);
+        }
+      };
+
+      const blob = await removeBackground(file, config as any);
       setResult(URL.createObjectURL(blob));
-    } catch (error) {
-      console.error(error);
-      alert("Error removing background. Please try a different image.");
+    } catch (error: any) {
+      console.error("BG Removal Error:", error);
+      alert(`Error removing background: ${error.message || "Unknown error"}. Please check your internet connection or try a smaller image.`);
     } finally {
       setLoading(false);
     }
@@ -633,6 +646,114 @@ function PasswordGenerator() {
         <button className="tools-btn" style={{ padding: "1rem 3rem" }} onClick={generate}>Generate Password</button>
         {password && <button className="tools-btn tools-btn-secondary" onClick={() => navigator.clipboard.writeText(password)}>Copy</button>}
       </div>
+    </div>
+  );
+}
+
+function BcryptTool() {
+  const [input, setInput] = useState("");
+  const [rounds, setRounds] = useState(10);
+  const [hash, setHash] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verifyHash, setVerifyHash] = useState("");
+  const [verifyResult, setVerifyResult] = useState<boolean | null>(null);
+
+  const generateHash = () => {
+    if (!input) return;
+    try {
+      const salt = bcrypt.genSaltSync(rounds);
+      const h = bcrypt.hashSync(input, salt);
+      setHash(h);
+      setVerifyResult(null);
+    } catch (e) {
+      alert("Error generating hash");
+    }
+  };
+
+  const verify = () => {
+    if (!input || !verifyHash) return;
+    try {
+      const match = bcrypt.compareSync(input, verifyHash);
+      setVerifyResult(match);
+    } catch (e) {
+      alert("Error verifying hash");
+    }
+  };
+
+  return (
+    <div className="input-group">
+      <div className="input-label">Bcrypt Password Hashing & Verification</div>
+      
+      <div className="tools-grid">
+        <div className="input-group">
+          <div className="input-label">Password / String</div>
+          <input
+            className="tools-textarea"
+            style={{ minHeight: "auto", padding: "0.75rem" }}
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Enter text to hash..."
+          />
+        </div>
+        <div className="input-group">
+          <div className="input-label">Cost Factor (Rounds): {rounds}</div>
+          <input 
+            type="range" 
+            min="4" 
+            max="15" 
+            value={rounds} 
+            onChange={(e) => setRounds(parseInt(e.target.value))} 
+          />
+        </div>
+      </div>
+
+      <div className="action-bar" style={{ marginTop: "1.5rem" }}>
+        <button className="tools-btn" onClick={generateHash}>Generate Hash</button>
+        <button 
+          className={`tools-btn ${isVerifying ? "" : "tools-btn-secondary"}`} 
+          onClick={() => setIsVerifying(!isVerifying)}
+        >
+          {isVerifying ? "Hide Verify" : "Verify Mode"}
+        </button>
+        <button className="tools-btn tools-btn-secondary" onClick={() => { setInput(""); setHash(""); setVerifyHash(""); setVerifyResult(null); }}>Clear</button>
+      </div>
+
+      {hash && (
+        <div style={{ marginTop: "2rem" }}>
+          <div className="input-label">Generated Hash</div>
+          <div className="pass-result" style={{ fontSize: "1rem", padding: "1rem" }}>{hash}</div>
+          <button className="tools-btn tools-btn-secondary" style={{ width: "100%" }} onClick={() => navigator.clipboard.writeText(hash)}>Copy Hash</button>
+        </div>
+      )}
+
+      {isVerifying && (
+        <div style={{ marginTop: "2rem", borderTop: "1px solid var(--tools-border)", paddingTop: "2rem" }}>
+          <div className="input-label">Verify Hash</div>
+          <textarea
+            className="tools-textarea"
+            style={{ minHeight: "100px" }}
+            value={verifyHash}
+            onChange={(e) => setVerifyHash(e.target.value)}
+            placeholder="Paste bcrypt hash to verify against..."
+          />
+          <button className="tools-btn" style={{ width: "100%", marginTop: "1rem" }} onClick={verify}>Verify Password</button>
+          
+          {verifyResult !== null && (
+            <div style={{ 
+              marginTop: "1rem", 
+              padding: "1rem", 
+              borderRadius: "8px", 
+              textAlign: "center",
+              backgroundColor: verifyResult ? "rgba(16, 185, 129, 0.1)" : "rgba(239, 68, 68, 0.1)",
+              color: verifyResult ? "var(--tools-success)" : "var(--tools-error)",
+              border: `1px solid ${verifyResult ? "var(--tools-success)" : "var(--tools-error)"}`
+            }}>
+              {verifyResult ? "✅ Match Found! Password is valid." : "❌ No Match! Password is incorrect."}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

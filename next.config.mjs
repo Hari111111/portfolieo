@@ -4,13 +4,13 @@ const isProd = process.env.NODE_ENV === "production";
 const basePath = isProd ? "" : "";
 
 const nextConfig = {
-  output: "export",
+  // output: "export", // Commented out to allow for dynamic routes in MERN stack
   basePath,
   assetPrefix: basePath,
   images: {
     unoptimized: true,
   },
-  trailingSlash: true,
+  // trailingSlash: true,
   env: {
     NEXT_PUBLIC_BASE_PATH: basePath,
   },

@@ -6,6 +6,7 @@ import Progresswork from '@/components/Home/WorkProgress';
 import Services from '@/components/Home/Services';
 import Portfolio from '@/components/SharedComponent/portfollio'
 import Resume from '@/components/Home/Resume'
+import RecentBlogs from '@/components/Home/RecentBlogs';
 export const metadata: Metadata = {
   title: "Hari Mishra | Professional MERN Stack Developer & UI Designer",
   description:
@@ -25,8 +26,9 @@ export default function Home() {
       <Counter isColorMode={false} />
       <Progresswork isColorMode={false} />
       <Services />
+      <Portfolio />
       <Resume />
-      {/* <Portfolio /> */}
+      <RecentBlogs />
     </main>
   )
 }
