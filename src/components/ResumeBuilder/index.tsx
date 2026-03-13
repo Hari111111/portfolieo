@@ -2,65 +2,120 @@
 import React, { useState, useRef } from 'react'
 import { Icon } from '@iconify/react'
 import { ResumeData, TemplateId } from '@/types/resume'
-import { ModernTemplate, ElegantTemplate, MinimalTemplate, ProfessionalTemplate, CreativeTemplate, ExecutiveTemplate } from './Templates'
+import {
+    ModernTemplate, ElegantTemplate, MinimalTemplate, ProfessionalTemplate, CreativeTemplate, ExecutiveTemplate,
+    TechTemplate, AcademicTemplate, SideSplitTemplate, GeometricTemplate, PastelTemplate, HighImpactTemplate,
+    CompactTemplate, FunctionalTemplate, ChronoTemplate, HybridTemplate, RetroTemplate, GlassyTemplate,
+    DarkTemplate, InfographicTemplate, StartupTemplate, MinimalistProTemplate, GradientTemplate, BoardTemplate, JournalTemplate
+} from './Templates'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-hot-toast'
 
 const initialData: ResumeData = {
     personalInfo: {
-        fullName: 'Lorem Ipsum',
-        email: 'lorem@example.com',
-        phone: '+00 123456789',
-        address: 'Lorem City, Ipsum Country',
-        website: 'www.loremipsum.com',
-        jobTitle: 'Software Developer',
+        fullName: "Lorem Ipsum",
+        email: "lorem@example.com",
+        phone: "+00 123456789",
+        address: "Lorem City, Ipsum Country",
+        website: "www.loremipsum.com",
+        jobTitle: "Full Stack Software Developer",
         summary:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+            "Passionate software developer with experience in building scalable web applications using modern technologies. Skilled in frontend and backend development, performance optimization, and clean architecture. Strong problem-solving ability with a focus on delivering high-quality products.",
     },
 
     education: [
         {
-            school: 'Lorem University',
-            degree: 'Bachelor of Computer Science',
-            startDate: '2018',
-            endDate: '2022',
+            school: "Lorem University",
+            degree: "Bachelor of Computer Science",
+            startDate: "2018",
+            endDate: "2022",
             description:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam.',
+                "Focused on software engineering, data structures, algorithms, and web development.",
+        },
+        {
+            school: "Ipsum Institute of Technology",
+            degree: "Diploma in Information Technology",
+            startDate: "2016",
+            endDate: "2018",
+            description:
+                "Studied programming fundamentals, networking, database systems, and operating systems.",
         },
     ],
 
     experience: [
         {
-            company: 'Lorem Technologies',
-            position: 'Frontend Developer',
-            startDate: '2022',
-            endDate: 'Present',
+            company: "Lorem Technologies",
+            position: "Frontend Developer",
+            startDate: "2022",
+            endDate: "Present",
             description:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute irure dolor in reprehenderit in voluptate velit esse.',
+                "Developed modern responsive web applications using React, Next.js, and TypeScript. Improved application performance by optimizing rendering and API usage.",
+        },
+        {
+            company: "Ipsum Solutions",
+            position: "Junior Web Developer",
+            startDate: "2021",
+            endDate: "2022",
+            description:
+                "Worked on building dynamic websites using JavaScript, HTML, CSS, and Node.js. Collaborated with the design team to improve UI/UX and implemented REST APIs.",
+        },
+        {
+            company: "Dolor Digital",
+            position: "Web Development Intern",
+            startDate: "2020",
+            endDate: "2021",
+            description:
+                "Assisted in developing internal tools and dashboards. Learned best practices for version control, code reviews, and agile development.",
         },
     ],
 
     skills: [
-        'Lorem',
-        'Ipsum',
-        'Dolor',
-        'Sit',
-        'Amet',
-        'Consectetur',
-        'Adipiscing',
-        'Elit'
+        "JavaScript",
+        "TypeScript",
+        "React",
+        "Next.js",
+        "Node.js",
+        "Express",
+        "MongoDB",
+        "PostgreSQL",
+        "HTML5",
+        "CSS3",
+        "Tailwind CSS",
+        "REST APIs",
+        "Git",
+        "Docker",
     ],
 
     projects: [
         {
-            name: 'Lorem Project',
-            link: 'github.com/lorem/project',
+            name: "Task Management System",
+            link: "github.com/lorem/task-manager",
             description:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.',
+                "A full-stack task management application built with React, Node.js, and MongoDB that allows teams to track tasks and productivity.",
+        },
+        {
+            name: "E-commerce Platform",
+            link: "github.com/lorem/ecommerce",
+            description:
+                "Developed a scalable online store with payment integration, product management, and admin dashboard.",
+        },
+        {
+            name: "Real-time Chat Application",
+            link: "github.com/lorem/chat-app",
+            description:
+                "Built a real-time chat application using Socket.IO with authentication and message persistence.",
         },
     ],
 
-    languages: ['English', 'Lorem'],
+    languages: [
+        "English (Fluent)",
+        "Spanish (Intermediate)",
+        "French (Basic)"
+    ],
+    customization: {
+        primaryColor: "#3b82f6",
+        fontFamily: "Inter"
+    }
 };
 const ResumeBuilder = () => {
     const [data, setData] = useState<ResumeData>(initialData)
@@ -70,7 +125,33 @@ const ResumeBuilder = () => {
     const [langInput, setLangInput] = useState('')
     const resumeRef = useRef<HTMLDivElement>(null)
     const contentRef = useRef<HTMLDivElement>(null)
+    const [selectedCategory, setSelectedCategory] = useState<'All' | 'Classic' | 'Modern' | 'Creative' | 'Specialized'>('All');
     const handlePrint = useReactToPrint({ contentRef });
+
+    const categories = {
+        Classic: ['modern', 'minimal', 'professional', 'executive', 'chrono', 'minimalist_pro', 'board'],
+        Modern: ['elegant', 'creative', 'hybrid', 'startup', 'gradient', 'glassy'],
+        Creative: ['pastel', 'journal', 'geometric', 'infographic'],
+        Specialized: ['tech', 'academic', 'sidebar', 'high_impact', 'compact', 'functional', 'retro', 'dark']
+    };
+
+    const allTemplates: TemplateId[] = [
+        'modern', 'elegant', 'minimal', 'professional', 'creative', 'executive',
+        'tech', 'academic', 'sidebar', 'geometric', 'pastel', 'high_impact',
+        'compact', 'functional', 'chrono', 'hybrid', 'retro', 'glassy',
+        'dark', 'infographic', 'startup', 'minimalist_pro', 'gradient', 'board', 'journal'
+    ];
+
+    const filteredTemplates = selectedCategory === 'All'
+        ? allTemplates
+        : (categories[selectedCategory as keyof typeof categories] as TemplateId[]);
+
+    const handleCustomizationChange = (field: 'primaryColor' | 'fontFamily', value: string) => {
+        setData(prev => ({
+            ...prev,
+            customization: { ...prev.customization, [field]: value }
+        }))
+    }
 
     const resetData = () => {
         if (confirm('Are you sure you want to reset all data? This cannot be undone.')) {
@@ -136,9 +217,38 @@ const ResumeBuilder = () => {
             case 'professional': return <ProfessionalTemplate data={data} />
             case 'creative': return <CreativeTemplate data={data} />
             case 'executive': return <ExecutiveTemplate data={data} />
+            case 'tech': return <TechTemplate data={data} />
+            case 'academic': return <AcademicTemplate data={data} />
+            case 'sidebar': return <SideSplitTemplate data={data} />
+            case 'geometric': return <GeometricTemplate data={data} />
+            case 'pastel': return <PastelTemplate data={data} />
+            case 'high_impact': return <HighImpactTemplate data={data} />
+            case 'compact': return <CompactTemplate data={data} />
+            case 'functional': return <FunctionalTemplate data={data} />
+            case 'chrono': return <ChronoTemplate data={data} />
+            case 'hybrid': return <HybridTemplate data={data} />
+            case 'retro': return <RetroTemplate data={data} />
+            case 'glassy': return <GlassyTemplate data={data} />
+            case 'dark': return <DarkTemplate data={data} />
+            case 'infographic': return <InfographicTemplate data={data} />
+            case 'startup': return <StartupTemplate data={data} />
+            case 'minimalist_pro': return <MinimalistProTemplate data={data} />
+            case 'gradient': return <GradientTemplate data={data} />
+            case 'board': return <BoardTemplate data={data} />
+            case 'journal': return <JournalTemplate data={data} />
             default: return <ModernTemplate data={data} />
         }
     }
+
+    const fonts = [
+        "Inter", "Roboto", "Poppins", "Montserrat", "Playfair Display", 
+        "Open Sans", "Raleway", "Merriweather", "Ubuntu", "Lato"
+    ];
+
+    const colors = [
+        "#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#6366f1", 
+        "#ec4899", "#14b8a6", "#334155", "#000000", "#7c3aed"
+    ];
 
     return (
         <section className="min-h-screen bg-[#f1f5f9] dark:bg-darkmode py-6 px-4">
@@ -161,18 +271,6 @@ const ResumeBuilder = () => {
                             <Icon icon="solar:restart-bold" />
                             <span className="hidden md:inline">Reset</span>
                         </button>
-                        <div className="h-6 w-[1px] bg-border dark:border-dark_border mx-2"></div>
-                        <div className="flex flex-wrap gap-1 bg-[#f8f9fa] dark:bg-black/20 p-1 rounded-xl">
-                            {(['modern', 'elegant', 'minimal', 'professional', 'creative', 'executive'] as TemplateId[]).map(t => (
-                                <button
-                                    key={t}
-                                    onClick={() => setActiveTemplate(t)}
-                                    className={`px-3 py-1.5 rounded-lg text-xs font-black capitalize transition-all ${activeTemplate === t ? 'bg-white dark:bg-primary shadow-sm text-primary dark:text-white' : 'text-grey hover:bg-grey/5'}`}
-                                >
-                                    {t}
-                                </button>
-                            ))}
-                        </div>
                     </div>
 
                     {/* Right Actions */}
@@ -187,17 +285,69 @@ const ResumeBuilder = () => {
                     </div>
                 </div>
 
+                {/* PREMIUM TEMPLATE SELECTOR */}
+                <div className="bg-white dark:bg-darklight rounded-3xl shadow-xl border border-border dark:border-dark_border p-6 mb-8 animate-fadeIn">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
+                        <div>
+                            <h3 className="text-lg font-black text-midnight_text dark:text-white flex items-center gap-2">
+                                <span className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                                    <Icon icon="solar:palette-bold" />
+                                </span>
+                                Choose Your Template
+                            </h3>
+                            <p className="text-xs text-grey font-bold uppercase tracking-widest mt-1 ml-10">25+ Professional Designs Library</p>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 p-1 bg-[#f8f9fa] dark:bg-black/20 rounded-2xl w-fit">
+                            {['All', 'Classic', 'Modern', 'Creative', 'Specialized'].map(cat => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setSelectedCategory(cat as any)}
+                                    className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${selectedCategory === cat ? 'bg-primary text-white shadow-lg' : 'text-grey hover:bg-grey/5'}`}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3 max-h-[220px] overflow-y-auto pr-2 custom-scrollbar">
+                        {filteredTemplates.map(t => (
+                            <button
+                                key={t}
+                                onClick={() => setActiveTemplate(t)}
+                                className={`group relative p-3 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${activeTemplate === t ? 'border-primary bg-primary/5 shadow-md shadow-primary/10' : 'border-border dark:border-dark_border hover:border-primary/30 bg-transparent'}`}
+                            >
+                                <div className={`w-full aspect-[3/4] rounded-lg mb-1 flex items-center justify-center transition-all ${activeTemplate === t ? 'bg-primary/10' : 'bg-slate-50 dark:bg-black/20 group-hover:bg-primary/5'}`}>
+                                    <Icon
+                                        icon={activeTemplate === t ? "solar:check-read-linear" : "solar:file-text-linear"}
+                                        className={`text-2xl ${activeTemplate === t ? 'text-primary' : 'text-grey/30 group-hover:text-primary/40'}`}
+                                    />
+                                    {activeTemplate === t && (
+                                        <div className="absolute top-2 right-2 w-5 h-5 bg-primary text-white rounded-full flex items-center justify-center text-[10px]">
+                                            <Icon icon="solar:check-circle-bold" />
+                                        </div>
+                                    )}
+                                </div>
+                                <span className={`text-[10px] font-black uppercase tracking-tighter truncate w-full text-center ${activeTemplate === t ? 'text-primary' : 'text-grey group-hover:text-midnight_text dark:group-hover:text-white'}`}>
+                                    {t.replace('_', ' ')}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-12 gap-10">
                     {/* Left Panel: Form */}
                     <div className="col-span-12 lg:col-span-5 space-y-6">
                         <div className="bg-white dark:bg-darklight rounded-3xl shadow-xl border border-border dark:border-dark_border overflow-hidden">
                             {/* Form Tabs */}
                             <div className="flex overflow-x-auto border-b border-border dark:border-dark_border scrollbar-hide">
-                                {['personal', 'experience', 'education', 'skills', 'languages', 'projects'].map(tab => (
+                                {['personal', 'experience', 'education', 'skills', 'languages', 'projects', 'design'].map(tab => (
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab)}
-                                        className={`px-6 py-4 text-xs font-black uppercase tracking-widest whitespace-nowrap border-b-2 transition-all ${activeTab === tab ? 'border-primary text-primary bg-primary/5' : 'border-transparent text-grey hover:text-midnight_text'}`}
+                                        className={`px-6 py-5 text-sm font-black uppercase tracking-widest whitespace-nowrap border-b-2 transition-all ${activeTab === tab ? 'border-primary text-primary bg-primary/5' : 'border-transparent text-grey hover:text-midnight_text'}`}
                                     >
                                         {tab}
                                     </button>
@@ -210,31 +360,31 @@ const ResumeBuilder = () => {
                                     <div className="space-y-6 animate-fadeIn">
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="col-span-2">
-                                                <label className="text-xs font-bold text-grey uppercase mb-2 block">Full Name</label>
+                                                <label className="text-sm font-black text-grey uppercase mb-2 block">Full Name</label>
                                                 <input name="fullName" value={data.personalInfo.fullName} onChange={handlePersonalInfoChange} className="resume-input" placeholder="e.g. Hari Mishra" />
                                             </div>
                                             <div className="col-span-2">
-                                                <label className="text-xs font-bold text-grey uppercase mb-2 block">Job Title</label>
+                                                <label className="text-sm font-black text-grey uppercase mb-2 block">Job Title</label>
                                                 <input name="jobTitle" value={data.personalInfo.jobTitle} onChange={handlePersonalInfoChange} className="resume-input" placeholder="e.g. Full Stack Developer" />
                                             </div>
                                             <div>
-                                                <label className="text-xs font-bold text-grey uppercase mb-2 block">Email</label>
+                                                <label className="text-sm font-black text-grey uppercase mb-2 block">Email</label>
                                                 <input name="email" value={data.personalInfo.email} onChange={handlePersonalInfoChange} className="resume-input" placeholder="email@example.com" />
                                             </div>
                                             <div>
-                                                <label className="text-xs font-bold text-grey uppercase mb-2 block">Phone</label>
+                                                <label className="text-sm font-black text-grey uppercase mb-2 block">Phone</label>
                                                 <input name="phone" value={data.personalInfo.phone} onChange={handlePersonalInfoChange} className="resume-input" placeholder="+91 ..." />
                                             </div>
                                             <div className="col-span-2">
-                                                <label className="text-xs font-bold text-grey uppercase mb-2 block">Address</label>
+                                                <label className="text-sm font-black text-grey uppercase mb-2 block">Address</label>
                                                 <input name="address" value={data.personalInfo.address} onChange={handlePersonalInfoChange} className="resume-input" placeholder="City, Country" />
                                             </div>
                                             <div className="col-span-2">
-                                                <label className="text-xs font-bold text-grey uppercase mb-2 block">Website</label>
+                                                <label className="text-sm font-black text-grey uppercase mb-2 block">Website</label>
                                                 <input name="website" value={data.personalInfo.website} onChange={handlePersonalInfoChange} className="resume-input" placeholder="portfolio.com" />
                                             </div>
                                             <div className="col-span-2">
-                                                <label className="text-xs font-bold text-grey uppercase mb-2 block">Professional Summary</label>
+                                                <label className="text-sm font-black text-grey uppercase mb-2 block">Professional Summary</label>
                                                 <textarea name="summary" value={data.personalInfo.summary} onChange={handlePersonalInfoChange} rows={4} className="resume-input" placeholder="Briefly describe your career..." />
                                             </div>
                                         </div>
@@ -362,6 +512,53 @@ const ResumeBuilder = () => {
                                         </button>
                                     </div>
                                 )}
+
+                                {/* Design tab */}
+                                {activeTab === 'design' && (
+                                    <div className="space-y-10 animate-fadeIn">
+                                        <section>
+                                            <label className="text-sm font-black text-grey uppercase mb-6 block">Theme Primary Color</label>
+                                            <div className="grid grid-cols-5 gap-4">
+                                                {colors.map(color => (
+                                                    <button
+                                                        key={color}
+                                                        onClick={() => handleCustomizationChange('primaryColor', color)}
+                                                        className={`w-full aspect-square rounded-xl border-4 transition-all ${data.customization.primaryColor.toLowerCase() === color.toLowerCase() ? 'border-primary' : 'border-transparent'}`}
+                                                        style={{ backgroundColor: color }}
+                                                    />
+                                                ))}
+                                                <div className="relative group overflow-hidden rounded-xl border-2 border-dashed border-grey/20 aspect-square">
+                                                    <input 
+                                                        type="color" 
+                                                        value={data.customization.primaryColor}
+                                                        onChange={(e) => handleCustomizationChange('primaryColor', e.target.value)}
+                                                        className="absolute inset-0 w-full h-full scale-[3] cursor-pointer opacity-0"
+                                                    />
+                                                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-grey">
+                                                        <Icon icon="solar:pipette-bold" width="24" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                        <section>
+                                            <label className="text-sm font-black text-grey uppercase mb-6 block">Typography (Font Family)</label>
+                                            <div className="grid grid-cols-1 gap-3">
+                                                {fonts.map(font => (
+                                                    <button
+                                                        key={font}
+                                                        onClick={() => handleCustomizationChange('fontFamily', font)}
+                                                        className={`p-4 rounded-2xl border-2 text-left transition-all flex items-center justify-between ${data.customization.fontFamily === font ? 'border-primary bg-primary/5 text-primary' : 'border-border dark:border-dark_border hover:border-primary/20'}`}
+                                                        style={{ fontFamily: font }}
+                                                    >
+                                                        <span className="font-bold text-lg">{font}</span>
+                                                        {data.customization.fontFamily === font && <Icon icon="solar:check-circle-bold" width="20" />}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </section>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -373,7 +570,7 @@ const ResumeBuilder = () => {
                                 <div className="max-h-[85vh] overflow-y-auto overflow-x-auto p-4 bg-[#e2e8f0] dark:bg-darkmode custom-scrollbar rounded-2xl">
                                     <div className="flex justify-center min-w-max sm:min-w-0">
                                         <div className="resume-preview-wrapper scale-[0.4] sm:scale-[0.5] md:scale-[0.7] lg:scale-[0.8] xl:scale-[0.9] origin-top transition-all duration-500 shadow-2xl">
-                                            <div ref={resumeRef} className="bg-white">
+                                            <div ref={resumeRef} className="bg-white overflow-hidden rounded-sm" style={{ fontFamily: `${data.customization.fontFamily}, sans-serif` }}>
                                                 {renderTemplate()}
                                             </div>
                                         </div>
@@ -395,9 +592,46 @@ const ResumeBuilder = () => {
             </div>
 
             {/* HIDDEN PRINTER NODE - Optimized for react-to-print */}
-            <div className="print-only" ref={contentRef}>
+            <div className="print-only" ref={contentRef} style={{ fontFamily: `${data.customization.fontFamily}, sans-serif` }}>
                 {renderTemplate()}
             </div>
+
+            {/* Font Loading */}
+            <link 
+                href={`https://fonts.googleapis.com/css2?family=${data.customization.fontFamily.replace(' ', '+')}:wght@300;400;500;700;900&display=swap`} 
+                rel="stylesheet" 
+            />
+
+            <style jsx global>{`
+                #resume-content {
+                    --primary: ${data.customization.primaryColor} !important;
+                    font-family: ${data.customization.fontFamily}, sans-serif !important;
+                }
+                #resume-content .text-primary { color: var(--primary) !important; }
+                #resume-content .bg-primary { background-color: var(--primary) !important; }
+                #resume-content .border-primary { border-color: var(--primary) !important; }
+                #resume-content .from-primary { --tw-gradient-from: var(--primary) !important; --tw-gradient-to: rgb(255 255 255 / 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+                #resume-content .to-primary { --tw-gradient-to: var(--primary) !important; }
+                
+                /* Override specific colors if they are used as primary accents in templates */
+                #resume-content .text-blue-600, 
+                #resume-content .text-indigo-600, 
+                #resume-content .text-emerald-600,
+                #resume-content .text-rose-400 { color: var(--primary) !important; }
+                
+                #resume-content .bg-blue-600, 
+                #resume-content .bg-indigo-600, 
+                #resume-content .bg-emerald-600,
+                #resume-content .bg-rose-400 { background-color: var(--primary) !important; }
+                
+                #resume-content .border-blue-600, 
+                #resume-content .border-indigo-600, 
+                #resume-content .border-emerald-600,
+                #resume-content .border-rose-400 { border-color: var(--primary) !important; }
+                
+                #resume-content .from-blue-600,
+                #resume-content .from-indigo-600 { --tw-gradient-from: var(--primary) !important; }
+            `}</style>
 
             <style jsx>{`
                 @media screen {

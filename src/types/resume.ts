@@ -30,6 +30,14 @@ export interface ResumeData {
     description: string;
   }>;
   languages: string[];
+  customization: {
+    primaryColor: string;
+    fontFamily: string;
+  };
 }
 
-export type TemplateId = 'modern' | 'elegant' | 'minimal' | 'professional' | 'creative' | 'executive';
+export type TemplateId = 
+  | 'modern' | 'elegant' | 'minimal' | 'professional' | 'creative' | 'executive'
+  | 'tech' | 'academic' | 'sidebar' | 'geometric' | 'pastel' | 'high_impact'
+  | 'compact' | 'functional' | 'chrono' | 'hybrid' | 'retro' | 'glassy'
+  | 'dark' | 'infographic' | 'startup' | 'minimalist_pro' | 'gradient' | 'board' | 'journal';
