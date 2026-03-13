@@ -149,7 +149,11 @@ const ResumeBuilder = () => {
     const handleCustomizationChange = (field: 'primaryColor' | 'fontFamily', value: string) => {
         setData(prev => ({
             ...prev,
-            customization: { ...prev.customization, [field]: value }
+            customization: {
+                primaryColor: prev.customization?.primaryColor || "#3b82f6",
+                fontFamily: prev.customization?.fontFamily || "Inter",
+                [field]: value
+            }
         }))
     }
 
@@ -241,12 +245,12 @@ const ResumeBuilder = () => {
     }
 
     const fonts = [
-        "Inter", "Roboto", "Poppins", "Montserrat", "Playfair Display", 
+        "Inter", "Roboto", "Poppins", "Montserrat", "Playfair Display",
         "Open Sans", "Raleway", "Merriweather", "Ubuntu", "Lato"
     ];
 
     const colors = [
-        "#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#6366f1", 
+        "#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#6366f1",
         "#ec4899", "#14b8a6", "#334155", "#000000", "#7c3aed"
     ];
 
@@ -523,14 +527,14 @@ const ResumeBuilder = () => {
                                                     <button
                                                         key={color}
                                                         onClick={() => handleCustomizationChange('primaryColor', color)}
-                                                        className={`w-full aspect-square rounded-xl border-4 transition-all ${data.customization.primaryColor.toLowerCase() === color.toLowerCase() ? 'border-primary' : 'border-transparent'}`}
+                                                        className={`w-full aspect-square rounded-xl border-4 transition-all ${data.customization?.primaryColor?.toLowerCase() === color.toLowerCase() ? 'border-primary' : 'border-transparent'}`}
                                                         style={{ backgroundColor: color }}
                                                     />
                                                 ))}
                                                 <div className="relative group overflow-hidden rounded-xl border-2 border-dashed border-grey/20 aspect-square">
-                                                    <input 
-                                                        type="color" 
-                                                        value={data.customization.primaryColor}
+                                                    <input
+                                                        type="color"
+                                                        value={data.customization?.primaryColor || "#3b82f6"}
                                                         onChange={(e) => handleCustomizationChange('primaryColor', e.target.value)}
                                                         className="absolute inset-0 w-full h-full scale-[3] cursor-pointer opacity-0"
                                                     />
@@ -548,11 +552,11 @@ const ResumeBuilder = () => {
                                                     <button
                                                         key={font}
                                                         onClick={() => handleCustomizationChange('fontFamily', font)}
-                                                        className={`p-4 rounded-2xl border-2 text-left transition-all flex items-center justify-between ${data.customization.fontFamily === font ? 'border-primary bg-primary/5 text-primary' : 'border-border dark:border-dark_border hover:border-primary/20'}`}
+                                                        className={`p-4 rounded-2xl border-2 text-left transition-all flex items-center justify-between ${data.customization?.fontFamily === font ? 'border-primary bg-primary/5 text-primary' : 'border-border dark:border-dark_border hover:border-primary/20'}`}
                                                         style={{ fontFamily: font }}
                                                     >
                                                         <span className="font-bold text-lg">{font}</span>
-                                                        {data.customization.fontFamily === font && <Icon icon="solar:check-circle-bold" width="20" />}
+                                                        {data.customization?.fontFamily === font && <Icon icon="solar:check-circle-bold" width="20" />}
                                                     </button>
                                                 ))}
                                             </div>
@@ -570,7 +574,7 @@ const ResumeBuilder = () => {
                                 <div className="max-h-[85vh] overflow-y-auto overflow-x-auto p-4 bg-[#e2e8f0] dark:bg-darkmode custom-scrollbar rounded-2xl">
                                     <div className="flex justify-center min-w-max sm:min-w-0">
                                         <div className="resume-preview-wrapper scale-[0.4] sm:scale-[0.5] md:scale-[0.7] lg:scale-[0.8] xl:scale-[0.9] origin-top transition-all duration-500 shadow-2xl">
-                                            <div ref={resumeRef} className="bg-white overflow-hidden rounded-sm" style={{ fontFamily: `${data.customization.fontFamily}, sans-serif` }}>
+                                            <div ref={resumeRef} className="bg-white overflow-hidden rounded-sm" style={{ fontFamily: `${data.customization?.fontFamily || 'Inter'}, sans-serif` }}>
                                                 {renderTemplate()}
                                             </div>
                                         </div>
@@ -592,20 +596,20 @@ const ResumeBuilder = () => {
             </div>
 
             {/* HIDDEN PRINTER NODE - Optimized for react-to-print */}
-            <div className="print-only" ref={contentRef} style={{ fontFamily: `${data.customization.fontFamily}, sans-serif` }}>
+            <div className="print-only" ref={contentRef} style={{ fontFamily: `${data.customization?.fontFamily || 'Inter'}, sans-serif` }}>
                 {renderTemplate()}
             </div>
 
             {/* Font Loading */}
-            <link 
-                href={`https://fonts.googleapis.com/css2?family=${data.customization.fontFamily.replace(' ', '+')}:wght@300;400;500;700;900&display=swap`} 
-                rel="stylesheet" 
+            <link
+                href={`https://fonts.googleapis.com/css2?family=${(data.customization?.fontFamily || 'Inter').replace(' ', '+')}:wght@300;400;500;700;900&display=swap`}
+                rel="stylesheet"
             />
 
             <style jsx global>{`
                 #resume-content {
-                    --primary: ${data.customization.primaryColor} !important;
-                    font-family: ${data.customization.fontFamily}, sans-serif !important;
+                    --primary: ${data.customization?.primaryColor || '#3b82f6'} !important;
+                    font-family: ${data.customization?.fontFamily || 'Inter'}, sans-serif !important;
                 }
                 #resume-content .text-primary { color: var(--primary) !important; }
                 #resume-content .bg-primary { background-color: var(--primary) !important; }
