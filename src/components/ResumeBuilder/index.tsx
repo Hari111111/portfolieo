@@ -290,12 +290,24 @@ const ResumeBuilder = () => {
                                 {activeTab === 'skills' && (
                                     <div className="space-y-6 animate-fadeIn">
                                         <div>
-                                            <label className="text-xs font-bold text-grey uppercase mb-2 block">Add Skills (Comma separated)</label>
+                                            <label className="text-xs font-bold text-grey uppercase mb-2 block">Skills (Type & Press Enter or Comma)</label>
                                             <input
                                                 onChange={e => handleListInput('skills', e.target.value)}
+                                                onKeyDown={e => {
+                                                    if (e.key === 'Enter') {
+                                                        const val = skillInput.trim();
+                                                        if (val) {
+                                                            setData(prev => ({
+                                                                ...prev,
+                                                                skills: [...prev.skills, val]
+                                                            }));
+                                                            setSkillInput('');
+                                                        }
+                                                    }
+                                                }}
                                                 value={skillInput}
                                                 className="resume-input"
-                                                placeholder="e.g. React, Python, UI Design..."
+                                                placeholder="React, Next.js, etc."
                                             />
                                         </div>
                                         <div className="flex flex-wrap gap-2">

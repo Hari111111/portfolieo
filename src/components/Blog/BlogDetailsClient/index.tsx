@@ -7,53 +7,53 @@ import { Blog } from '@/types/blog'
 import { format } from 'date-fns'
 import Image from 'next/image'
 import Link from 'next/link'
-import markdownToHtml from '@/utils/markdownToHtml'
-
+import { useParams } from 'next/navigation'
 import { getBlogFromCache } from '@/utils/blogCache'
 
-const BlogDetailsClient = ({ slug }: { slug: string }) => {
+const BlogDetailsClient = ({ details, slug: propSlug }: { details?: any, slug?: string }) => {
+    const params = useParams();
+    const slug = propSlug || (params?.slug as string);
+
     const [blog, setBlog] = useState<Blog | null>(null);
     const [loading, setLoading] = useState(true);
     const [contentHtml, setContentHtml] = useState('');
 
     useEffect(() => {
-        const fetchBlog = async () => {
+        const loadBlogData = async () => {
             try {
-                // Try cache first
-                let blogData = getBlogFromCache(slug);
-                
-                // If not in cache, fetch
-                if (!blogData) {
-                    const response = await getBlogBySlug(slug);
-                    blogData = response.data || response;
+                // If data was passed directly via props, use it
+                let blogData = details;
+
+                // Otherwise, try to find it in the cache using the URL slug
+                if (!blogData && slug) {
+                    blogData = getBlogFromCache(slug);
                 }
 
                 if (blogData) {
                     setBlog(blogData);
-                    
+
                     if (blogData.content) {
-                        // Replace {{skills}} placeholder with a list of tags
+                        // Replace {{skills}} placeholder
                         let processedContent = blogData.content;
                         if (blogData.tags && blogData.tags.length > 0) {
                             const skillsListHtml = blogData.tags
-                                .map(tag => `<li class="skill-item">${tag}</li>`)
+                                .map((tag: any) => `<li class="skill-item">${tag}</li>`)
                                 .join('');
                             processedContent = processedContent.replace('{{skills}}', skillsListHtml);
                         }
 
-                        // Process markdown to HTML
-                        const html = await markdownToHtml(processedContent);
-                        setContentHtml(html);
+                        // Editor data is already HTML, no need for markdownToHtml
+                        setContentHtml(processedContent);
                     }
                 }
             } catch (error) {
-                console.error("Error fetching blog details:", error);
+                console.error("Error loading blog details:", error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchBlog();
-    }, [slug]);
+        loadBlogData();
+    }, [slug, details]);
 
     if (loading) return (
         <div className="flex justify-center items-center py-40 min-h-screen dark:bg-darkmode">
@@ -75,13 +75,7 @@ const BlogDetailsClient = ({ slug }: { slug: string }) => {
 
     return (
         <>
-            <HeroSub
-                title="Blog Post"
-                description="Dive into the details of this article"
-                breadcrumbLinks={breadcrumbLinks}
-            />
-
-            <article className="container mx-auto max-w-4xl px-4 -mt-10 mb-20 relative z-10">
+            <article className="container mx-auto max-w-4xl px-4 py-8 mb-20 relative z-10">
                 <div className="bg-white dark:bg-darklight rounded-3xl shadow-2xl border border-border dark:border-dark_border overflow-hidden">
                     {/* Blog Cover Image */}
                     <div className="relative w-full aspect-video group overflow-hidden">

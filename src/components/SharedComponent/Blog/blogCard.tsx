@@ -3,13 +3,20 @@ import Image from "next/image";
 import { Blog } from "@/types/blog";
 import { format } from "date-fns";
 import Link from "next/link";
-const BlogCard = ({ blog }: { blog: Blog }) => {
+const BlogCard = ({ blog, onSelect }: { blog: Blog, onSelect?: (blog: Blog) => void }) => {
     const { title, image, description, createdAt, slug, category } = blog;
+    
+    const handleClick = (e: React.MouseEvent) => {
+        if (onSelect) {
+            e.preventDefault();
+            onSelect(blog);
+        }
+    };
     return (
         <>
             <div className="group mb-0 relative h-full flex flex-col bg-white dark:bg-dark_border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <div className="overflow-hidden h-60 relative">
-                    <Link href={`/blog/${slug}`} aria-label="blog cover" className="block h-full">
+                    <Link href={`/blog?slug=${slug}`} onClick={handleClick} aria-label="blog cover" className="block h-full">
                         {image ? (
                             <Image
                                 src={image}
@@ -35,7 +42,8 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
                     <div className="flex-grow">
                         <h3>
                             <Link
-                                href={`/blog/${slug}`}
+                                href={`/blog?slug=${slug}`}
+                                onClick={handleClick}
                                 className="mb-3 inline-block font-bold text-black hover:text-primary dark:text-white dark:hover:text-primary text-xl leading-snug line-clamp-2"
                             >
                                 {title}
@@ -47,7 +55,7 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
                     </div>
                     <div className="mt-auto pt-4 border-t border-border dark:border-dark_border flex justify-between items-center text-xs font-semibold text-SereneGray">
                         <span>{format(new Date(createdAt), "dd MMM yyyy")}</span>
-                        <Link href={`/blog/${slug}`} className="text-primary hover:underline">Read More</Link>
+                        <Link href={`/blog?slug=${slug}`} onClick={handleClick} className="text-primary hover:underline">Read More</Link>
                     </div>
                 </div>
             </div>
