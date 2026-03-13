@@ -175,6 +175,11 @@ const Footer: FC = () => {
                 Resume Builder
               </Link>
             </li>
+            <li className='text-base text-grey dark:text-white/50'>
+              <Link href='/interview-questions' className='hover:text-primary'>
+                Interview Q&A
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
