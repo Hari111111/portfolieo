@@ -2,6 +2,7 @@ import React from 'react'
 import ResumeBuilder from '@/components/ResumeBuilder'
 import HeroSub from '@/components/SharedComponent/HeroSub'
 import { Metadata } from 'next'
+import PageTracker from '@/components/Common/PageTracker'
 
 export const metadata: Metadata = {
   title: "Best Free Online AI Resume Builder | Professional CV Maker",
@@ -87,6 +88,12 @@ const ResumeBuilderPage = () => {
         description='Craft a winning resume with our premium templates. Fast, free, and no login required.'
         breadcrumbLinks={breadcrumbLinks}
       />
+      <div className="bg-[#f4f7fe] pt-12 pb-6">
+        <div className="container mx-auto max-w-7xl px-6 flex justify-between items-center">
+            <PageTracker />
+            <div className="text-[10px] uppercase font-black tracking-[0.3em] text-slate-400">Career Builder</div>
+        </div>
+      </div>
       <ResumeBuilder />
     </>
   )

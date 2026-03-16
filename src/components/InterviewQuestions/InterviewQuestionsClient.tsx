@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import HeroSub from '@/components/SharedComponent/HeroSub';
 import { getQuestions } from '@/app/api/users/question.services';
 import { Icon } from '@iconify/react';
+import PageTracker from '@/components/Common/PageTracker';
 
 const categories = [
     { name: 'All', icon: 'solar:layers-bold-duotone' },
@@ -66,6 +67,10 @@ export default function InterviewQuestionsClient() {
             <section className="py-24 bg-[#f4f7fe] selection:bg-primary/10 min-h-screen">
                 <div className="container mx-auto max-w-7xl px-4">
                     {/* ADVANCED FLOATING CONTROL HUB */}
+                    <div className="flex justify-between items-center mb-10 px-6">
+                        <PageTracker />
+                        <div className="text-[10px] uppercase font-black tracking-[0.3em] text-slate-400">Preparation Hub</div>
+                    </div>
                     <div className="relative z-30 mb-20 animate-fadeIn">
                         <div className="bg-white/80 backdrop-blur-3xl rounded-[3rem] border-2 border-white p-5 shadow-2xl shadow-blue-900/10 flex flex-col xl:flex-row items-center gap-6">
                             {/* Search Engine UI */}
