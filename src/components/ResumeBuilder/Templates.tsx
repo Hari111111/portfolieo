@@ -9,7 +9,7 @@ interface TemplateProps {
 // 1. MODERN TEMPLATE
 export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
     return (
-        <div id="resume-content" className="bg-white text-black p-10 min-h-[1123px] w-[794px] mx-auto shadow-2xl origin-top transition-all duration-300">
+        <div id="resume-content" className="bg-white text-black p-8 sm:p-10 h-auto w-[794px] mx-auto shadow-2xl origin-top transition-all duration-300">
             {/* Header */}
             <header className="border-b-4 border-primary pb-6 mb-8 flex justify-between items-end">
                 <div>
@@ -26,25 +26,25 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
 
             {/* Summary */}
             {data.personalInfo.summary && (
-                <section className="mb-8">
-                    <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-3 border-b border-grey/20 pb-1">Professional Summary</h2>
+                <section className="mb-4">
+                    <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-2 border-b border-grey/20 pb-1">Professional Summary</h2>
                     <p className="text-black text-[15px] leading-relaxed italic">{data.personalInfo.summary}</p>
                 </section>
             )}
 
-            <div className="grid grid-cols-12 gap-10">
+            <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-8">
                     {/* Experience */}
-                    <section className="mb-8">
-                        <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-5 border-b border-grey/20 pb-1">Experience</h2>
-                        <div className="space-y-6">
+                    <section className="mb-6">
+                        <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-3 border-b border-grey/20 pb-1">Experience</h2>
+                        <div className="space-y-4">
                             {data.experience.map((exp, i) => (
                                 <div key={i}>
                                     <div className="flex justify-between items-baseline">
                                         <h3 className="font-bold text-black text-lg">{exp.position}</h3>
                                         <span className="text-sm font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">{exp.startDate} - {exp.endDate}</span>
                                     </div>
-                                    <p className="font-bold text-black/70 mb-2">{exp.company}</p>
+                                    <p className="font-bold text-black/70 mb-1">{exp.company}</p>
                                     <p className="text-[14px] text-black/80 leading-relaxed whitespace-pre-line">{exp.description}</p>
                                 </div>
                             ))}
@@ -53,9 +53,9 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                     {/* Projects */}
                     {data.projects.length > 0 && (
-                        <section className="mb-8">
-                            <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-5 border-b border-grey/20 pb-1">Projects</h2>
-                            <div className="space-y-4">
+                        <section className="mb-6">
+                            <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-3 border-b border-grey/20 pb-1">Projects</h2>
+                            <div className="space-y-3">
                                 {data.projects.map((proj, i) => (
                                     <div key={i}>
                                         <h3 className="font-bold text-black">{proj.name} {proj.link && <span className="font-normal text-xs text-primary underline ml-2">({proj.link})</span>}</h3>
@@ -69,19 +69,19 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                 <div className="col-span-4">
                     {/* Skills */}
-                    <section className="mb-8">
-                        <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-4 border-b border-grey/20 pb-1">Skills</h2>
+                    <section className="mb-6">
+                        <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-2 border-b border-grey/20 pb-1">Skills</h2>
                         <div className="flex flex-wrap gap-2">
                             {data.skills.map((skill, i) => (
-                                <span key={i} className="px-3 py-1 bg-black text-white text-[12px] font-bold rounded uppercase tracking-wider">{skill}</span>
+                                <span key={i} className="px-2 py-1 bg-black text-white text-[11px] font-bold rounded uppercase tracking-wider">{skill}</span>
                             ))}
                         </div>
                     </section>
 
                     {/* Education */}
-                    <section className="mb-8">
-                        <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-4 border-b border-grey/20 pb-1">Education</h2>
-                        <div className="space-y-4">
+                    <section className="mb-6">
+                        <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-2 border-b border-grey/20 pb-1">Education</h2>
+                        <div className="space-y-3">
                             {data.education.map((edu, i) => (
                                 <div key={i}>
                                     <h3 className="font-bold text-black text-sm">{edu.degree}</h3>
@@ -112,7 +112,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
 // 2. ELEGANT TEMPLATE (Sidebar)
 export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
     return (
-        <div id="resume-content" className="bg-[#f4f4f4] p-0 min-h-[1123px] w-[794px] mx-auto shadow-2xl flex overflow-hidden">
+        <div id="resume-content" className="bg-[#f4f4f4] p-0 h-auto min-h-[1123px] w-[794px] mx-auto shadow-2xl flex overflow-hidden">
             {/* Sidebar */}
             <aside className="w-1/3 bg-[#2c3e50] text-white p-8">
                 <div className="mb-10 text-center">
@@ -160,44 +160,44 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
             </aside>
 
             {/* Main Content */}
-            <main className="w-2/3 bg-white p-10">
-                <section className="mb-10">
-                    <h2 className="text-xl font-bold text-[#2c3e50] uppercase tracking-widest mb-4 flex items-center gap-3">
+            <main className="w-2/3 bg-white p-8">
+                <section className="mb-6">
+                    <h2 className="text-lg font-bold text-[#2c3e50] uppercase tracking-widest mb-2 flex items-center gap-3">
                         About Me
                         <div className="h-[2px] bg-[#2c3e50] flex-grow"></div>
                     </h2>
-                    <p className="text-[14px] leading-relaxed text-[#34495e]">{data.personalInfo.summary}</p>
+                    <p className="text-[13px] leading-relaxed text-[#34495e]">{data.personalInfo.summary}</p>
                 </section>
 
-                <section className="mb-10">
-                    <h2 className="text-xl font-bold text-[#2c3e50] uppercase tracking-widest mb-6 flex items-center gap-3">
+                <section className="mb-6">
+                    <h2 className="text-lg font-bold text-[#2c3e50] uppercase tracking-widest mb-4 flex items-center gap-3">
                         Professional Experience
                         <div className="h-[2px] bg-[#2c3e50] flex-grow"></div>
                     </h2>
-                    <div className="space-y-8 relative before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-[#2c3e50]/10 pl-6">
+                    <div className="space-y-5 relative before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-[#2c3e50]/10 pl-6">
                         {data.experience.map((exp, i) => (
                             <div key={i} className="relative before:absolute before:-left-[30px] before:top-2 before:w-2 before:h-2 before:bg-[#2c3e50] before:rounded-full">
-                                <h3 className="font-black text-[#2c3e50]">{exp.position}</h3>
-                                <div className="flex justify-between text-[13px] font-bold text-primary my-1">
+                                <h3 className="font-black text-[#2c3e50] text-sm">{exp.position}</h3>
+                                <div className="flex justify-between text-[12px] font-bold text-primary my-0.5">
                                     <span>{exp.company}</span>
                                     <span className="bg-[#2c3e50]/5 px-2 py-0.5 rounded text-[#2c3e50]">{exp.startDate} - {exp.endDate}</span>
                                 </div>
-                                <p className="text-[14px] leading-relaxed text-[#34495e] whitespace-pre-line">{exp.description}</p>
+                                <p className="text-[13px] leading-relaxed text-[#34495e] whitespace-pre-line">{exp.description}</p>
                             </div>
                         ))}
                     </div>
                 </section>
 
                 <section>
-                    <h2 className="text-xl font-bold text-[#2c3e50] uppercase tracking-widest mb-6 flex items-center gap-3">
+                    <h2 className="text-lg font-bold text-[#2c3e50] uppercase tracking-widest mb-4 flex items-center gap-3">
                         Projects
                         <div className="h-[2px] bg-[#2c3e50] flex-grow"></div>
                     </h2>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-3">
                         {data.projects.map((proj, i) => (
-                            <div key={i} className="p-4 bg-[#f8f9fa] rounded-lg">
-                                <h3 className="font-bold text-[#2c3e50] text-[14px]">{proj.name}</h3>
-                                <p className="text-[12px] opacity-70 mt-1 line-clamp-3">{proj.description}</p>
+                            <div key={i} className="p-3 bg-[#f8f9fa] rounded-lg border border-slate-100">
+                                <h3 className="font-bold text-[#2c3e50] text-[13px]">{proj.name}</h3>
+                                <p className="text-[11px] opacity-70 mt-1 line-clamp-2">{proj.description}</p>
                             </div>
                         ))}
                     </div>
@@ -210,7 +210,7 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
 // 3. MINIMALIST TEMPLATE
 export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
     return (
-        <div id="resume-content" className="bg-white text-gray-800 p-16 min-h-[1123px] w-[794px] mx-auto shadow-2xl font-serif">
+        <div id="resume-content" className="bg-white text-gray-800 p-12 sm:p-16 h-auto w-[794px] mx-auto shadow-2xl font-serif">
             <div className="text-center mb-16 px-16">
                 <h1 className="text-5xl border-b border-black pb-4 mb-4 text-black lowercase tracking-tighter">{data.personalInfo.fullName}</h1>
                 <div className="flex justify-center gap-4 text-xs font-serif italic text-gray-500">
@@ -226,31 +226,31 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 <p className="text-center text-[15px] italic leading-relaxed text-gray-600 px-10">{data.personalInfo.summary}</p>
             </section>
 
-            <div className="space-y-12">
+            <div className="space-y-8">
                 <section>
-                    <h2 className="text-xs font-black uppercase tracking-[0.3em] text-black border-l-4 border-black pl-3 mb-6">Experience</h2>
-                    <div className="space-y-10">
+                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-black border-l-4 border-black pl-3 mb-4">Experience</h2>
+                    <div className="space-y-6">
                         {data.experience.map((exp, i) => (
                             <div key={i}>
-                                <div className="flex justify-between items-baseline mb-1">
-                                    <h3 className="text-lg font-bold text-black">{exp.company}</h3>
-                                    <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">{exp.startDate} – {exp.endDate}</span>
+                                <div className="flex justify-between items-baseline mb-0.5">
+                                    <h3 className="text-base font-bold text-black">{exp.company}</h3>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{exp.startDate} – {exp.endDate}</span>
                                 </div>
-                                <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 lowercase">{exp.position}</p>
-                                <p className="text-[14px] leading-relaxed text-gray-700 whitespace-pre-line">{exp.description}</p>
+                                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 lowercase">{exp.position}</p>
+                                <p className="text-[13px] leading-relaxed text-gray-700 whitespace-pre-line">{exp.description}</p>
                             </div>
                         ))}
                     </div>
                 </section>
 
                 <section>
-                    <h2 className="text-xs font-black uppercase tracking-[0.3em] text-black border-l-4 border-black pl-3 mb-6">Education</h2>
-                    <div className="grid grid-cols-2 gap-8">
+                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-black border-l-4 border-black pl-3 mb-4">Education</h2>
+                    <div className="grid grid-cols-2 gap-6">
                         {data.education.map((edu, i) => (
                             <div key={i}>
-                                <h3 className="text-base font-bold text-black">{edu.school}</h3>
-                                <p className="text-sm italic text-gray-600 mb-1">{edu.degree}</p>
-                                <p className="text-[11px] font-black uppercase text-gray-400">{edu.startDate} – {edu.endDate}</p>
+                                <h3 className="text-sm font-bold text-black">{edu.school}</h3>
+                                <p className="text-xs italic text-gray-600 mb-0.5">{edu.degree}</p>
+                                <p className="text-[10px] font-black uppercase text-gray-400">{edu.startDate} – {edu.endDate}</p>
                             </div>
                         ))}
                     </div>
@@ -278,7 +278,7 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
 // 4. PROFESSIONAL TEMPLATE (Traditional/Corporate)
 export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
     return (
-        <div id="resume-content" className="bg-white text-gray-900 p-12 min-h-[1123px] w-[794px] mx-auto shadow-2xl font-serif border-[12px] border-gray-100">
+        <div id="resume-content" className="bg-white text-gray-900 p-8 sm:p-12 h-auto w-[794px] mx-auto shadow-2xl font-serif border-[12px] border-gray-100">
             <div className="text-center border-b-2 border-gray-900 pb-6 mb-8">
                 <h1 className="text-3xl font-bold uppercase tracking-widest mb-2">{data.personalInfo.fullName}</h1>
                 <div className="flex justify-center gap-4 text-sm font-medium">
@@ -355,7 +355,7 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
     const lastName = data.personalInfo.fullName.split(' ')[1] || ''
 
     return (
-        <div id="resume-content" className="bg-[#1a1a1a] text-white p-0 min-h-[1123px] w-[794px] mx-auto shadow-2xl flex flex-col font-sans">
+        <div id="resume-content" className="bg-[#1a1a1a] text-white p-0 h-auto min-h-[1123px] w-[794px] mx-auto shadow-2xl flex flex-col font-sans">
             {/* Diagonal Header */}
             <div className="bg-primary p-16 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20"></div>
