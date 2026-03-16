@@ -58,6 +58,19 @@ const Header: React.FC = () => {
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
     document.addEventListener('mousedown', handleClickOutside)
+
+    // First-time visitor popup logic
+    if (typeof window !== 'undefined') {
+      const hasSeenPopup = localStorage.getItem('hasSeenAuthPopup');
+      if (!hasSeenPopup) {
+        const timer = setTimeout(() => {
+          setIsSignInOpen(true);
+          localStorage.setItem('hasSeenAuthPopup', 'true');
+        }, 3000); // Show popup after 3 seconds
+        return () => clearTimeout(timer);
+      }
+    }
+
     return () => {
       window.removeEventListener('scroll', handleScroll)
       document.removeEventListener('mousedown', handleClickOutside)
@@ -79,8 +92,8 @@ const Header: React.FC = () => {
   return (
     <header
       className={`fixed h-20 top-0 z-50 w-full transition-all duration-500 ${sticky
-          ? 'shadow-lg bg-white/95 dark:bg-darklight/95 backdrop-blur-md border-b border-border dark:border-dark_border'
-          : 'bg-white/80 dark:bg-transparent backdrop-blur-md border-b border-white/5 dark:border-transparent'
+        ? 'shadow-lg bg-white/95 dark:bg-darklight/95 backdrop-blur-md border-b border-border dark:border-dark_border'
+        : 'bg-white/80 dark:bg-transparent backdrop-blur-md border-b border-white/5 dark:border-transparent'
         }`}>
       <div className='container mx-auto max-w-7xl flex items-center justify-between px-6 h-full'>
         <Logo />
@@ -118,26 +131,6 @@ const Header: React.FC = () => {
             }}>
             Sign In
           </Link>
-          {isSignInOpen && (
-            <div
-              ref={signInRef}
-              className='fixed top-0 m-0! left-0 w-full h-full bg-black/50 flex items-center justify-center z-50'>
-              <div className='relative mx-auto w-full max-w-md overflow-hidden rounded-lg bg-white px-8 py-14 text-center dark:bg-darklight'>
-                <button
-                  onClick={() => setIsSignInOpen(false)}
-                  className=' hover:bg-gray-200 dark:hover:bg-gray-800 p-1 rounded-full absolute -top-5 -right-3 mr-8 mt-8'
-                  aria-label='Close Sign In Modal'>
-                  <Icon
-                    icon='ic:round-close'
-                    className='text-2xl dark:text-white'
-                  />
-                </button>
-                <Signin
-                  signInOpen={(value: boolean) => setIsSignInOpen(value)}
-                />
-              </div>
-            </div>
-          )}
           <Link
             href='#'
             className='hidden lg:block bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700'
@@ -146,26 +139,6 @@ const Header: React.FC = () => {
             }}>
             Sign Up
           </Link>
-          {isSignUpOpen && (
-            <div
-              ref={signUpRef}
-              className='fixed top-0 m-0! left-0 w-full h-full bg-black/50 flex items-center justify-center z-50'>
-              <div className='relative mx-auto w-full max-w-md overflow-hidden rounded-lg bg-white px-8 py-14 text-center dark:bg-darklight'>
-                <button
-                  onClick={() => setIsSignUpOpen(false)}
-                  className=' hover:bg-gray-200 dark:hover:bg-gray-800 p-1 rounded-full absolute -top-5 -right-3 mr-8 mt-8'
-                  aria-label='Close Sign In Modal'>
-                  <Icon
-                    icon='ic:round-close'
-                    className='text-2xl dark:text-white'
-                  />
-                </button>
-                <SignUp
-                  signUpOpen={(value: boolean) => setIsSignUpOpen(value)}
-                />
-              </div>
-            </div>
-          )}
           <button
             onClick={() => setNavbarOpen(!navbarOpen)}
             className='block lg:hidden p-2 rounded-lg'
@@ -252,6 +225,57 @@ const Header: React.FC = () => {
           }`}>
         <UserRegistered />
       </div>
+
+      {/* Centered Auth Modals */}
+      {isSignInOpen && (
+        <div className='fixed inset-0 w-screen h-screen bg-midnight_text/40 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-fadeIn'>
+          <div
+            ref={signInRef}
+            className='relative w-full max-w-md overflow-hidden rounded-[2.5rem] bg-white p-12 shadow-2xl border border-white'>
+            <button
+              onClick={() => setIsSignInOpen(false)}
+              className='absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:bg-primary/10 hover:text-primary rounded-full transition-all duration-300 group z-50'
+              aria-label='Close Sign In Modal'>
+              <Icon
+                icon='ic:round-close'
+                className='text-2xl group-hover:rotate-90 transition-transform duration-300'
+              />
+            </button>
+            <Signin
+              toggleSignUp={() => {
+                setIsSignInOpen(false);
+                setIsSignUpOpen(true);
+              }}
+              signInOpen={(value: boolean) => setIsSignInOpen(value)}
+            />
+          </div>
+        </div>
+      )}
+
+      {isSignUpOpen && (
+        <div className='fixed inset-0 w-screen h-screen bg-midnight_text/40 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-fadeIn'>
+          <div
+            ref={signUpRef}
+            className='relative w-full max-w-md overflow-hidden rounded-[2.5rem] bg-white p-12 shadow-2xl border border-white'>
+            <button
+              onClick={() => setIsSignUpOpen(false)}
+              className='absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:bg-primary/10 hover:text-primary rounded-full transition-all duration-300 group z-50'
+              aria-label='Close Sign Up Modal'>
+              <Icon
+                icon='ic:round-close'
+                className='text-2xl group-hover:rotate-90 transition-transform duration-300'
+              />
+            </button>
+            <SignUp
+              toggleSignIn={() => {
+                setIsSignUpOpen(false);
+                setIsSignInOpen(true);
+              }}
+              signUpOpen={(value: boolean) => setIsSignUpOpen(value)}
+            />
+          </div>
+        </div>
+      )}
     </header>
   )
 }

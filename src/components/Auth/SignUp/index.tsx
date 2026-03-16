@@ -1,128 +1,113 @@
 "use client";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
-import SocialSignUp from "../SocialSignUp";
-import Logo from "@/components/Layout/Header/Logo"
-import { useContext, useState } from "react";
+import { useState } from "react";
+import Logo from "@/components/Layout/Header/Logo";
+import { Icon } from "@iconify/react";
 import Loader from "@/components/Common/Loader";
-import AuthDialogContext from "@/app/context/AuthDialogContext";
-const SignUp = ({signUpOpen}:{signUpOpen?:any}) => {
-  const router = useRouter();
+
+const SignUp = ({ signUpOpen, toggleSignIn }: { signUpOpen?: any; toggleSignIn?: () => void }) => {
   const [loading, setLoading] = useState(false);
-  const authDialog = useContext(AuthDialogContext);
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     setLoading(true);
-    const data = new FormData(e.currentTarget);
-    const value = Object.fromEntries(data.entries());
-    const finalData = { ...value };
 
-    fetch("/api/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(finalData),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        toast.success("Successfully registered");
-        setLoading(false);
-        router.push("/");
-      })
-      .catch((err) => {
-        toast.error(err.message);
-        setLoading(false);
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       });
-      setTimeout(() => {
-        signUpOpen(false);
-      }, 1200);
-      authDialog?.setIsUserRegistered(true);
 
-      setTimeout(() => {
-        authDialog?.setIsUserRegistered(false);
-      }, 1100);
-
+      if (res.ok) {
+        // toast.success("Account created successfully!");
+        if (toggleSignIn) toggleSignIn();
+      } else {
+        // toast.error("Registration failed. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <>
-      <div className="mb-10 text-center mx-auto inline-block max-w-[160px]">
+    <div className="flex flex-col items-center">
+      <div className="mb-8 p-4 bg-slate-50 rounded-2xl">
         <Logo />
       </div>
 
-      <SocialSignUp />
+      <div className="mb-6 text-center">
+        <h2 className="text-2xl font-black text-slate-900 mb-2">Create Account</h2>
+        <p className="text-slate-500 text-sm font-medium">Join our community of developers</p>
+      </div>
 
-      <span className="z-1 relative my-8 block text-center">
-        <span className="-z-1 absolute left-0 top-1/2 block h-px w-full bg-border dark:bg-dark_border"></span>
-        <span className="text-body-secondary relative z-10 inline-block bg-white px-3 text-base dark:bg-darklight">
-          OR
-        </span>
-      </span>
-
-      <form onSubmit={handleSubmit}>
-        <div className="mb-[22px]">
+      <form onSubmit={handleSubmit} className="w-full space-y-4">
+        <div className="relative group">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+            <Icon icon="solar:user-bold-duotone" width="20" />
+          </div>
           <input
             type="text"
-            placeholder="Name"
+            placeholder="Full Name"
             name="name"
             required
-            className="w-full rounded-md border border-border dark:border-dark_border border-solid bg-transparent px-5 py-3 text-base text-dark outline-hidden transition placeholder:text-gray-300 focus:border-primary focus-visible:shadow-none dark:text-white dark:focus:border-primary"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-12 pr-4 py-4 text-sm font-bold text-slate-800 outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all placeholder:text-slate-400"
           />
         </div>
-        <div className="mb-[22px]">
+
+        <div className="relative group">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+            <Icon icon="solar:letter-bold-duotone" width="20" />
+          </div>
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Email Address"
             name="email"
             required
-            className="w-full rounded-md border border-border dark:border-dark_border border-solid bg-transparent px-5 py-3 text-base text-dark outline-hidden transition placeholder:text-gray-300 focus:border-primary focus-visible:shadow-none dark:text-white dark:focus:border-primary"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-12 pr-4 py-4 text-sm font-bold text-slate-800 outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all placeholder:text-slate-400"
           />
         </div>
-        <div className="mb-[22px]">
+
+        <div className="relative group">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+            <Icon icon="solar:lock-password-bold-duotone" width="20" />
+          </div>
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Create Password"
             name="password"
             required
-            className="w-full rounded-md border border-border dark:border-dark_border border-solid bg-transparent px-5 py-3 text-base text-dark outline-hidden transition placeholder:text-gray-300 focus:border-primary focus-visible:shadow-none dark:text-white dark:focus:border-primary"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-12 pr-4 py-4 text-sm font-bold text-slate-800 outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all placeholder:text-slate-400"
           />
         </div>
-        <div className="mb-9">
-          <button
-            type="submit"
-            className="flex w-full cursor-pointer items-center justify-center rounded-md bg-primary px-5 py-3 text-base text-white transition duration-300 ease-in-out hover:bg-darkprimary! dark:hover:bg-darkprimary!"
-          >
-            Sign Up {loading && <Loader />}
-          </button>
-        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full py-4 bg-primary text-white rounded-xl font-black text-sm uppercase tracking-[0.2em] shadow-lg shadow-primary/20 hover:bg-darkprimary hover:shadow-xl hover:shadow-primary/30 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-70"
+        >
+          {loading ? <Loader /> : "Get Started"}
+        </button>
       </form>
 
-      <p className="text-body-secondary mb-4 text-base">
-        By creating an account you are agree with our{" "}
-        <a href="#!" className="text-primary hover:underline">
-          Privacy
-        </a>{" "}
-        and{" "}
-        <a href="#!" className="text-primary hover:underline">
-          Policy
-        </a>
-      </p>
-
-      <p className="text-body-secondary text-base">
-        Already have an account?
-        <Link
-          href="/"
-          className="pl-2 text-primary hover:bg-darkprimary hover:underline"
-        >
-          Sign In
-        </Link>
-      </p>
-    </>
+      <div className="mt-8 pt-6 border-t border-slate-100 w-full text-center">
+        <p className="text-slate-500 text-sm font-medium">
+          Already a member?{" "}
+          <button
+            onClick={toggleSignIn}
+            className="text-primary font-black hover:underline pl-1"
+          >
+            Sign In Here
+          </button>
+        </p>
+      </div>
+    </div>
   );
 };
+
 
 export default SignUp;
