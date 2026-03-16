@@ -2,7 +2,9 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Layout/Header";
 import Footer from "@/components/Layout/Footer";
+import Chat from "@/components/Chat";
 import { ThemeProvider } from "next-themes";
+import { Toaster } from "react-hot-toast";
 import ScrollToTop from '@/components/ScrollToTop';
 import Aoscompo from "@/utils/aos";
 import NextTopLoader from 'nextjs-toploader';
@@ -120,6 +122,8 @@ export default function RootLayout({
               <Footer />
             </Aoscompo>
             <ScrollToTop />
+            <Chat />
+            <Toaster position="top-right" reverseOrder={false} />
           </ThemeProvider>
         </AuthDialogProvider>
       </body>
