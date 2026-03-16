@@ -9,9 +9,19 @@ import Resume from '@/components/Home/Resume'
 import RecentBlogs from '@/components/Home/RecentBlogs';
 export const metadata: Metadata = {
   title: "Hari Mishra | Professional MERN Stack Developer & UI Designer",
-  description:
-    "Explore the portfolio of Hari Mishra, a skilled MERN Stack Developer specializing in building high-performance web applications, interactive tools, and clean UI designs.",
-  keywords: ["MERN stack developer", "Full stack developer", "React developer", "Web developer portfolio", "Hari Mishra", "software engineer explorer"],
+  description: "Explore the portfolio of Hari Mishra, a skilled MERN Stack Developer. Featuring an AI Resume Builder, Technical Interview Q&A Bank, and high-performance web applications.",
+  keywords: [
+    "MERN stack developer",
+    "Full stack developer",
+    "React developer",
+    "Web developer portfolio",
+    "Hari Mishra",
+    "Coding Interview Preparation",
+    "Free Resume Builder",
+    "Next.js Developer Portfolio",
+    "AI Tools for Developers",
+    "Custom Web Solutions"
+  ],
   openGraph: {
     title: "Hari Mishra Portfolio - MERN Stack Expert",
     description: "Building modern web solutions with React, Node.js, and AI technologies.",

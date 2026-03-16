@@ -179,7 +179,7 @@ export default function InterviewQuestionsClient() {
                                             {/* Advanced Aesthetics */}
                                             <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/5 rounded-full blur-[120px] group-hover/card:bg-primary/10 transition-all duration-1000"></div>
 
-                                            <div className="p-12 md:p-16 relative z-10">
+                                            <div className="p-8 md:p-16 relative z-10">
                                                 <div className="flex flex-wrap items-center justify-between gap-8 mb-12">
                                                     <div className="flex flex-wrap items-center gap-4">
                                                         <div className="flex items-center gap-3 px-6 py-2.5 bg-slate-900 text-white text-[10px] font-black rounded-full uppercase tracking-[0.2em] shadow-xl shadow-slate-900/20">
@@ -212,8 +212,8 @@ export default function InterviewQuestionsClient() {
                                                         <div className="w-1 h-full bg-slate-100 rounded-full mt-8 group-hover/card:bg-primary/20 transition-all duration-1000"></div>
                                                     </div>
 
-                                                    <div className="flex-1">
-                                                        <h3 className="text-2xl md:text-[2.75rem] font-black text-slate-900 mb-12 leading-[1.2] group-hover/card:text-primary transition-all duration-500 tracking-tight">
+                                                    <div className="flex-1 min-w-0">
+                                                        <h3 className="text-2xl md:text-[2.75rem] font-black text-slate-900 mb-12 leading-[1.2] group-hover/card:text-primary transition-all duration-500 tracking-tight break-words">
                                                             {q.question}
                                                         </h3>
 
@@ -227,7 +227,9 @@ export default function InterviewQuestionsClient() {
                                                                         <div className="w-14 h-14 flex items-center justify-center bg-white rounded-2xl text-primary font-black shadow-md border border-slate-50 group-hover/opt:bg-primary group-hover/opt:text-white transition-all duration-500 uppercase text-xl">
                                                                             {String.fromCharCode(65 + i)}
                                                                         </div>
-                                                                        <span className="text-slate-700 font-black text-xl">{opt}</span>
+                                                                        <div className="flex-1 min-w-0">
+                                                                            <span className="text-slate-700 font-black text-xl break-words block">{opt}</span>
+                                                                        </div>
                                                                     </div>
                                                                 ))}
                                                             </div>
@@ -255,18 +257,18 @@ export default function InterviewQuestionsClient() {
                                                         </div>
 
                                                         {revealedIds.has(q._id) && (
-                                                            <div className="mt-14 p-12 md:p-16 bg-slate-900 rounded-[4rem] border-2 border-white shadow-3xl animate-fadeIn relative overflow-hidden group/ans">
-                                                                <div className="absolute top-0 right-0 p-16 opacity-5 rotate-12 group-hover/ans:rotate-0 transition-all duration-1000">
+                                                            <div className="mt-14 p-12 md:p-16 bg-white/80 backdrop-blur-xl rounded-[4rem] border-2 border-white shadow-2xl shadow-blue-900/5 animate-fadeIn relative overflow-hidden group/ans">
+                                                                <div className="absolute top-0 right-0 p-16 opacity-[0.03] rotate-12 group-hover/ans:rotate-0 transition-all duration-1000">
                                                                     <Icon icon="solar:check-read-bold-duotone" width="180" />
                                                                 </div>
                                                                 <h4 className="flex items-center gap-5 text-primary font-black uppercase tracking-[0.4em] text-[10px] mb-12">
-                                                                    <div className="w-12 h-12 rounded-[1.25rem] bg-primary/20 flex items-center justify-center shadow-lg shadow-primary/10">
+                                                                    <div className="w-12 h-12 rounded-[1.25rem] bg-primary/10 flex items-center justify-center shadow-lg shadow-primary/5">
                                                                         <Icon icon="solar:verified-check-bold" className="text-2xl" />
                                                                     </div>
                                                                     Verified Technical Documentation
                                                                 </h4>
                                                                 <div
-                                                                    className="text-slate-300 leading-[2.2] whitespace-pre-line text-xl qna-content prose prose-invert max-w-none prose-p:font-bold prose-strong:text-white prose-strong:font-black"
+                                                                    className="text-slate-700 leading-[2.2] whitespace-pre-line text-xl qna-content prose max-w-none prose-slate prose-p:text-slate-600 prose-strong:text-slate-900 prose-strong:font-black break-words overflow-hidden"
                                                                     dangerouslySetInnerHTML={{ __html: q.answer }}
                                                                 />
                                                             </div>
@@ -303,6 +305,33 @@ export default function InterviewQuestionsClient() {
                 }
                 .animate-fadeIn {
                     animation: fadeIn 0.4s ease-out forwards;
+                }
+                .qna-content {
+                    word-break: break-word;
+                    overflow-wrap: break-word;
+                }
+                .qna-content p {
+                    margin-bottom: 1.5rem;
+                }
+                .qna-content strong {
+                    color: #0f172a;
+                    font-weight: 900;
+                }
+                .qna-content code {
+                    background: #f1f5f9;
+                    padding: 0.2rem 0.5rem;
+                    border-radius: 0.5rem;
+                    font-size: 0.9em;
+                    color: #2563eb;
+                    word-break: break-all;
+                    white-space: pre-wrap;
+                }
+                .qna-content ul, .qna-content ol {
+                    margin-bottom: 1.5rem;
+                    padding-left: 1.5rem;
+                }
+                .qna-content li {
+                    margin-bottom: 0.5rem;
                 }
             `}</style>
         </div>
