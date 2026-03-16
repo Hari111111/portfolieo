@@ -13,10 +13,10 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
             {/* Header */}
             <header className="border-b-4 border-primary pb-6 mb-8 flex justify-between items-end">
                 <div>
-                    <h1 className="text-4xl font-black uppercase tracking-tighter text-black">{data.personalInfo.fullName || 'Full Name'}</h1>
-                    <p className="text-xl text-primary font-bold mt-1">{data.personalInfo.jobTitle || 'Your Job Title'}</p>
+                    <h1 className="font-black uppercase tracking-tighter text-black" style={{ fontSize: 'calc(var(--base-font-size) * 2.5)' }}>{data.personalInfo.fullName || 'Full Name'}</h1>
+                    <p className="text-primary font-bold mt-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>{data.personalInfo.jobTitle || 'Your Job Title'}</p>
                 </div>
-                <div className="text-right text-sm font-medium text-grey">
+                <div className="text-right font-medium text-grey" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>
                     <p>{data.personalInfo.email}</p>
                     <p>{data.personalInfo.phone}</p>
                     <p>{data.personalInfo.address}</p>
@@ -26,26 +26,26 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
 
             {/* Summary */}
             {data.personalInfo.summary && (
-                <section className="mb-4">
-                    <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-2 border-b border-grey/20 pb-1">Professional Summary</h2>
-                    <p className="text-black text-[15px] leading-relaxed italic">{data.personalInfo.summary}</p>
+                <section style={{ marginBottom: 'var(--summary-spacing)' }}>
+                    <h2 className="font-bold uppercase tracking-widest text-primary mb-2 border-b border-grey/20 pb-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Professional Summary</h2>
+                    <p className="text-black leading-relaxed italic" style={{ fontSize: 'var(--base-font-size)' }}>{data.personalInfo.summary}</p>
                 </section>
             )}
 
             <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-8">
                     {/* Experience */}
-                    <section className="mb-6">
-                        <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-3 border-b border-grey/20 pb-1">Experience</h2>
+                    <section style={{ marginBottom: 'var(--experience-spacing)' }}>
+                        <h2 className="font-bold uppercase tracking-widest text-primary mb-3 border-b border-grey/20 pb-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Experience</h2>
                         <div className="space-y-4">
                             {data.experience.map((exp, i) => (
                                 <div key={i}>
                                     <div className="flex justify-between items-baseline">
-                                        <h3 className="font-bold text-black text-lg">{exp.position}</h3>
-                                        <span className="text-sm font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">{exp.startDate} - {exp.endDate}</span>
+                                        <h3 className="font-bold text-black" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>{exp.position}</h3>
+                                        <span className="font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full" style={{ fontSize: 'calc(var(--base-font-size) * 0.8)' }}>{exp.startDate} - {exp.endDate}</span>
                                     </div>
-                                    <p className="font-bold text-black/70 mb-1">{exp.company}</p>
-                                    <p className="text-[14px] text-black/80 leading-relaxed whitespace-pre-line">{exp.description}</p>
+                                    <p className="font-bold text-black/70 mb-1" style={{ fontSize: 'var(--base-font-size)' }}>{exp.company}</p>
+                                    <p className="text-black/80 leading-relaxed whitespace-pre-line" style={{ fontSize: 'var(--base-font-size)' }}>{exp.description}</p>
                                 </div>
                             ))}
                         </div>
@@ -53,13 +53,13 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                     {/* Projects */}
                     {data.projects.length > 0 && (
-                        <section className="mb-6">
-                            <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-3 border-b border-grey/20 pb-1">Projects</h2>
+                        <section style={{ marginBottom: 'var(--projects-spacing)' }}>
+                            <h2 className="font-bold uppercase tracking-widest text-primary mb-3 border-b border-grey/20 pb-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Projects</h2>
                             <div className="space-y-3">
                                 {data.projects.map((proj, i) => (
                                     <div key={i}>
-                                        <h3 className="font-bold text-black">{proj.name} {proj.link && <span className="font-normal text-xs text-primary underline ml-2">({proj.link})</span>}</h3>
-                                        <p className="text-[14px] text-black/80">{proj.description}</p>
+                                        <h3 className="font-bold text-black" style={{ fontSize: 'var(--base-font-size)' }}>{proj.name} {proj.link && <span className="font-normal text-primary underline ml-2" style={{ fontSize: 'calc(var(--base-font-size) * 0.8)' }}>({proj.link})</span>}</h3>
+                                        <p className="text-black/80" style={{ fontSize: 'var(--base-font-size)' }}>{proj.description}</p>
                                     </div>
                                 ))}
                             </div>
@@ -69,24 +69,24 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                 <div className="col-span-4">
                     {/* Skills */}
-                    <section className="mb-6">
-                        <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-2 border-b border-grey/20 pb-1">Skills</h2>
+                    <section style={{ marginBottom: 'var(--skills-spacing)' }}>
+                        <h2 className="font-bold uppercase tracking-widest text-primary mb-2 border-b border-grey/20 pb-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Skills</h2>
                         <div className="flex flex-wrap gap-2">
                             {data.skills.map((skill, i) => (
-                                <span key={i} className="px-2 py-1 bg-black text-white text-[11px] font-bold rounded uppercase tracking-wider">{skill}</span>
+                                <span key={i} className="px-2 py-1 bg-black text-white font-bold rounded uppercase tracking-wider" style={{ fontSize: 'calc(var(--base-font-size) * 0.7)' }}>{skill}</span>
                             ))}
                         </div>
                     </section>
 
                     {/* Education */}
-                    <section className="mb-6">
-                        <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-2 border-b border-grey/20 pb-1">Education</h2>
+                    <section style={{ marginBottom: 'var(--education-spacing)' }}>
+                        <h2 className="font-bold uppercase tracking-widest text-primary mb-2 border-b border-grey/20 pb-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Education</h2>
                         <div className="space-y-3">
                             {data.education.map((edu, i) => (
                                 <div key={i}>
-                                    <h3 className="font-bold text-black text-sm">{edu.degree}</h3>
-                                    <p className="text-[12px] text-black/70">{edu.school}</p>
-                                    <p className="text-[11px] font-bold text-primary italic">{edu.startDate} - {edu.endDate}</p>
+                                    <h3 className="font-bold text-black" style={{ fontSize: 'var(--base-font-size)' }}>{edu.degree}</h3>
+                                    <p className="text-black/70" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{edu.school}</p>
+                                    <p className="font-bold text-primary italic" style={{ fontSize: 'calc(var(--base-font-size) * 0.8)' }}>{edu.startDate} - {edu.endDate}</p>
                                 </div>
                             ))}
                         </div>
@@ -94,11 +94,11 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                     {/* Languages */}
                     {data.languages.length > 0 && (
-                        <section className="mb-8">
-                            <h2 className="text-lg font-bold uppercase tracking-widest text-primary mb-4 border-b border-grey/20 pb-1">Languages</h2>
+                        <section style={{ marginBottom: 'calc(var(--section-spacing) * 1.25)' }}>
+                            <h2 className="font-bold uppercase tracking-widest text-primary mb-4 border-b border-grey/20 pb-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Languages</h2>
                             <div className="space-y-1">
                                 {data.languages.map((lang, i) => (
-                                    <p key={i} className="text-[14px] font-medium text-black">{lang}</p>
+                                    <p key={i} className="font-medium text-black" style={{ fontSize: 'var(--base-font-size)' }}>{lang}</p>
                                 ))}
                             </div>
                         </section>
@@ -121,21 +121,21 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
 
                 <div className="space-y-8">
-                    <section>
-                        <h2 className="text-sm font-black uppercase tracking-widest text-[#bdc3c7] mb-4">Contact</h2>
-                        <div className="space-y-2 text-[13px] text-white/80">
+                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                        <h2 className="text-[#bdc3c7] font-black uppercase tracking-widest mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 0.8)' }}>Contact</h2>
+                        <div className="space-y-2 text-white/80" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>
                             <p className="flex items-center gap-2">{data.personalInfo.email}</p>
                             <p className="flex items-center gap-2">{data.personalInfo.phone}</p>
                             <p className="flex items-center gap-2">{data.personalInfo.address}</p>
                         </div>
                     </section>
 
-                    <section>
-                        <h2 className="text-sm font-black uppercase tracking-widest text-[#bdc3c7] mb-4">Top Skills</h2>
+                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                        <h2 className="text-[#bdc3c7] font-black uppercase tracking-widest mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 0.8)' }}>Top Skills</h2>
                         <div className="space-y-2">
                             {data.skills.map((skill, i) => (
                                 <div key={i} className="flex justify-between items-center">
-                                    <span className="text-[13px]">{skill}</span>
+                                    <span style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>{skill}</span>
                                     <div className="w-16 h-1 bg-white/10 rounded-full overflow-hidden">
                                         <div className="h-full bg-white w-full"></div>
                                     </div>
@@ -144,14 +144,14 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
                         </div>
                     </section>
 
-                    <section>
-                        <h2 className="text-sm font-black uppercase tracking-widest text-[#bdc3c7] mb-4">Education</h2>
+                    <section style={{ marginBottom: 'var(--education-spacing)' }}>
+                        <h2 className="text-[#bdc3c7] font-black uppercase tracking-widest mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 0.8)' }}>Education</h2>
                         <div className="space-y-6">
                             {data.education.map((edu, i) => (
                                 <div key={i}>
-                                    <h3 className="font-bold text-[13px]">{edu.degree}</h3>
-                                    <p className="text-[12px] opacity-70">{edu.school}</p>
-                                    <p className="text-[11px] opacity-50 italic">{edu.startDate} - {edu.endDate}</p>
+                                    <h3 className="font-bold" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>{edu.degree}</h3>
+                                    <p className="opacity-70" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{edu.school}</p>
+                                    <p className="opacity-50 italic" style={{ fontSize: 'calc(var(--base-font-size) * 0.8)' }}>{edu.startDate} - {edu.endDate}</p>
                                 </div>
                             ))}
                         </div>
@@ -161,28 +161,28 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
 
             {/* Main Content */}
             <main className="w-2/3 bg-white p-8">
-                <section className="mb-6">
-                    <h2 className="text-lg font-bold text-[#2c3e50] uppercase tracking-widest mb-2 flex items-center gap-3">
+                <section style={{ marginBottom: 'var(--summary-spacing)' }}>
+                    <h2 className="font-bold text-[#2c3e50] uppercase tracking-widest mb-2 flex items-center gap-3" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>
                         About Me
                         <div className="h-[2px] bg-[#2c3e50] flex-grow"></div>
                     </h2>
-                    <p className="text-[13px] leading-relaxed text-[#34495e]">{data.personalInfo.summary}</p>
+                    <p className="leading-relaxed text-[#34495e]" style={{ fontSize: 'calc(var(--base-font-size) * 0.95)' }}>{data.personalInfo.summary}</p>
                 </section>
 
-                <section className="mb-6">
-                    <h2 className="text-lg font-bold text-[#2c3e50] uppercase tracking-widest mb-4 flex items-center gap-3">
+                <section style={{ marginBottom: 'var(--experience-spacing)' }}>
+                    <h2 className="font-bold text-[#2c3e50] uppercase tracking-widest mb-4 flex items-center gap-3" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>
                         Professional Experience
                         <div className="h-[2px] bg-[#2c3e50] flex-grow"></div>
                     </h2>
                     <div className="space-y-5 relative before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-[#2c3e50]/10 pl-6">
                         {data.experience.map((exp, i) => (
                             <div key={i} className="relative before:absolute before:-left-[30px] before:top-2 before:w-2 before:h-2 before:bg-[#2c3e50] before:rounded-full">
-                                <h3 className="font-black text-[#2c3e50] text-sm">{exp.position}</h3>
-                                <div className="flex justify-between text-[12px] font-bold text-primary my-0.5">
+                                <h3 className="font-black text-[#2c3e50]" style={{ fontSize: 'var(--base-font-size)' }}>{exp.position}</h3>
+                                <div className="flex justify-between font-bold text-primary my-0.5" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>
                                     <span>{exp.company}</span>
                                     <span className="bg-[#2c3e50]/5 px-2 py-0.5 rounded text-[#2c3e50]">{exp.startDate} - {exp.endDate}</span>
                                 </div>
-                                <p className="text-[13px] leading-relaxed text-[#34495e] whitespace-pre-line">{exp.description}</p>
+                                <p className="leading-relaxed text-[#34495e] whitespace-pre-line" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>{exp.description}</p>
                             </div>
                         ))}
                     </div>
@@ -222,22 +222,22 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
             </div>
 
-            <section className="mb-12">
-                <p className="text-center text-[15px] italic leading-relaxed text-gray-600 px-10">{data.personalInfo.summary}</p>
+            <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                <p className="text-center italic leading-relaxed text-gray-600 px-10" style={{ fontSize: 'calc(var(--base-font-size) * 1.05)' }}>{data.personalInfo.summary}</p>
             </section>
 
             <div className="space-y-8">
-                <section>
-                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-black border-l-4 border-black pl-3 mb-4">Experience</h2>
+                <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                    <h2 className="font-black uppercase tracking-[0.3em] text-black border-l-4 border-black pl-3 mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 0.7)' }}>Experience</h2>
                     <div className="space-y-6">
                         {data.experience.map((exp, i) => (
                             <div key={i}>
                                 <div className="flex justify-between items-baseline mb-0.5">
-                                    <h3 className="text-base font-bold text-black">{exp.company}</h3>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">{exp.startDate} – {exp.endDate}</span>
+                                    <h3 className="font-bold text-black" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>{exp.company}</h3>
+                                    <span className="font-black uppercase tracking-widest text-gray-400" style={{ fontSize: 'calc(var(--base-font-size) * 0.7)' }}>{exp.startDate} – {exp.endDate}</span>
                                 </div>
-                                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 lowercase">{exp.position}</p>
-                                <p className="text-[13px] leading-relaxed text-gray-700 whitespace-pre-line">{exp.description}</p>
+                                <p className="font-bold text-gray-500 uppercase tracking-wider mb-2 lowercase" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{exp.position}</p>
+                                <p className="leading-relaxed text-gray-700 whitespace-pre-line" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>{exp.description}</p>
                             </div>
                         ))}
                     </div>
@@ -291,13 +291,13 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 {data.personalInfo.website && <p className="text-sm mt-1 underline italic">{data.personalInfo.website}</p>}
             </div>
 
-            <section className="mb-8">
-                <h2 className="text-base font-bold uppercase border-b border-gray-300 pb-1 mb-3">Professional Profile</h2>
-                <p className="text-sm leading-relaxed">{data.personalInfo.summary}</p>
+            <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                <h2 className="font-bold uppercase border-b border-gray-300 pb-1 mb-3" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Professional Profile</h2>
+                <p className="leading-relaxed" style={{ fontSize: 'var(--base-font-size)' }}>{data.personalInfo.summary}</p>
             </section>
 
-            <section className="mb-8">
-                <h2 className="text-base font-bold uppercase border-b border-gray-300 pb-1 mb-4">Professional Experience</h2>
+            <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                <h2 className="font-bold uppercase border-b border-gray-300 pb-1 mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Professional Experience</h2>
                 <div className="space-y-6">
                     {data.experience.map((exp, i) => (
                         <div key={i}>
@@ -316,8 +316,8 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
             </section>
 
-            <section className="mb-8">
-                <h2 className="text-base font-bold uppercase border-b border-gray-300 pb-1 mb-4">Academic Background</h2>
+            <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                <h2 className="font-bold uppercase border-b border-gray-300 pb-1 mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Academic Background</h2>
                 <div className="space-y-4">
                     {data.education.map((edu, i) => (
                         <div key={i} className="flex justify-between items-start">
@@ -368,9 +368,9 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
             <div className="flex grow">
                 {/* Left Column */}
                 <div className="w-[35%] bg-[#222] p-10 space-y-12 border-r border-white/5">
-                    <section>
+                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
                         <h2 className="text-primary text-xs font-black uppercase tracking-[0.4em] mb-6">Contact</h2>
-                        <div className="space-y-4 text-[11px] opacity-80 uppercase font-black">
+                        <div className="space-y-4 opacity-80 uppercase font-black" style={{ fontSize: 'calc(var(--base-font-size) * 0.75)' }}>
                             <p className="border-b border-white/10 pb-2 truncate">{data.personalInfo.email}</p>
                             <p className="border-b border-white/10 pb-2">{data.personalInfo.phone}</p>
                             <p className="border-b border-white/10 pb-2 leading-relaxed">{data.personalInfo.address}</p>
@@ -401,20 +401,20 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                 {/* Right Column */}
                 <div className="w-[65%] bg-[#1a1a1a] p-12 space-y-12">
-                    <section>
+                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
                         <div className="flex items-center gap-4 mb-6">
-                            <h2 className="text-lg font-black uppercase italic tracking-widest text-primary">Experience</h2>
+                            <h2 className="font-black uppercase italic tracking-widest text-primary" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>Experience</h2>
                             <div className="h-[1px] bg-white/10 grow"></div>
                         </div>
                         <div className="space-y-8">
                             {data.experience.map((exp, i) => (
                                 <div key={i} className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-1 before:h-1 before:bg-primary">
                                     <div className="flex justify-between items-baseline mb-2">
-                                        <h3 className="text-base font-bold text-white italic uppercase tracking-tighter">{exp.position}</h3>
-                                        <span className="text-[9px] font-black opacity-40 uppercase">{exp.startDate} - {exp.endDate}</span>
+                                        <h3 className="font-bold text-white italic uppercase tracking-tighter" style={{ fontSize: 'var(--base-font-size)' }}>{exp.position}</h3>
+                                        <span className="font-black opacity-40 uppercase" style={{ fontSize: 'calc(var(--base-font-size) * 0.65)' }}>{exp.startDate} - {exp.endDate}</span>
                                     </div>
-                                    <p className="text-[10px] text-primary uppercase font-black tracking-widest mb-2">{exp.company}</p>
-                                    <p className="text-[13px] opacity-70 leading-relaxed font-light">{exp.description}</p>
+                                    <p className="text-primary uppercase font-black tracking-widest mb-2" style={{ fontSize: 'calc(var(--base-font-size) * 0.7)' }}>{exp.company}</p>
+                                    <p className="opacity-70 leading-relaxed font-light" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>{exp.description}</p>
                                 </div>
                             ))}
                         </div>
@@ -468,13 +468,13 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
                 {/* Main Side */}
                 <div className="w-[70%] p-12 pr-10 border-r border-slate-50">
                     {data.personalInfo.summary && (
-                        <section className="mb-10">
+                        <section style={{ marginBottom: 'var(--section-spacing)' }}>
                             <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-4 border-b border-slate-100 pb-2">Profile</h2>
-                            <p className="text-[14px] leading-relaxed text-slate-700">{data.personalInfo.summary}</p>
+                            <p className="leading-relaxed text-slate-700" style={{ fontSize: 'var(--base-font-size)' }}>{data.personalInfo.summary}</p>
                         </section>
                     )}
 
-                    <section className="mb-10">
+                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
                         <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-6 border-b border-slate-100 pb-2">Professional Experience</h2>
                         <div className="space-y-8">
                             {data.experience.map((exp, i) => (
@@ -580,25 +580,25 @@ export const TechTemplate: React.FC<TemplateProps> = ({ data }) => {
 
             <div className="grid grid-cols-12 gap-8">
                 <div className="col-span-12">
-                    <section className="mb-10 bg-slate-800/50 p-6 rounded-xl border border-slate-700">
-                        <h2 className="text-sky-500 font-bold mb-4 flex items-center gap-2">
+                    <section style={{ marginBottom: 'var(--section-spacing)' }} className="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <h2 className="text-sky-500 font-bold mb-4 flex items-center gap-2" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>
                             <span className="text-slate-500">&gt;</span> ./professional_summary
                         </h2>
-                        <p className="text-sm leading-relaxed text-slate-300 italic">"{data.personalInfo.summary}"</p>
+                        <p className="leading-relaxed text-slate-300 italic" style={{ fontSize: 'var(--base-font-size)' }}>"{data.personalInfo.summary}"</p>
                     </section>
                 </div>
 
                 <div className="col-span-8">
-                    <section className="mb-12">
-                        <h2 className="text-sky-500 font-bold mb-6 border-b border-slate-700 pb-2">Experience[]</h2>
+                    <section style={{ marginBottom: 'calc(var(--section-spacing) * 1.2)' }}>
+                        <h2 className="text-sky-500 font-bold mb-6 border-b border-slate-700 pb-2" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Experience[]</h2>
                         <div className="space-y-8">
                             {data.experience.map((exp, i) => (
                                 <div key={i}>
                                     <div className="flex justify-between font-bold text-white mb-1">
-                                        <h3>{exp.position} @ {exp.company}</h3>
-                                        <span className="text-sky-500 text-xs">{exp.startDate} - {exp.endDate}</span>
+                                        <h3 style={{ fontSize: 'var(--base-font-size)' }}>{exp.position} @ {exp.company}</h3>
+                                        <span className="text-sky-500" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{exp.startDate} - {exp.endDate}</span>
                                     </div>
-                                    <p className="text-xs text-slate-400 mb-2 leading-relaxed whitespace-pre-line">{exp.description}</p>
+                                    <p className="text-slate-400 mb-2 leading-relaxed whitespace-pre-line" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{exp.description}</p>
                                 </div>
                             ))}
                         </div>
@@ -660,37 +660,37 @@ export const AcademicTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
             </div>
 
-            <section className="mb-10">
-                <h2 className="text-lg font-bold uppercase tracking-widest border-b border-gray-300 pb-1 mb-4 italic">Professional Summary</h2>
-                <p className="text-[13px] text-gray-700 text-justify">{data.personalInfo.summary}</p>
+            <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                <h2 className="font-bold uppercase tracking-widest border-b border-gray-300 pb-1 mb-4 italic" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>Professional Summary</h2>
+                <p className="text-gray-700 text-justify" style={{ fontSize: 'calc(var(--base-font-size) * 0.95)' }}>{data.personalInfo.summary}</p>
             </section>
 
-            <section className="mb-10">
-                <h2 className="text-lg font-bold uppercase tracking-widest border-b border-gray-300 pb-1 mb-4 italic">Education</h2>
+            <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                <h2 className="font-bold uppercase tracking-widest border-b border-gray-300 pb-1 mb-4 italic" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>Education</h2>
                 <div className="space-y-6">
                     {data.education.map((edu, i) => (
                         <div key={i}>
-                            <div className="flex justify-between items-baseline font-bold text-[14px]">
+                            <div className="flex justify-between items-baseline font-bold" style={{ fontSize: 'var(--base-font-size)' }}>
                                 <h3>{edu.school.toUpperCase()}</h3>
-                                <span className="font-medium text-gray-500">{edu.startDate} — {edu.endDate}</span>
+                                <span className="font-medium text-gray-500" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>{edu.startDate} — {edu.endDate}</span>
                             </div>
-                            <p className="text-[13px] italic text-gray-600">{edu.degree}</p>
+                            <p className="italic text-gray-600" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>{edu.degree}</p>
                         </div>
                     ))}
                 </div>
             </section>
 
-            <section className="mb-10">
-                <h2 className="text-lg font-bold uppercase tracking-widest border-b border-gray-300 pb-1 mb-4 italic">Professional Experience</h2>
+            <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                <h2 className="font-bold uppercase tracking-widest border-b border-gray-300 pb-1 mb-4 italic" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>Professional Experience</h2>
                 <div className="space-y-8">
                     {data.experience.map((exp, i) => (
                         <div key={i}>
-                            <div className="flex justify-between items-baseline font-bold text-[14px]">
+                            <div className="flex justify-between items-baseline font-bold" style={{ fontSize: 'var(--base-font-size)' }}>
                                 <h3>{exp.company.toUpperCase()}</h3>
-                                <span className="font-medium text-gray-500">{exp.startDate} — {exp.endDate}</span>
+                                <span className="font-medium text-gray-500" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>{exp.startDate} — {exp.endDate}</span>
                             </div>
-                            <p className="text-[13px] font-bold text-gray-700 mb-2 italic">{exp.position}</p>
-                            <p className="text-[13px] text-gray-600 text-justify whitespace-pre-line leading-relaxed">{exp.description}</p>
+                            <p className="font-bold text-gray-700 mb-2 italic" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>{exp.position}</p>
+                            <p className="text-gray-600 text-justify whitespace-pre-line leading-relaxed" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>{exp.description}</p>
                         </div>
                     ))}
                 </div>
@@ -766,8 +766,8 @@ export const SideSplitTemplate: React.FC<TemplateProps> = ({ data }) => {
             </aside>
 
             <main className="grow p-12 bg-white">
-                <section className="mb-12">
-                    <h2 className="text-sm font-black uppercase tracking-[0.4em] text-primary mb-6 flex items-center gap-4">
+                <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                    <h2 className="font-black uppercase tracking-[0.4em] text-primary mb-6 flex items-center gap-4" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>
                         Experience
                         <div className="h-px bg-primary/10 grow"></div>
                     </h2>
@@ -776,11 +776,11 @@ export const SideSplitTemplate: React.FC<TemplateProps> = ({ data }) => {
                             <div key={i} className="relative pl-6 border-l-2 border-primary/10">
                                 <div className="absolute -left-[5px] top-0 w-2 h-2 bg-primary rounded-full"></div>
                                 <div className="flex justify-between items-baseline mb-2">
-                                    <h3 className="text-base font-black text-midnight_text uppercase tracking-tight">{exp.position}</h3>
-                                    <span className="text-[10px] font-black text-grey uppercase bg-primary/5 px-2 py-0.5 rounded">{exp.startDate} - {exp.endDate}</span>
+                                    <h3 className="font-black text-midnight_text uppercase tracking-tight" style={{ fontSize: 'calc(var(--base-font-size) * 1.15)' }}>{exp.position}</h3>
+                                    <span className="font-black text-grey uppercase bg-primary/5 px-2 py-0.5 rounded" style={{ fontSize: 'calc(var(--base-font-size) * 0.7)' }}>{exp.startDate} - {exp.endDate}</span>
                                 </div>
-                                <p className="text-xs font-bold text-primary mb-3 uppercase tracking-widest">{exp.company}</p>
-                                <p className="text-[13px] leading-relaxed text-grey whitespace-pre-line">{exp.description}</p>
+                                <p className="font-bold text-primary mb-3 uppercase tracking-widest" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{exp.company}</p>
+                                <p className="leading-relaxed text-grey whitespace-pre-line" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>{exp.description}</p>
                             </div>
                         ))}
                     </div>
@@ -829,12 +829,12 @@ export const GeometricTemplate: React.FC<TemplateProps> = ({ data }) => {
             </header>
 
             <div className="px-16 pb-16 relative">
-                <section className="mb-16">
+                <section style={{ marginBottom: 'var(--section-spacing)' }}>
                     <div className="grid grid-cols-12 gap-8 items-center">
                         <div className="col-span-3">
-                            <h2 className="text-xs font-black uppercase tracking-[0.5em] text-indigo-600 rotate-[-90deg] origin-center translate-x-12 translate-y-8">Mission</h2>
+                            <h2 className="font-black uppercase tracking-[0.5em] text-indigo-600 rotate-[-90deg] origin-center translate-x-12 translate-y-8" style={{ fontSize: 'calc(var(--base-font-size) * 0.75)' }}>Mission</h2>
                         </div>
-                        <div className="col-span-9 border-l border-[#2d3436]/10 pl-12 italic text-lg leading-relaxed font-light text-[#2d3436]/80">
+                        <div className="col-span-9 border-l border-[#2d3436]/10 pl-12 italic leading-relaxed font-light text-[#2d3436]/80" style={{ fontSize: 'calc(var(--base-font-size) * 1.2)' }}>
                             {data.personalInfo.summary}
                         </div>
                     </div>
@@ -842,17 +842,17 @@ export const GeometricTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                 <div className="grid grid-cols-12 gap-16">
                     <div className="col-span-7">
-                        <section className="mb-12">
-                            <h2 className="text-xs font-black uppercase tracking-[0.5em] text-indigo-600 mb-8 border-b-2 border-indigo-100 pb-2">Experience</h2>
+                        <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                            <h2 className="font-black uppercase tracking-[0.5em] text-indigo-600 mb-8 border-b-2 border-indigo-100 pb-2" style={{ fontSize: 'calc(var(--base-font-size) * 0.75)' }}>Experience</h2>
                             <div className="space-y-12">
                                 {data.experience.map((exp, i) => (
                                     <div key={i} className="group">
                                         <div className="flex justify-between items-start mb-2">
-                                            <h3 className="text-2xl font-black text-[#2d3436] tracking-tighter leading-none">{exp.position}</h3>
-                                            <span className="text-[10px] font-black bg-[#2d3436] text-white px-2 py-0.5 rounded italic">/{exp.startDate.slice(-2)} — /{exp.endDate.slice(-2)}</span>
+                                            <h3 className="font-black text-[#2d3436] tracking-tighter leading-none" style={{ fontSize: 'calc(var(--base-font-size) * 1.5)' }}>{exp.position}</h3>
+                                            <span className="font-black bg-[#2d3436] text-white px-2 py-0.5 rounded italic" style={{ fontSize: 'calc(var(--base-font-size) * 0.65)' }}>/{exp.startDate.slice(-2)} — /{exp.endDate.slice(-2)}</span>
                                         </div>
-                                        <p className="text-sm font-bold text-rose-500 uppercase tracking-widest mb-4">{exp.company}</p>
-                                        <p className="text-sm leading-relaxed text-[#2d3436]/70 font-medium whitespace-pre-line">{exp.description}</p>
+                                        <p className="font-bold text-rose-500 uppercase tracking-widest mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{exp.company}</p>
+                                        <p className="leading-relaxed text-[#2d3436]/70 font-medium whitespace-pre-line" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>{exp.description}</p>
                                     </div>
                                 ))}
                             </div>
@@ -900,8 +900,8 @@ export const PastelTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
 
             <div className="max-w-4xl mx-auto px-16 -mt-12 bg-white rounded-3xl p-16 shadow-lg border border-[#eee]">
-                <section className="mb-16 text-center">
-                    <p className="text-lg leading-loose italic text-justify px-10 border-l-2 border-rose-100 pl-16">
+                <section style={{ marginBottom: 'var(--section-spacing)' }} className="text-center">
+                    <p className="leading-loose italic text-justify px-10 border-l-2 border-rose-100 pl-16" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>
                         "{data.personalInfo.summary}"
                     </p>
                 </section>
@@ -982,24 +982,24 @@ export const HighImpactTemplate: React.FC<TemplateProps> = ({ data }) => {
             </header>
 
             <div className="p-16 pt-12 grid grid-cols-12 gap-16">
-                <div className="col-span-12 mb-4">
-                    <p className="text-2xl font-light leading-relaxed text-[#1a1c1e]/60 italic">
+                <div className="col-span-12" style={{ marginBottom: 'var(--section-spacing)' }}>
+                    <p className="font-light leading-relaxed text-[#1a1c1e]/60 italic" style={{ fontSize: 'calc(var(--base-font-size) * 1.4)' }}>
                         "{data.personalInfo.summary}"
                     </p>
                 </div>
 
                 <div className="col-span-8">
-                    <section className="mb-12">
-                        <h2 className="text-sm font-black uppercase tracking-[0.4em] text-primary mb-8">Work History</h2>
+                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                        <h2 className="font-black uppercase tracking-[0.4em] text-primary mb-8" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>Work History</h2>
                         <div className="space-y-12">
                             {data.experience.map((exp, i) => (
                                 <div key={i}>
                                     <div className="flex justify-between items-baseline mb-2">
-                                        <h3 className="text-2xl font-black">{exp.position}</h3>
-                                        <span className="text-xs font-bold opacity-30 uppercase tracking-widest">{exp.startDate} - {exp.endDate}</span>
+                                        <h3 className="font-black" style={{ fontSize: 'calc(var(--base-font-size) * 1.5)' }}>{exp.position}</h3>
+                                        <span className="font-bold opacity-30 uppercase tracking-widest" style={{ fontSize: 'calc(var(--base-font-size) * 0.75)' }}>{exp.startDate} - {exp.endDate}</span>
                                     </div>
-                                    <p className="text-lg font-bold text-primary mb-4">{exp.company}</p>
-                                    <p className="text-base leading-relaxed text-[#1a1c1e]/70 font-medium whitespace-pre-line border-l-4 border-[#1a1c1e]/5 pl-8">
+                                    <p className="font-bold text-primary mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>{exp.company}</p>
+                                    <p className="leading-relaxed text-[#1a1c1e]/70 font-medium whitespace-pre-line border-l-4 border-[#1a1c1e]/5 pl-8" style={{ fontSize: 'var(--base-font-size)' }}>
                                         {exp.description}
                                     </p>
                                 </div>
@@ -1055,22 +1055,22 @@ export const CompactTemplate: React.FC<TemplateProps> = ({ data }) => {
             </header>
 
             <div className="grid grid-cols-12 gap-8">
-                <div className="col-span-12 mb-2">
-                    <h2 className="font-black uppercase tracking-widest bg-[#333] text-white px-2 py-0.5 w-fit mb-3">Professional Profile</h2>
-                    <p className="leading-relaxed font-medium text-justify">{data.personalInfo.summary}</p>
+                <div className="col-span-12" style={{ marginBottom: 'calc(var(--section-spacing) / 2)' }}>
+                    <h2 className="font-black uppercase tracking-widest bg-[#333] text-white px-2 py-0.5 w-fit mb-3" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>Professional Profile</h2>
+                    <p className="leading-relaxed font-medium text-justify" style={{ fontSize: 'var(--base-font-size)' }}>{data.personalInfo.summary}</p>
                 </div>
 
                 <div className="col-span-9">
-                    <section className="mb-6">
-                        <h2 className="font-black uppercase tracking-widest border-b-2 border-[#333] pb-0.5 mb-4">Professional Experience</h2>
+                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                        <h2 className="font-black uppercase tracking-widest border-b-2 border-[#333] pb-0.5 mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>Professional Experience</h2>
                         <div className="space-y-4">
                             {data.experience.map((exp, i) => (
                                 <div key={i}>
-                                    <div className="flex justify-between font-black uppercase">
+                                    <div className="flex justify-between font-black uppercase" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>
                                         <h3>{exp.position} | {exp.company}</h3>
                                         <span>{exp.startDate} - {exp.endDate}</span>
                                     </div>
-                                    <p className="leading-snug text-[#333]/80 mt-1 whitespace-pre-line border-l border-[#333]/10 pl-4">{exp.description}</p>
+                                    <p className="leading-snug text-[#333]/80 mt-1 whitespace-pre-line border-l border-[#333]/10 pl-4" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{exp.description}</p>
                                 </div>
                             ))}
                         </div>
@@ -1132,25 +1132,25 @@ export const FunctionalTemplate: React.FC<TemplateProps> = ({ data }) => {
                     </div>
                 </header>
 
-                <section className="mb-12">
-                    <h2 className="text-lg font-black uppercase tracking-[0.3em] bg-[#2c3e50] text-white px-6 py-2 w-fit mx-auto mb-8">Expertise & Skills</h2>
+                <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                    <h2 className="font-black uppercase tracking-[0.3em] bg-[#2c3e50] text-white px-6 py-2 w-fit mx-auto mb-8" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Expertise & Skills</h2>
                     <div className="grid grid-cols-3 gap-6">
                         {data.skills.map((skill, i) => (
                             <div key={i} className="flex items-center gap-3 border-b-2 border-[#2c3e50]/10 pb-2">
                                 <div className="w-2 h-2 bg-[#e67e22] rotate-45"></div>
-                                <span className="font-black uppercase text-xs">{skill}</span>
+                                <span className="font-black uppercase text-xs" style={{ fontSize: 'calc(var(--base-font-size) * 0.75)' }}>{skill}</span>
                             </div>
                         ))}
                     </div>
                 </section>
 
-                <section className="mb-12">
-                    <h2 className="text-lg font-black uppercase tracking-[0.3em] bg-[#2c3e50] text-white px-6 py-2 w-fit mx-auto mb-8">Professional Journey</h2>
+                <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                    <h2 className="font-black uppercase tracking-[0.3em] bg-[#2c3e50] text-white px-6 py-2 w-fit mx-auto mb-8" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Professional Journey</h2>
                     <div className="space-y-6">
                         {data.experience.map((exp, i) => (
                             <div key={i} className="text-center">
-                                <h3 className="text-xl font-black italic">{exp.position}</h3>
-                                <p className="font-bold text-[#e67e22] mt-1">{exp.company} | {exp.startDate} - {exp.endDate}</p>
+                                <h3 className="font-black italic" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>{exp.position}</h3>
+                                <p className="font-bold text-[#e67e22] mt-1" style={{ fontSize: 'var(--base-font-size)' }}>{exp.company} | {exp.startDate} - {exp.endDate}</p>
                             </div>
                         ))}
                     </div>
@@ -1201,18 +1201,18 @@ export const ChronoTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </header>
 
                 <div className="space-y-16">
-                    <section>
-                        <h2 className="text-xs font-black uppercase tracking-[0.5em] text-[#d63031] mb-8">Career History</h2>
+                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                        <h2 className="text-xs font-black uppercase tracking-[0.5em] text-[#d63031] mb-8" style={{ fontSize: 'calc(var(--base-font-size) * 0.75)' }}>Career History</h2>
                         <div className="space-y-12">
                             {data.experience.map((exp, i) => (
                                 <div key={i} className="grid grid-cols-12 gap-8">
                                     <div className="col-span-3 text-right">
-                                        <span className="font-black text-sm uppercase opacity-40">{exp.startDate} - {exp.endDate}</span>
+                                        <span className="font-black uppercase opacity-40" style={{ fontSize: 'calc(var(--base-font-size) * 0.75)' }}>{exp.startDate} - {exp.endDate}</span>
                                     </div>
                                     <div className="col-span-9">
-                                        <h3 className="text-2xl font-black leading-none">{exp.position}</h3>
-                                        <p className="text-lg font-bold italic mt-2 text-[#2d3436]/60">{exp.company}</p>
-                                        <p className="text-base leading-relaxed mt-4 text-[#2d3436]/80 whitespace-pre-line border-t border-[#eee] pt-4">{exp.description}</p>
+                                        <h3 className="font-black leading-none" style={{ fontSize: 'calc(var(--base-font-size) * 1.5)' }}>{exp.position}</h3>
+                                        <p className="font-bold italic mt-2 text-[#2d3436]/60" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>{exp.company}</p>
+                                        <p className="leading-relaxed mt-4 text-[#2d3436]/80 whitespace-pre-line border-t border-[#eee] pt-4" style={{ fontSize: 'var(--base-font-size)' }}>{exp.description}</p>
                                     </div>
                                 </div>
                             ))}
@@ -1280,17 +1280,17 @@ export const HybridTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
 
                 <div className="col-span-8">
-                    <section className="mb-12">
+                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
                         <h2 className="text-xs font-black uppercase tracking-[0.3em] text-grey mb-8 border-b-2 border-primary/20 pb-2">Experience Matrix</h2>
                         <div className="space-y-10">
                             {data.experience.map((exp, i) => (
                                 <div key={i} className="group">
                                     <div className="flex justify-between items-start mb-2">
-                                        <h3 className="text-xl font-black text-midnight_text">{exp.position}</h3>
-                                        <span className="text-[10px] font-black text-primary uppercase">{exp.startDate} - {exp.endDate}</span>
+                                        <h3 className="font-black text-midnight_text" style={{ fontSize: 'calc(var(--base-font-size) * 1.5)' }}>{exp.position}</h3>
+                                        <span className="text-primary uppercase" style={{ fontSize: 'calc(var(--base-font-size) * 0.7)' }}>{exp.startDate} - {exp.endDate}</span>
                                     </div>
-                                    <p className="text-sm font-black text-grey uppercase tracking-widest mb-4 italic">{exp.company}</p>
-                                    <p className="text-sm leading-relaxed text-grey/80 whitespace-pre-line">{exp.description}</p>
+                                    <p className="font-black text-grey uppercase tracking-widest mb-4 italic" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{exp.company}</p>
+                                    <p className="leading-relaxed text-grey/80 whitespace-pre-line" style={{ fontSize: 'var(--base-font-size)' }}>{exp.description}</p>
                                 </div>
                             ))}
                         </div>
@@ -1328,22 +1328,22 @@ export const RetroTemplate: React.FC<TemplateProps> = ({ data }) => {
             </header>
 
             <div className="space-y-12">
-                <section>
-                    <h2 className="text-lg font-bold border-b border-[#222] mb-6"># PROFESSIONAL_SUMMARY</h2>
-                    <p className="leading-relaxed text-sm whitespace-pre-line">{data.personalInfo.summary}</p>
+                <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                    <h2 className="font-bold border-b border-[#222] mb-6" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}># PROFESSIONAL_SUMMARY</h2>
+                    <p className="leading-relaxed whitespace-pre-line" style={{ fontSize: 'var(--base-font-size)' }}>{data.personalInfo.summary}</p>
                 </section>
 
-                <section>
-                    <h2 className="text-lg font-bold border-b border-[#222] mb-6"># WORK_EXPERIENCE</h2>
+                <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                    <h2 className="font-bold border-b border-[#222] mb-6" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}># WORK_EXPERIENCE</h2>
                     <div className="space-y-10">
                         {data.experience.map((exp, i) => (
                             <div key={i}>
-                                <div className="flex justify-between font-bold">
+                                <div className="flex justify-between font-bold" style={{ fontSize: 'var(--base-font-size)' }}>
                                     <span>&gt; {exp.position}</span>
                                     <span>[{exp.startDate} - {exp.endDate}]</span>
                                 </div>
-                                <p className="font-bold underline mt-1">{exp.company}</p>
-                                <p className="mt-4 text-sm leading-relaxed border-l-2 border-[#ddd] pl-6 italic">{exp.description}</p>
+                                <p className="font-bold underline mt-1" style={{ fontSize: 'var(--base-font-size)' }}>{exp.company}</p>
+                                <p className="mt-4 leading-relaxed border-l-2 border-[#ddd] pl-6 italic" style={{ fontSize: 'calc(var(--base-font-size) * 0.9)' }}>{exp.description}</p>
                             </div>
                         ))}
                     </div>
@@ -1468,24 +1468,24 @@ export const DarkTemplate: React.FC<TemplateProps> = ({ data }) => {
 
             <div className="grid grid-cols-12 gap-16">
                 <div className="col-span-8">
-                    <section className="mb-16">
-                        <h2 className="text-xs font-black uppercase tracking-[0.6em] text-primary mb-8 border-b border-white/5 pb-4">Professional Narrative</h2>
-                        <p className="text-lg leading-relaxed font-light text-white/70 italic">
+                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                        <h2 className="text-xs font-black uppercase tracking-[0.6em] text-primary mb-8 border-b border-white/5 pb-4" style={{ fontSize: 'calc(var(--base-font-size) * 0.75)' }}>Professional Narrative</h2>
+                        <p className="leading-relaxed font-light text-white/70 italic" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>
                             "{data.personalInfo.summary}"
                         </p>
                     </section>
 
-                    <section>
-                        <h2 className="text-xs font-black uppercase tracking-[0.6em] text-primary mb-8 border-b border-white/5 pb-4">Experience Record</h2>
+                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                        <h2 className="text-xs font-black uppercase tracking-[0.6em] text-primary mb-8 border-b border-white/5 pb-4" style={{ fontSize: 'calc(var(--base-font-size) * 0.75)' }}>Experience Record</h2>
                         <div className="space-y-12">
                             {data.experience.map((exp, i) => (
                                 <div key={i} className="group">
                                     <div className="flex justify-between items-baseline mb-4">
-                                        <h3 className="text-2xl font-black text-white group-hover:text-primary transition-colors">{exp.position}</h3>
-                                        <span className="text-xs font-black text-primary/40 uppercase bg-white/5 px-2 py-1 rounded">{exp.startDate} - {exp.endDate}</span>
+                                        <h3 className="font-black text-white group-hover:text-primary transition-colors" style={{ fontSize: 'calc(var(--base-font-size) * 1.5)' }}>{exp.position}</h3>
+                                        <span className="font-black text-primary/40 uppercase bg-white/5 px-2 py-1 rounded" style={{ fontSize: 'calc(var(--base-font-size) * 0.75)' }}>{exp.startDate} - {exp.endDate}</span>
                                     </div>
-                                    <p className="text-sm font-black text-primary uppercase tracking-widest mb-4">{exp.company}</p>
-                                    <p className="text-base leading-relaxed opacity-60 font-light whitespace-pre-line border-l border-white/10 pl-8 group-hover:border-primary transition-colors">
+                                    <p className="font-black text-primary uppercase tracking-widest mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{exp.company}</p>
+                                    <p className="leading-relaxed opacity-60 font-light whitespace-pre-line border-l border-white/10 pl-8 group-hover:border-primary transition-colors" style={{ fontSize: 'var(--base-font-size)' }}>
                                         {exp.description}
                                     </p>
                                 </div>
@@ -1549,21 +1549,21 @@ export const InfographicTemplate: React.FC<TemplateProps> = ({ data }) => {
                     </header>
 
                     <div className="p-12 space-y-12 bg-white">
-                        <section>
-                            <h2 className="text-2xl font-black text-[#1e293b] mb-8 flex items-center gap-4">
+                        <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                            <h2 className="font-black text-[#1e293b] mb-8 flex items-center gap-4" style={{ fontSize: 'calc(var(--base-font-size) * 1.5)' }}>
                                 <span className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-sm">01</span>
                                 Experience Baseline
                             </h2>
                             <div className="space-y-10">
                                 {data.experience.map((exp, i) => (
                                     <div key={i} className="relative pl-12">
-                                        <div className="absolute left-0 top-0 w-8 h-8 rounded-full border-4 border-primary/20 bg-white flex items-center justify-center text-[10px] font-black text-primary">#{i+1}</div>
+                                        <div className="absolute left-0 top-0 w-8 h-8 rounded-full border-4 border-primary/20 bg-white flex items-center justify-center text-[10px] font-black text-primary" style={{ fontSize: 'calc(var(--base-font-size) * 0.65)' }}>#{i+1}</div>
                                         <div className="flex justify-between items-baseline mb-2">
-                                            <h3 className="text-xl font-black text-[#1e293b]">{exp.position}</h3>
-                                            <span className="text-[11px] font-black opacity-30 uppercase">{exp.startDate} - {exp.endDate}</span>
+                                            <h3 className="font-black text-[#1e293b]" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>{exp.position}</h3>
+                                            <span className="font-black opacity-30 uppercase" style={{ fontSize: 'calc(var(--base-font-size) * 0.7)' }}>{exp.startDate} - {exp.endDate}</span>
                                         </div>
-                                        <p className="text-sm font-bold text-primary mb-4 uppercase tracking-widest">{exp.company}</p>
-                                        <p className="text-sm leading-relaxed text-[#64748b] bg-[#f8fafc] p-6 rounded-3xl border border-[#f1f5f9]">{exp.description}</p>
+                                        <p className="font-bold text-primary mb-4 uppercase tracking-widest" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{exp.company}</p>
+                                        <p className="leading-relaxed text-[#64748b] bg-[#f8fafc] p-6 rounded-3xl border border-[#f1f5f9]" style={{ fontSize: 'var(--base-font-size)' }}>{exp.description}</p>
                                     </div>
                                 ))}
                             </div>
@@ -1629,27 +1629,27 @@ export const StartupTemplate: React.FC<TemplateProps> = ({ data }) => {
             </header>
 
             <div className="grid grid-cols-12 gap-12">
-                <div className="col-span-12">
-                    <section className="mb-8">
-                        <p className="text-lg leading-relaxed text-slate-600 font-medium">
+                <div className="col-span-12" style={{ marginBottom: 'var(--section-spacing)' }}>
+                    <section>
+                        <p className="leading-relaxed text-slate-600 font-medium" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>
                             {data.personalInfo.summary}
                         </p>
                     </section>
                 </div>
 
                 <div className="col-span-8">
-                    <section className="mb-12">
-                        <h2 className="text-sm font-black uppercase tracking-widest text-emerald-600 mb-6">Experience Map</h2>
+                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                        <h2 className="text-emerald-600 mb-6 font-black uppercase tracking-widest" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>Experience Map</h2>
                         <div className="space-y-10">
                             {data.experience.map((exp, i) => (
                                 <div key={i} className="relative pl-8 border-l-2 border-slate-100">
                                     <div className="absolute -left-[5px] top-0 w-2 h-2 bg-emerald-400 rounded-full shadow-[0_0_10px_#34d399]"></div>
                                     <div className="flex justify-between items-baseline mb-2">
-                                        <h3 className="text-xl font-black text-slate-900 leading-none">{exp.position}</h3>
-                                        <span className="text-[10px] font-black bg-slate-50 px-2 py-1 rounded border border-slate-200 uppercase">{exp.startDate} - {exp.endDate}</span>
+                                        <h3 className="font-black text-slate-900 leading-none" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>{exp.position}</h3>
+                                        <span className="font-black bg-slate-50 px-2 py-1 rounded border border-slate-200 uppercase" style={{ fontSize: 'calc(var(--base-font-size) * 0.65)' }}>{exp.startDate} - {exp.endDate}</span>
                                     </div>
-                                    <p className="text-sm font-bold text-emerald-600 mb-4">{exp.company}</p>
-                                    <p className="text-sm leading-relaxed text-slate-500 whitespace-pre-line">{exp.description}</p>
+                                    <p className="font-bold text-emerald-600 mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{exp.company}</p>
+                                    <p className="leading-relaxed text-slate-500 whitespace-pre-line" style={{ fontSize: 'var(--base-font-size)' }}>{exp.description}</p>
                                 </div>
                             ))}
                         </div>
@@ -1700,23 +1700,23 @@ export const MinimalistProTemplate: React.FC<TemplateProps> = ({ data }) => {
             </header>
 
             <div className="max-w-2xl mx-auto space-y-16">
-                <section>
-                    <p className="text-base text-center italic opacity-60">
+                <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                    <p className="text-center italic opacity-60" style={{ fontSize: 'var(--base-font-size)' }}>
                         {data.personalInfo.summary}
                     </p>
                 </section>
 
-                <section>
+                <section style={{ marginBottom: 'var(--section-spacing)' }}>
                     <h2 className="text-xs font-black uppercase tracking-[0.5em] mb-10 text-center border-b border-gray-100 pb-2">Experience</h2>
                     <div className="space-y-12">
                         {data.experience.map((exp, i) => (
                             <div key={i}>
                                 <div className="flex justify-between items-baseline mb-2">
-                                    <h3 className="text-lg font-bold uppercase tracking-tight">{exp.position}</h3>
-                                    <span className="text-[10px] opacity-40 uppercase font-black">{exp.startDate} - {exp.endDate}</span>
+                                    <h3 className="font-bold uppercase tracking-tight" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>{exp.position}</h3>
+                                    <span className="opacity-40 uppercase font-black" style={{ fontSize: 'calc(var(--base-font-size) * 0.7)' }}>{exp.startDate} - {exp.endDate}</span>
                                 </div>
-                                <p className="text-xs font-black tracking-widest uppercase mb-4 opacity-70">{exp.company}</p>
-                                <p className="text-sm text-gray-600 text-justify leading-loose">{exp.description}</p>
+                                <p className="font-black tracking-widest uppercase mb-4 opacity-70" style={{ fontSize: 'calc(var(--base-font-size) * 0.75)' }}>{exp.company}</p>
+                                <p className="text-gray-600 text-justify leading-loose" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{exp.description}</p>
                             </div>
                         ))}
                     </div>
@@ -1767,25 +1767,25 @@ export const GradientTemplate: React.FC<TemplateProps> = ({ data }) => {
 
             <div className="px-16 -mt-10 relative z-10">
                 <div className="bg-white rounded-3xl p-12 shadow-2xl space-y-16">
-                    <section className="text-center">
-                        <p className="text-xl font-medium leading-relaxed text-slate-500 italic">
+                    <section className="text-center" style={{ marginBottom: 'var(--section-spacing)' }}>
+                        <p className="font-medium leading-relaxed text-slate-500 italic" style={{ fontSize: 'calc(var(--base-font-size) * 1.4)' }}>
                             "{data.personalInfo.summary}"
                         </p>
                     </section>
 
                     <div className="grid grid-cols-12 gap-12">
                         <div className="col-span-8">
-                            <section>
-                                <h2 className="text-sm font-black uppercase tracking-[0.4em] text-indigo-600 mb-10">Experience Journey</h2>
+                            <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                                <h2 className="text-indigo-600 mb-10 font-black uppercase tracking-[0.4em]" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>Experience Journey</h2>
                                 <div className="space-y-12">
                                     {data.experience.map((exp, i) => (
                                         <div key={i} className="group">
                                             <div className="flex justify-between items-start mb-2">
-                                                <h3 className="text-2xl font-black text-slate-800 tracking-tight leading-none">{exp.position}</h3>
-                                                <span className="text-[10px] font-black bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full">{exp.startDate} - {exp.endDate}</span>
+                                                <h3 className="font-black text-slate-800 tracking-tight leading-none" style={{ fontSize: 'calc(var(--base-font-size) * 1.5)' }}>{exp.position}</h3>
+                                                <span className="font-black bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full" style={{ fontSize: 'calc(var(--base-font-size) * 0.65)' }}>{exp.startDate} - {exp.endDate}</span>
                                             </div>
-                                            <p className="text-sm font-bold text-indigo-400 uppercase tracking-widest mb-4 italic">{exp.company}</p>
-                                            <p className="text-sm leading-relaxed text-slate-500">{exp.description}</p>
+                                            <p className="font-bold text-indigo-400 uppercase tracking-widest mb-4 italic" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{exp.company}</p>
+                                            <p className="text-slate-500 leading-relaxed" style={{ fontSize: 'var(--base-font-size)' }}>{exp.description}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -1839,27 +1839,27 @@ export const BoardTemplate: React.FC<TemplateProps> = ({ data }) => {
             </header>
 
             <div className="grid grid-cols-12 gap-16">
-                <div className="col-span-12">
-                    <section className="mb-12 border-l-4 border-[#2c3e50] pl-10">
+                <div className="col-span-12" style={{ marginBottom: 'var(--section-spacing)' }}>
+                    <section className="border-l-4 border-[#2c3e50] pl-10">
                         <h2 className="text-xs font-black uppercase tracking-[0.4em] text-[#2c3e50]/40 mb-6 font-sans">Corporate Narrative</h2>
-                        <p className="text-xl leading-relaxed font-medium italic text-justify text-[#2c3e50]">
+                        <p className="leading-relaxed font-medium italic text-justify text-[#2c3e50]" style={{ fontSize: 'calc(var(--base-font-size) * 1.4)' }}>
                             {data.personalInfo.summary}
                         </p>
                     </section>
                 </div>
 
                 <div className="col-span-8">
-                    <section>
+                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
                         <h2 className="text-xs font-black uppercase tracking-[0.4em] text-[#2c3e50]/40 mb-8 font-sans">Strategic Milestones</h2>
                         <div className="space-y-12">
                             {data.experience.map((exp, i) => (
                                 <div key={i}>
                                     <div className="flex justify-between items-baseline mb-2">
-                                        <h3 className="text-2xl font-black uppercase leading-none">{exp.position}</h3>
-                                        <span className="font-black text-sm text-[#2c3e50]/40 font-sans tracking-tight">{exp.startDate} - {exp.endDate}</span>
+                                        <h3 className="font-black uppercase leading-none" style={{ fontSize: 'calc(var(--base-font-size) * 1.5)' }}>{exp.position}</h3>
+                                        <span className="font-black text-[#2c3e50]/40 font-sans tracking-tight" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>{exp.startDate} - {exp.endDate}</span>
                                     </div>
-                                    <p className="text-lg font-bold italic mb-6 text-[#2c3e50]/60">{exp.company}</p>
-                                    <div className="space-y-2 text-sm font-medium leading-relaxed font-sans text-justify">
+                                    <p className="font-bold italic mb-6 text-[#2c3e50]/60" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>{exp.company}</p>
+                                    <div className="font-medium leading-relaxed font-sans text-justify space-y-2" style={{ fontSize: 'calc(var(--base-font-size) * 0.85)' }}>
                                         {exp.description.split('\n').map((line, idx) => (
                                             <p key={idx}>{line}</p>
                                         ))}
@@ -1941,8 +1941,8 @@ export const JournalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
 
                 <div className="col-span-7">
-                    <section className="mb-20">
-                        <p className="text-2xl font-light leading-relaxed italic border-b-2 border-rose-100 pb-12">
+                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                        <p className="font-light leading-relaxed italic border-b-2 border-rose-100 pb-12" style={{ fontSize: 'calc(var(--base-font-size) * 1.5)' }}>
                             "{data.personalInfo.summary}"
                         </p>
                     </section>

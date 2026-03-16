@@ -33,6 +33,13 @@ export interface ResumeData {
   customization: {
     primaryColor: string;
     fontFamily: string;
+    sectionSpacing?: number;
+    fontSize?: number;
+    summarySpacing?: number;
+    experienceSpacing?: number;
+    educationSpacing?: number;
+    skillsSpacing?: number;
+    projectsSpacing?: number;
   };
 }
 

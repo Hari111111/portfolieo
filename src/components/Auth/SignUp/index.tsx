@@ -1,34 +1,40 @@
 "use client";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Logo from "@/components/Layout/Header/Logo";
 import { Icon } from "@iconify/react";
 import Loader from "@/components/Common/Loader";
+import axios from "axios";
+import AuthDialogContext from "@/app/context/AuthDialogContext";
 
 const SignUp = ({ signUpOpen, toggleSignIn }: { signUpOpen?: any; toggleSignIn?: () => void }) => {
   const [loading, setLoading] = useState(false);
+
+  const { setIsFailedDialogOpen, setIsUserRegistered } = useContext(AuthDialogContext)!;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+    const name = formData.get("name");
+    const email = formData.get("email");
+    const password = formData.get("password");
 
     try {
-      const res = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+      const res = await axios.post(`${API_URL}/users`, { name, email, password });
 
-      if (res.ok) {
-        // toast.success("Account created successfully!");
-        if (toggleSignIn) toggleSignIn();
-      } else {
-        // toast.error("Registration failed. Please try again.");
+      if (res.status === 201 || res.status === 200) {
+        setIsUserRegistered(true);
+        setTimeout(() => {
+          setIsUserRegistered(false);
+          if (toggleSignIn) toggleSignIn();
+        }, 2000);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setIsFailedDialogOpen(true);
+      setTimeout(() => setIsFailedDialogOpen(false), 3000);
     } finally {
       setLoading(false);
     }

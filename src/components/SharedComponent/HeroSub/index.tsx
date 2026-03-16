@@ -11,11 +11,11 @@ interface HeroSubProps {
 const HeroSub: FC<HeroSubProps> = ({ title, description, breadcrumbLinks }) => {
   return (
     <>
-      <section className='text-center md:py-24 py-16 md:pt-44 pt-36 bg-white dark:bg-blue'>
-        <h2 className='md:text-[40px] leading-tight text-4xl font-black text-midnight_text uppercase tracking-tight'>
+      <section className='text-center md:py-8 py-6 md:pt-28 pt-20 bg-white dark:bg-blue'>
+        <h2 className='md:text-3xl text-2xl font-black text-midnight_text uppercase tracking-tight'>
           {title}
         </h2>
-        <p className='md:text-xl text-lg text-slate-500 font-medium max-w-4xl mx-auto my-[1.875rem] sm:px-0 px-4'>
+        <p className='text-base text-slate-500 font-medium max-w-2xl mx-auto my-4 sm:px-0 px-4'>
           {description}
         </p>
         <Breadcrumb links={breadcrumbLinks} />

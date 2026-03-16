@@ -11,17 +11,14 @@ export const headerData: HeaderItem[] = [
     href: "#",
     submenu: [
       { label: "Code Tools", href: "/code-tools" },
-      { label: "AI Tools", href: "/ai-tools" },
+      // { label: "AI Tools", href: "/ai-tools" },
       { label: "Typing Test", href: "/typing" },
     ],
   },
   {
-    label: "Career",
-    href: "#",
-    submenu: [
-      { label: "Resume Builder", href: "/resume-builder" },
-      { label: "Interview Q&A", href: "/interview-questions" },
-    ],
+    label: "Resume Builder",
+    href: "/resume-builder",
   },
+  { label: "Interview Q&A", href: "/interview-questions" },
   { label: "Contact", href: "/contact" },
 ];

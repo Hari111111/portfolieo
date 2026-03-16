@@ -23,6 +23,7 @@ const Header: React.FC = () => {
   const [sticky, setSticky] = useState(false)
   const [isSignInOpen, setIsSignInOpen] = useState(false)
   const [isSignUpOpen, setIsSignUpOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
 
   const navbarRef = useRef<HTMLDivElement>(null)
   const signInRef = useRef<HTMLDivElement>(null)
@@ -55,14 +56,25 @@ const Header: React.FC = () => {
     }
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('userInfo')
+    setUser(null)
+    window.location.reload()
+  }
+
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
     document.addEventListener('mousedown', handleClickOutside)
 
+    const userInfo = localStorage.getItem('userInfo')
+    if (userInfo) {
+      setUser(JSON.parse(userInfo))
+    }
+
     // First-time visitor popup logic
     if (typeof window !== 'undefined') {
       const hasSeenPopup = localStorage.getItem('hasSeenAuthPopup');
-      if (!hasSeenPopup) {
+      if (!hasSeenPopup && !userInfo) {
         const timer = setTimeout(() => {
           setIsSignInOpen(true);
           localStorage.setItem('hasSeenAuthPopup', 'true');
@@ -123,22 +135,44 @@ const Header: React.FC = () => {
               <path d='M16.6111 15.855C17.591 15.1394 18.3151 14.1979 18.7723 13.1623C16.4824 13.4065 14.1342 12.4631 12.6795 10.4711C11.2248 8.47905 11.0409 5.95516 11.9705 3.84818C10.8449 3.9685 9.72768 4.37162 8.74781 5.08719C5.7759 7.25747 5.12529 11.4308 7.29558 14.4028C9.46586 17.3747 13.6392 18.0253 16.6111 15.855Z' />
             </svg>
           </button>
-          <Link
-            href='#'
-            className='hidden lg:block bg-transparent border border-primary text-primary px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white'
-            onClick={() => {
-              setIsSignInOpen(true)
-            }}>
-            Sign In
-          </Link>
-          <Link
-            href='#'
-            className='hidden lg:block bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700'
-            onClick={() => {
-              setIsSignUpOpen(true)
-            }}>
-            Sign Up
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 bg-slate-50 dark:bg-white/5 py-1.5 px-3 rounded-full border border-slate-100 dark:border-white/10">
+                <div className="w-7 h-7 bg-primary/10 text-primary rounded-full flex items-center justify-center font-black text-xs">
+                  {user.name?.charAt(0).toUpperCase()}
+                </div>
+                <span className="text-xs font-black text-midnight_text dark:text-white uppercase tracking-tight hidden sm:block">
+                  {user.name}
+                </span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                title="Logout"
+              >
+                <Icon icon="solar:logout-3-bold-duotone" width="22" />
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link
+                href='#'
+                className='hidden lg:block bg-transparent border border-primary text-primary px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white'
+                onClick={() => {
+                  setIsSignInOpen(true)
+                }}>
+                Sign In
+              </Link>
+              <Link
+                href='#'
+                className='hidden lg:block bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700'
+                onClick={() => {
+                  setIsSignUpOpen(true)
+                }}>
+                Sign Up
+              </Link>
+            </>
+          )}
           <button
             onClick={() => setNavbarOpen(!navbarOpen)}
             className='block lg:hidden p-2 rounded-lg'
@@ -186,24 +220,49 @@ const Header: React.FC = () => {
             <MobileHeaderLink key={index} item={item} />
           ))}
           <div className='mt-4 flex flex-col gap-4 w-full'>
-            <Link
-              href='#'
-              className='bg-transparent border border-primary text-primary px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white'
-              onClick={() => {
-                setIsSignInOpen(true)
-                setNavbarOpen(false)
-              }}>
-              Sign In
-            </Link>
-            <Link
-              href='#'
-              className='bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700'
-              onClick={() => {
-                setIsSignUpOpen(true)
-                setNavbarOpen(false)
-              }}>
-              Sign Up
-            </Link>
+            {user ? (
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/10">
+                  <div className="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center font-black text-sm">
+                    {user.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-black text-midnight_text dark:text-white uppercase tracking-tight">
+                      {user.name}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase">Member</span>
+                  </div>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center justify-center gap-2 bg-red-50 text-red-500 py-3 rounded-lg font-black text-xs uppercase tracking-widest hover:bg-red-100 transition-colors"
+                >
+                  <Icon icon="solar:logout-3-bold-duotone" width="18" />
+                  Logout Account
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link
+                  href='#'
+                  className='bg-transparent border border-primary text-primary px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white'
+                  onClick={() => {
+                    setIsSignInOpen(true)
+                    setNavbarOpen(false)
+                  }}>
+                  Sign In
+                </Link>
+                <Link
+                  href='#'
+                  className='bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700'
+                  onClick={() => {
+                    setIsSignUpOpen(true)
+                    setNavbarOpen(false)
+                  }}>
+                  Sign Up
+                </Link>
+              </>
+            )}
           </div>
         </nav>
       </div>

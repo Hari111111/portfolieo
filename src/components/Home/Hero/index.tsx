@@ -5,10 +5,10 @@ import Link from 'next/link'
 
 const Hero = () => {
   return (
-    <section className='relative py-16 md:py-24 bg-white dark:bg-darklight bg-cover text-white'>
+    <section className='relative py-10 md:py-14 bg-white dark:bg-darklight bg-cover text-white'>
       <div className='container mx-auto max-w-6xl px-4 grid grid-cols-12 gap-4 relative z-10'>
         <div
-          className='md:col-span-6 col-span-12 p-4 md:px-4 px-0 space-y-4 flex flex-col items-start justify-center'
+          className='md:col-span-6 col-span-12 p-4 md:px-4 px-0 space-y-3 flex flex-col items-start justify-center'
           data-aos='fade-right'
           data-aos-delay='200'
           data-aos-duration='1000'>
@@ -18,15 +18,15 @@ const Hero = () => {
               MERN Stack Developer
             </span>
           </div>
-          <h1 className='text-midnight_text font-bold dark:text-white text-4xl  md:text-5xl md:leading-[1.15]'>
+          <h1 className='text-midnight_text font-bold dark:text-white text-3xl md:text-4xl md:leading-[1.15]'>
             Hi, I'm <span className='text-primary'>Hari Mishra</span> - Full Stack MERN Developer
           </h1>
-          <p className='text-grey dark:text-white/70 text-xl font-semibold'>
+          <p className='text-grey dark:text-white/70 text-lg font-semibold'>
             BTech Graduate | Previously at Sileo Technology Pvt Ltd | Currently working at Websultante Pvt Ltd
           </p>
           <a
             href='#learn-more'
-            className='py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 px-8'>
+            className='py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-300 px-8'>
             Get Started
           </a>
         </div>

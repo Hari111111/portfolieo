@@ -49,7 +49,7 @@ const Chat: React.FC = () => {
 
         socketRef.current.on("receive_message", (message: Message) => {
             setMessages((prev) => [...prev, message]);
-            
+
             if (message.senderId !== storedId) {
                 if (!isOpenRef.current) {
                     setUnreadCount((prev) => prev + 1);
@@ -62,8 +62,8 @@ const Chat: React.FC = () => {
                 socketRef.current.disconnect();
             }
         };
-    }, []); 
-// Removed [isOpen] to prevent reconnection loops
+    }, []);
+    // Removed [isOpen] to prevent reconnection loops
 
     // Reset unread count when chat is opened
     useEffect(() => {
@@ -160,7 +160,7 @@ const Chat: React.FC = () => {
                                 <p className="text-[10px] text-gray-500 dark:text-gray-400">Talking to everyone online</p>
                             </div>
                         </div>
-                        <button 
+                        <button
                             onClick={clearChat}
                             title="Reset Identity & Clear"
                             className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-gray-400"
@@ -170,7 +170,7 @@ const Chat: React.FC = () => {
                     </div>
 
                     {/* Messages Area */}
-                    <div 
+                    <div
                         ref={scrollRef}
                         className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10"
                     >
@@ -183,16 +183,15 @@ const Chat: React.FC = () => {
                             </div>
                         ) : (
                             messages.map((msg, idx) => (
-                                <div 
-                                    key={idx} 
+                                <div
+                                    key={idx}
                                     className={`flex flex-col ${msg.senderId === userId ? "items-end" : "items-start"}`}
                                 >
-                                    <div 
-                                        className={`max-w-[80%] p-3 rounded-2xl text-sm ${
-                                            msg.senderId === userId 
-                                            ? "bg-blue-600 text-white rounded-tr-none shadow-lg shadow-blue-500/20" 
+                                    <div
+                                        className={`max-w-[80%] p-3 rounded-2xl text-sm ${msg.senderId === userId
+                                            ? "bg-blue-600 text-white rounded-tr-none shadow-lg shadow-blue-500/20"
                                             : "bg-white dark:bg-white/5 border border-white/10 rounded-tl-none shadow-sm"
-                                        }`}
+                                            }`}
                                     >
                                         <p className="break-words">{msg.text}</p>
                                     </div>
@@ -206,11 +205,11 @@ const Chat: React.FC = () => {
 
                     {/* Emoji Picker Container */}
                     {showEmojiPicker && (
-                        <div 
+                        <div
                             ref={emojiPickerRef}
                             className="absolute bottom-24 right-4 z-[10001] shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200"
                         >
-                            <EmojiPicker 
+                            <EmojiPicker
                                 onEmojiClick={onEmojiClick}
                                 theme={theme === "dark" ? EmojiTheme.DARK : EmojiTheme.LIGHT}
                                 width={300}

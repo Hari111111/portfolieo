@@ -1,16 +1,41 @@
 "use client";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Logo from "@/components/Layout/Header/Logo";
 import { Toaster } from "react-hot-toast";
 import { Icon } from "@iconify/react";
+import axios from "axios";
+import AuthDialogContext from "@/app/context/AuthDialogContext";
+import Loader from "@/components/Common/Loader";
 
 const Signin = ({ signInOpen, toggleSignUp }: { signInOpen?: any; toggleSignUp?: () => void }) => {
-  const [username, setUsername] = useState("admin");
+  const [email, setEmail] = useState("admin@example.com");
   const [password, setPassword] = useState("admin123");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { setIsSuccessDialogOpen, setIsFailedDialogOpen } = useContext(AuthDialogContext)!;
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Logic for login can go here
+    setLoading(true);
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+      const res = await axios.post(`${API_URL}/users/login`, { email, password }, { withCredentials: true });
+
+      if (res.status === 200) {
+        localStorage.setItem("userInfo", JSON.stringify(res.data));
+        setIsSuccessDialogOpen(true);
+        setTimeout(() => {
+          setIsSuccessDialogOpen(false);
+          if (signInOpen) signInOpen(false);
+        }, 2000);
+      }
+    } catch (err: any) {
+      console.error(err);
+      setIsFailedDialogOpen(true);
+      setTimeout(() => setIsFailedDialogOpen(false), 3000);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -30,11 +55,11 @@ const Signin = ({ signInOpen, toggleSignUp }: { signInOpen?: any; toggleSignUp?:
             <Icon icon="solar:user-bold-duotone" width="20" />
           </div>
           <input
-            type="text"
-            placeholder="Username"
+            type="email"
+            placeholder="Email"
             required
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-12 pr-4 py-4 text-sm font-bold text-slate-800 outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all placeholder:text-slate-400"
           />
         </div>
@@ -61,9 +86,10 @@ const Signin = ({ signInOpen, toggleSignUp }: { signInOpen?: any; toggleSignUp?:
 
         <button
           type="submit"
-          className="w-full py-4 bg-primary text-white rounded-xl font-black text-sm uppercase tracking-[0.2em] shadow-lg shadow-primary/20 hover:bg-darkprimary hover:shadow-xl hover:shadow-primary/30 active:scale-[0.98] transition-all"
+          disabled={loading}
+          className="w-full py-4 bg-primary text-white rounded-xl font-black text-sm uppercase tracking-[0.2em] shadow-lg shadow-primary/20 hover:bg-darkprimary hover:shadow-xl hover:shadow-primary/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
         >
-          Explore Now
+          {loading ? <Loader /> : "Explore Now"}
         </button>
       </form>
 
