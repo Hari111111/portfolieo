@@ -22,6 +22,7 @@ export default function InterviewQuestionsClient() {
     const [activeCategory, setActiveCategory] = useState('All');
     const [activeType, setActiveType] = useState('All');
     const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
+    const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
@@ -51,6 +52,16 @@ export default function InterviewQuestionsClient() {
         setRevealedIds(newRevealed);
     };
 
+    const handleOptionSelect = (questionId: string, option: string) => {
+        if (selectedAnswers[questionId]) return; // Stop if already answered
+        setSelectedAnswers(prev => ({ ...prev, [questionId]: option }));
+    };
+
+    const isCorrect = (option: string, answer: string) => {
+        const cleanAnswer = answer.replace(/<[^>]*>/g, '').trim().toLowerCase();
+        return option.trim().toLowerCase() === cleanAnswer;
+    };
+
     const breadcrumbLinks = [
         { href: '/', text: 'Home' },
         { href: '/interview-questions', text: 'Interview Q&A' },
@@ -64,7 +75,7 @@ export default function InterviewQuestionsClient() {
                 breadcrumbLinks={breadcrumbLinks}
             />
 
-            <section className="py-24 bg-[#f4f7fe] selection:bg-primary/10 min-h-screen">
+            <section className="py-32 bg-[#f4f7fe] selection:bg-primary/10 min-h-screen">
                 <div className="container mx-auto max-w-7xl px-4">
                     {/* ADVANCED FLOATING CONTROL HUB */}
                     <div className="flex justify-between items-center mb-10 px-6">
@@ -177,14 +188,14 @@ export default function InterviewQuestionsClient() {
                                     .map((q, idx) => (
                                         <div
                                             key={q._id}
-                                            className="bg-white/70 backdrop-blur-md rounded-[4rem] border-2 border-white shadow-2xl shadow-blue-900/5 hover:shadow-primary/10 transition-all duration-700 group/card relative overflow-hidden"
+                                            className="bg-white/80 backdrop-blur-xl rounded-[5rem] border-2 border-white shadow-3xl shadow-blue-900/5 hover:shadow-primary/20 transition-all duration-700 group/card relative overflow-hidden"
                                             data-aos="fade-up"
                                             data-aos-delay={idx * 50}
                                         >
                                             {/* Advanced Aesthetics */}
                                             <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/5 rounded-full blur-[120px] group-hover/card:bg-primary/10 transition-all duration-1000"></div>
 
-                                            <div className="p-8 md:p-16 relative z-10">
+                                            <div className="p-8 md:p-14 relative z-10">
                                                 <div className="flex flex-wrap items-center justify-between gap-8 mb-12">
                                                     <div className="flex flex-wrap items-center gap-4">
                                                         <div className="flex items-center gap-3 px-6 py-2.5 bg-slate-900 text-white text-[10px] font-black rounded-full uppercase tracking-[0.2em] shadow-xl shadow-slate-900/20">
@@ -218,46 +229,76 @@ export default function InterviewQuestionsClient() {
                                                     </div>
 
                                                     <div className="flex-1 min-w-0">
-                                                        <h3 className="text-2xl md:text-[2.75rem] font-black text-slate-900 mb-12 leading-[1.2] group-hover/card:text-primary transition-all duration-500 tracking-tight break-words">
+                                                        <h3 className="text-xl md:text-[2.2rem] font-black text-slate-900 mb-10 leading-[1.3] group-hover/card:text-primary transition-all duration-500 tracking-tight break-words">
                                                             {q.question}
                                                         </h3>
 
                                                         {q.type === 'MCQ' && q.options && q.options.length > 0 && (
-                                                            <div className="grid md:grid-cols-2 gap-6 mb-16">
-                                                                {q.options.map((opt: string, i: number) => (
-                                                                    <div
-                                                                        key={i}
-                                                                        className="flex items-center gap-6 p-8 bg-slate-50/50 rounded-[2.5rem] border-2 border-slate-100 hover:border-primary/40 hover:bg-white hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 group/opt cursor-default"
-                                                                    >
-                                                                        <div className="w-14 h-14 flex items-center justify-center bg-white rounded-2xl text-primary font-black shadow-md border border-slate-50 group-hover/opt:bg-primary group-hover/opt:text-white transition-all duration-500 uppercase text-xl">
-                                                                            {String.fromCharCode(65 + i)}
+                                                            <div className="grid md:grid-cols-2 gap-8 mb-16">
+                                                                {q.options.map((opt: string, i: number) => {
+                                                                    const isSelected = selectedAnswers[q._id] === opt;
+                                                                    const correct = isCorrect(opt, q.answer);
+                                                                    const hasAnswered = !!selectedAnswers[q._id];
+                                                                    
+                                                                    let statusClass = "bg-slate-50/50 border-slate-100 hover:border-primary/40 hover:bg-white hover:shadow-2xl hover:shadow-primary/5";
+                                                                    let iconClass = "bg-white text-primary border-slate-50 group-hover/opt:bg-primary group-hover/opt:text-white";
+                                                                    
+                                                                    if (hasAnswered) {
+                                                                        if (correct) {
+                                                                            statusClass = "bg-emerald-50 border-emerald-500 shadow-xl shadow-emerald-500/10 scale-[1.02]";
+                                                                            iconClass = "bg-emerald-500 text-white border-emerald-400";
+                                                                        } else if (isSelected) {
+                                                                            statusClass = "bg-rose-50 border-rose-500 shadow-xl shadow-rose-500/10";
+                                                                            iconClass = "bg-rose-500 text-white border-rose-400";
+                                                                        } else {
+                                                                            statusClass = "bg-slate-50 opacity-40 grayscale-[0.5]";
+                                                                        }
+                                                                    }
+
+                                                                    return (
+                                                                        <div
+                                                                            key={i}
+                                                                            onClick={() => handleOptionSelect(q._id, opt)}
+                                                                            className={`flex items-center gap-5 p-7 rounded-[2.25rem] border-2 transition-all duration-500 group/opt ${statusClass} ${!hasAnswered ? 'cursor-pointer active:scale-95' : 'cursor-default'}`}
+                                                                        >
+                                                                            <div className={`w-13 h-13 flex items-center justify-center rounded-2xl font-black shadow-md border transition-all duration-500 uppercase text-lg shrink-0 ${iconClass}`}>
+                                                                                {hasAnswered && correct ? (
+                                                                                    <Icon icon="solar:check-circle-bold" />
+                                                                                ) : hasAnswered && isSelected && !correct ? (
+                                                                                    <Icon icon="solar:close-circle-bold" />
+                                                                                ) : (
+                                                                                    String.fromCharCode(65 + i)
+                                                                                )}
+                                                                            </div>
+                                                                            <div className="flex-1 min-w-0">
+                                                                                <span className={`font-black text-lg break-words block ${hasAnswered && correct ? 'text-emerald-900' : hasAnswered && isSelected && !correct ? 'text-rose-900' : 'text-slate-700'}`}>
+                                                                                    {opt}
+                                                                                </span>
+                                                                            </div>
                                                                         </div>
-                                                                        <div className="flex-1 min-w-0">
-                                                                            <span className="text-slate-700 font-black text-xl break-words block">{opt}</span>
-                                                                        </div>
-                                                                    </div>
-                                                                ))}
+                                                                    );
+                                                                })}
                                                             </div>
                                                         )}
 
                                                         <div className="flex flex-wrap items-center justify-between gap-8 pt-10 border-t-2 border-slate-50">
                                                             <button
                                                                 onClick={() => toggleReveal(q._id)}
-                                                                className={`flex items-center gap-5 px-14 py-6 rounded-[2.5rem] font-black uppercase tracking-[0.25em] text-[10px] transition-all duration-700 active:scale-95 ${revealedIds.has(q._id)
+                                                                className={`flex items-center gap-5 px-14 py-7 rounded-[2.5rem] font-black uppercase tracking-[0.25em] text-xs transition-all duration-700 active:scale-95 ${revealedIds.has(q._id)
                                                                     ? 'bg-slate-900 text-white shadow-2xl shadow-slate-900/30'
-                                                                    : 'bg-primary text-white shadow-3xl shadow-primary/30 hover:shadow-primary/50'
+                                                                    : 'bg-primary text-white shadow-3xl shadow-primary/30 hover:shadow-primary/50 translate-y-[-2px]'
                                                                     }`}
                                                             >
                                                                 <Icon
                                                                     icon={revealedIds.has(q._id) ? "solar:eye-closed-bold-duotone" : "solar:eye-bold-duotone"}
-                                                                    className="text-3xl"
+                                                                    className="text-4xl"
                                                                 />
-                                                                {revealedIds.has(q._id) ? 'Conceal Assets' : 'Access Solution'}
+                                                                {revealedIds.has(q._id) ? 'Conceal Solution' : 'Reveal Answer'}
                                                             </button>
 
-                                                            <div className="flex items-center gap-6">
-                                                                <button className="w-14 h-14 rounded-2xl bg-white border-2 border-slate-50 text-slate-300 hover:text-primary hover:border-primary/30 flex items-center justify-center transition-all duration-500 shadow-sm"><Icon icon="solar:share-bold-duotone" width="26" /></button>
-                                                                <button className="w-14 h-14 rounded-2xl bg-white border-2 border-slate-50 text-slate-300 hover:text-primary hover:border-primary/30 flex items-center justify-center transition-all duration-500 shadow-sm"><Icon icon="solar:bookmark-bold-duotone" width="26" /></button>
+                                                            <div className="flex items-center gap-8">
+                                                                <button className="w-16 h-16 rounded-3xl bg-white border-2 border-slate-50 text-slate-300 hover:text-primary hover:border-primary/30 flex items-center justify-center transition-all duration-500 shadow-sm active:scale-90"><Icon icon="solar:share-bold-duotone" width="28" /></button>
+                                                                <button className="w-16 h-16 rounded-3xl bg-white border-2 border-slate-50 text-slate-300 hover:text-primary hover:border-primary/30 flex items-center justify-center transition-all duration-500 shadow-sm active:scale-90"><Icon icon="solar:bookmark-bold-duotone" width="28" /></button>
                                                             </div>
                                                         </div>
 
