@@ -6,7 +6,7 @@ import { Icon } from "@iconify/react";
 import EmojiPicker, { Theme as EmojiTheme } from "emoji-picker-react";
 import { useTheme } from "next-themes";
 
-const SOCKET_SERVER_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000";
+const SOCKET_SERVER_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "https://portfolio-socket-server-rv84.onrender.com";
 
 interface Message {
     id: string;
@@ -47,7 +47,7 @@ const Chat: React.FC = () => {
 
         socketRef.current = io(SOCKET_SERVER_URL);
 
-        socketRef.current.on("receive_message", (message: Message) => {
+        socketRef.current.on("receive-message", (message: Message) => {
             setMessages((prev) => [...prev, message]);
 
             if (message.senderId !== storedId) {
@@ -95,8 +95,9 @@ const Chat: React.FC = () => {
                 id: Date.now().toString(),
                 senderId: userId,
                 text: input.trim(),
+                timestamp: new Date().toISOString()
             };
-            socketRef.current.emit("send_message", messageData);
+            socketRef.current.emit("send-message", messageData);
             setInput("");
             setShowEmojiPicker(false);
         }
