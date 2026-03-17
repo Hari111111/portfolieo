@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import Loader from "@/components/Common/Loader";
 import axios from "axios";
 import AuthDialogContext from "@/app/context/AuthDialogContext";
+import axiosHelper from "@/utils/axiosHelper";
 
 const SignUp = ({ signUpOpen, toggleSignIn }: { signUpOpen?: any; toggleSignIn?: () => void }) => {
   const [loading, setLoading] = useState(false);
@@ -21,8 +22,7 @@ const SignUp = ({ signUpOpen, toggleSignIn }: { signUpOpen?: any; toggleSignIn?:
     const password = formData.get("password");
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-      const res = await axios.post(`${API_URL}/users`, { name, email, password });
+      const res = await axiosHelper.post(`/users`, { name, email, password });
 
       if (res.status === 201 || res.status === 200) {
         setIsUserRegistered(true);

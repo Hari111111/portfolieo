@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import axios from "axios";
 import AuthDialogContext from "@/app/context/AuthDialogContext";
 import Loader from "@/components/Common/Loader";
+import axiosHelper from "@/utils/axiosHelper";
 
 const Signin = ({ signInOpen, toggleSignUp }: { signInOpen?: any; toggleSignUp?: () => void }) => {
   const [email, setEmail] = useState("admin@example.com");
@@ -18,8 +19,7 @@ const Signin = ({ signInOpen, toggleSignUp }: { signInOpen?: any; toggleSignUp?:
     e.preventDefault();
     setLoading(true);
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-      const res = await axios.post(`${API_URL}/users/login`, { email, password }, { withCredentials: true });
+      const res = await axiosHelper.post(`/users/login`, { email, password }, { withCredentials: true });
 
       if (res.status === 200) {
         localStorage.setItem("userInfo", JSON.stringify(res.data));
@@ -96,7 +96,7 @@ const Signin = ({ signInOpen, toggleSignUp }: { signInOpen?: any; toggleSignUp?:
       <div className="mt-8 pt-6 border-t border-slate-100 w-full text-center">
         <p className="text-slate-500 text-sm font-medium">
           Don't have an account?{" "}
-          <button 
+          <button
             onClick={toggleSignUp}
             className="text-primary font-black hover:underline"
           >
