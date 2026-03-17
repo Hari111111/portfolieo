@@ -1,8 +1,9 @@
 import axios from "axios";
 
 const axiosHelper = axios.create({
-    baseURL: "https://port-backend-three.vercel.app/api",
+    baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api",
     timeout: 10000,
+    withCredentials: true,
     headers: {
         "Content-Type": "application/json",
     },
