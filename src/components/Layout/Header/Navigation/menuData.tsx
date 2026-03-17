@@ -3,7 +3,6 @@ import { HeaderItem } from "@/types/menu";
 export const headerData: HeaderItem[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Services", href: "/services" },
   { label: "Portfolio", href: "/portfolio" },
   { label: "Blog", href: "/blog" },
   {
@@ -11,6 +10,7 @@ export const headerData: HeaderItem[] = [
     href: "#",
     submenu: [
       { label: "Code Tools", href: "/code-tools" },
+      { label: "JSON Formatter", href: "/json-formatter" },
       // { label: "AI Tools", href: "/ai-tools" },
       { label: "Typing Test", href: "/typing" },
     ],

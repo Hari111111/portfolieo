@@ -2,39 +2,64 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { HeaderItem } from '../../../../types/menu';
 import { usePathname } from 'next/navigation';
+import { Icon } from '@iconify/react';
 
-const MobileHeaderLink: React.FC<{ item: HeaderItem }> = ({ item }) => {
+const MobileHeaderLink: React.FC<{ item: HeaderItem; onClick?: () => void }> = ({ item, onClick }) => {
   const [submenuOpen, setSubmenuOpen] = useState(false);
-
-  const handleToggle = () => {
-    setSubmenuOpen(!submenuOpen);
-  };
-
   const path = usePathname();
 
+  const handleToggle = (e: React.MouseEvent) => {
+    if (item.submenu) {
+      e.preventDefault();
+      setSubmenuOpen(!submenuOpen);
+    } else {
+      onClick?.();
+    }
+  };
+
+  const isActive = path === item.href || (item.submenu?.some(sub => path === sub.href));
+
   return (
-    <Link href={item.href} className="relative block w-full">
-      <button
-        onClick={item.submenu ? handleToggle : undefined}
-        className={`flex items-center justify-between w-full py-2 px-3 text-black rounded-md dark:text-grey dark:text-opacity-70 focus:outline-hidden ${path === item.href ? 'bg-primary text-white dark:text-white!' : '  '} ${path.startsWith("/blog") && item.href==="/blog"?"bg-primary! text-white dark:text-white!":null} ${path.startsWith("/portfolio") && item.href==="/portfolio"?"bg-primary text-white dark:text-white!":null}`}
+    <div className="w-full mb-2">
+      <Link 
+        href={item.href} 
+        onClick={handleToggle}
+        className={`flex items-center justify-between w-full p-4 rounded-2xl transition-all duration-300 ${
+          isActive 
+            ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-[1.02]' 
+            : 'text-midnight_text dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/5'
+        }`}
       >
-        {item.label}
+        <span className="text-xs font-black uppercase tracking-[0.2em] italic">
+          {item.label}
+        </span>
         {item.submenu && (
-          <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
-            <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m7 10l5 5l5-5" />
-          </svg>
+          <Icon 
+            icon="solar:alt-arrow-down-bold-duotone" 
+            className={`text-xl transition-transform duration-300 ${submenuOpen ? 'rotate-180' : ''}`} 
+          />
         )}
-      </button>
+      </Link>
+      
       {submenuOpen && item.submenu && (
-        <div className="bg-white p-2 w-full">
+        <div className="mt-2 ml-4 pl-4 border-l-2 border-primary/20 space-y-1 animate-fadeIn">
           {item.submenu.map((subItem, index) => (
-            <Link key={index} href={subItem.href} className="block py-2 text-gray-500 hover:bg-gray-200">
+            <Link 
+              key={index} 
+              href={subItem.href} 
+              onClick={onClick}
+              className={`block p-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-colors ${
+                path === subItem.href 
+                  ? 'text-primary bg-primary/5' 
+                  : 'text-slate-400 hover:text-primary dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5'
+              }`}
+            >
               {subItem.label}
             </Link>
           ))}
         </div>
       )}
-    </Link>
+    </div>
   );
 };
 

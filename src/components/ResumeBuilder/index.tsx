@@ -318,68 +318,69 @@ const ResumeBuilder = () => {
     };
 
     return (
-        <section className="min-h-screen bg-slate-50 dark:bg-slate-950 py-4 px-2 md:px-6 selection:bg-primary/20 overflow-x-hidden">
+        <section className="min-h-screen bg-slate-50 dark:bg-slate-950 py-4 px-3 md:px-6 selection:bg-primary/20 overflow-x-hidden">
             <div className="max-w-[1920px] mx-auto">
                 {/* MODERN TOP BAR */}
-                <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-3xl shadow-2xl shadow-slate-200/50 dark:shadow-none border border-white/50 dark:border-slate-800 p-4 mb-6 flex flex-wrap items-center justify-between gap-6 sticky top-4 z-40 transition-all duration-300">
+                <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[2rem] md:rounded-3xl shadow-2xl shadow-slate-200/50 dark:shadow-none border border-white/50 dark:border-slate-800 p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-6 sticky top-4 z-40 transition-all duration-300">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-primary via-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 rotate-3 hover:rotate-0 transition-all duration-500 group-hover:scale-110">
-                            <Icon icon="solar:document-bold-duotone" width="28" />
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-primary via-blue-600 to-indigo-700 rounded-xl md:rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 rotate-3 hover:rotate-0 transition-all duration-500 group-hover:scale-110">
+                            <Icon icon="solar:document-bold-duotone" width="24" className="md:w-[28px]" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-black text-slate-900 dark:text-white leading-none tracking-tight">Resume<span className="text-primary">Canvas</span></h2>
-                            <p className="text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.25em] mt-1.5 flex items-center gap-1.5">
+                            <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white leading-none tracking-tight">Resume<span className="text-primary">Canvas</span></h2>
+                            <p className="text-[8px] md:text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.25em] mt-1.5 flex items-center gap-1.5 whitespace-nowrap">
                                 <span className="w-1.5 h-1.5 bg-primary rounded-full animate-ping"></span>
                                 Professional Builder v2.7
                             </p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        <button onClick={resetData} className="group flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-300">
-                            <Icon icon="solar:restart-bold" className="text-lg group-hover:rotate-180 transition-transform duration-500" />
-                            <span>Reset</span>
+                    <div className="flex items-center justify-between w-full sm:w-auto gap-2 md:gap-3">
+                        <button onClick={resetData} className="group flex items-center gap-2 px-3 md:px-4 py-2.5 rounded-xl text-[10px] md:text-sm font-bold text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-300">
+                            <Icon icon="solar:restart-bold" className="text-base md:text-lg group-hover:rotate-180 transition-transform duration-500" />
+                            <span className="hidden xs:inline">Reset</span>
                         </button>
 
-                        <div className="h-8 w-px bg-slate-200 dark:bg-white/10 mx-2"></div>
+                        <div className="h-6 md:h-8 w-px bg-slate-200 dark:bg-white/10 mx-1 md:mx-2"></div>
 
                         <button
                             onClick={() => saveResumeData()}
-                            className="hidden sm:flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-black text-slate-600 dark:text-slate-300 hover:text-primary hover:bg-primary/5 dark:hover:bg-primary/10 transition-all duration-300 border border-slate-200 dark:border-slate-800"
+                            className="flex items-center gap-2 px-4 md:px-6 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[10px] md:text-sm font-black text-slate-600 dark:text-slate-300 hover:text-primary hover:bg-primary/5 dark:hover:bg-primary/10 transition-all duration-300 border border-slate-200 dark:border-slate-800"
                         >
-                            <Icon icon="solar:cloud-upload-bold" width="20" className="opacity-70 group-hover:scale-110" />
-                            <span>Save Progress</span>
+                            <Icon icon="solar:cloud-upload-bold" width="18" className="md:w-[20px] opacity-70 group-hover:scale-110" />
+                            <span className="hidden md:inline">Save Progress</span>
+                            <span className="md:hidden">Save</span>
                         </button>
 
                         <button
                             onClick={onExportPDF}
-                            className="bg-primary hover:bg-blue-600 text-white font-black px-8 py-3 rounded-2xl shadow-xl shadow-primary/25 flex items-center gap-3 transform active:scale-95 transition-all duration-300 group"
+                            className="bg-primary hover:bg-blue-600 text-white font-black px-5 md:px-8 py-2.5 md:py-3 rounded-xl md:rounded-2xl shadow-xl shadow-primary/25 flex items-center gap-2 md:gap-3 transform active:scale-95 transition-all duration-300 group"
                         >
-                            <Icon icon="solar:download-minimalistic-bold" width="20" className="group-hover:translate-y-0.5 transition-transform" />
-                            <span>Export PDF</span>
+                            <Icon icon="solar:download-minimalistic-bold" width="18" className="md:w-[20px] group-hover:translate-y-0.5 transition-transform" />
+                            <span className="text-[10px] md:text-sm">Export <span className="hidden xs:inline">PDF</span></span>
                         </button>
                     </div>
                 </div>
 
                 {/* TEMPLATE GALLERY - COMPACT & ELEGANT */}
-                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-md rounded-[2.5rem] border border-white dark:border-slate-800 p-8 mb-8 group/gallery animate-fadeIn">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8">
+                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-md rounded-[2rem] md:rounded-[2.5rem] border border-white dark:border-slate-800 p-4 md:p-8 mb-8 group/gallery animate-fadeIn">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 md:gap-8 mb-6 md:mb-8">
                         <div className="space-y-1">
-                            <h3 className="text-3xl font-black text-slate-800 dark:text-white flex items-center gap-4">
-                                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                                    <Icon icon="solar:widget-bold-duotone" className="text-primary text-2xl" />
+                            <h3 className="text-xl md:text-3xl font-black text-slate-800 dark:text-white flex items-center gap-3 md:gap-4">
+                                <div className="w-8 h-8 md:w-10 md:h-10 bg-primary/10 rounded-lg md:rounded-xl flex items-center justify-center">
+                                    <Icon icon="solar:widget-bold-duotone" width="20" className="text-primary md:w-[24px]" />
                                 </div>
                                 Template Library
                             </h3>
-                            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium pl-14 italic max-w-xl">Curated modern designs optimized for ATS and professional visual impact</p>
+                            <p className="text-[10px] md:text-sm text-slate-500 dark:text-slate-400 font-medium pl-11 md:pl-14 italic max-w-xl">Curated modern designs optimized for ATS and professional impact</p>
                         </div>
 
-                        <div className="flex flex-wrap gap-2 p-2 bg-slate-200/50 dark:bg-slate-800/50 rounded-2xl w-fit backdrop-blur-sm shadow-inner">
+                        <div className="flex flex-wrap gap-1.5 md:gap-2 p-1.5 md:p-2 bg-slate-200/50 dark:bg-slate-800/50 rounded-xl md:rounded-2xl w-full sm:w-fit backdrop-blur-sm shadow-inner">
                             {['All', 'Classic', 'Modern', 'Creative', 'Specialized'].map(cat => (
                                 <button
                                     key={cat}
                                     onClick={() => setSelectedCategory(cat as any)}
-                                    className={`px-6 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all duration-300 ${selectedCategory === cat ? 'bg-white dark:bg-primary text-primary dark:text-white shadow-lg' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'}`}
+                                    className={`flex-1 sm:flex-none px-3 md:px-6 py-2 md:py-2.5 rounded-lg md:rounded-xl text-[9px] md:text-[11px] font-black uppercase tracking-wider transition-all duration-300 ${selectedCategory === cat ? 'bg-white dark:bg-primary text-primary dark:text-white shadow-lg' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'}`}
                                 >
                                     {cat}
                                 </button>
@@ -387,29 +388,30 @@ const ResumeBuilder = () => {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-4 max-h-[250px] overflow-y-auto pr-4 custom-scrollbar">
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-3 md:gap-4 max-h-[180px] md:max-h-[250px] overflow-y-auto pr-2 md:pr-4 custom-scrollbar">
                         {filteredTemplates.map(t => (
                             <button
                                 key={t}
                                 onClick={() => setActiveTemplate(t)}
-                                className={`group relative p-2 rounded-2xl transition-all duration-500 border-2 ${activeTemplate === t ? 'border-primary bg-primary/5 scale-[1.02]' : 'border-transparent hover:bg-slate-50 dark:hover:bg-white/5'}`}
+                                className={`group relative p-1.5 md:p-2 rounded-xl md:rounded-2xl transition-all duration-500 border-2 ${activeTemplate === t ? 'border-primary bg-primary/5 scale-[1.02]' : 'border-transparent hover:bg-slate-50 dark:hover:bg-white/5'}`}
                             >
-                                <div className={`aspect-[3/4] rounded-xl overflow-hidden transition-all duration-500 shadow-sm group-hover:shadow-md ${activeTemplate === t ? 'shadow-primary/20 ring-4 ring-primary/10' : 'bg-slate-100 dark:bg-black/20'}`}>
+                                <div className={`aspect-[3/4] rounded-lg md:rounded-xl overflow-hidden transition-all duration-500 shadow-sm group-hover:shadow-md ${activeTemplate === t ? 'shadow-primary/20 ring-2 md:ring-4 ring-primary/10' : 'bg-slate-100 dark:bg-black/20'}`}>
                                     <div className="w-full h-full flex items-center justify-center relative bg-gradient-to-b from-white to-slate-50 dark:from-darklight dark:to-black">
                                         <Icon
                                             icon={activeTemplate === t ? "solar:check-read-linear" : "solar:file-text-bold-duotone"}
-                                            className={`text-3xl transition-all duration-500 ${activeTemplate === t ? 'text-primary' : 'text-slate-300 group-hover:text-primary/40 group-hover:scale-110'}`}
+                                            width="24"
+                                            className={`md:w-[32px] transition-all duration-500 ${activeTemplate === t ? 'text-primary' : 'text-slate-300 group-hover:text-primary/40 group-hover:scale-110'}`}
                                         />
                                         {activeTemplate === t && (
                                             <div className="absolute inset-0 bg-primary/10 backdrop-blur-[1px] flex items-center justify-center">
-                                                <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center shadow-lg animate-bounce-subtle">
-                                                    <Icon icon="solar:check-circle-bold" />
+                                                <div className="w-6 h-6 md:w-8 md:h-8 bg-primary text-white rounded-full flex items-center justify-center shadow-lg animate-bounce-subtle">
+                                                    <Icon icon="solar:check-circle-bold" className="text-xs md:text-base" />
                                                 </div>
                                             </div>
                                         )}
                                     </div>
                                 </div>
-                                <span className={`mt-3 text-[10px] font-black uppercase tracking-widest block text-center truncate px-1 transition-colors duration-300 ${activeTemplate === t ? 'text-primary' : 'text-slate-400 group-hover:text-midnight_text dark:group-hover:text-white'}`}>
+                                <span className={`mt-2 md:mt-3 text-[8px] md:text-[10px] font-black uppercase tracking-widest block text-center truncate px-1 transition-colors duration-300 ${activeTemplate === t ? 'text-primary' : 'text-slate-400 group-hover:text-midnight_text dark:group-hover:text-white'}`}>
                                     {t.replace('_', ' ')}
                                 </span>
                             </button>
@@ -417,165 +419,165 @@ const ResumeBuilder = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-12 gap-8 items-start">
+                <div className="grid grid-cols-12 gap-6 md:gap-8 items-start">
                     {/* LEFT PANEL: SMART FORM */}
                     <div className="col-span-12 lg:col-span-6 2xl:col-span-6 space-y-6 lg:sticky lg:top-28">
-                        <div className="bg-white dark:bg-slate-950 rounded-[2.5rem] shadow-2xl shadow-slate-200 dark:shadow-black/50 border border-slate-100 dark:border-slate-800 overflow-hidden">
+                        <div className="bg-white dark:bg-slate-950 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-slate-200 dark:shadow-black/50 border border-slate-100 dark:border-slate-800 overflow-hidden">
                             {/* NAVIGATION TABS - SOLID BACKGROUND */}
-                            <div className="flex bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 overflow-x-auto no-scrollbar scroll-smooth p-2 gap-1">
+                            <div className="flex bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 overflow-x-auto no-scrollbar scroll-smooth p-1.5 md:p-2 gap-1">
                                 {Object.keys(tabIcons).map((tab) => (
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab)}
-                                        className={`flex flex-col items-center justify-center min-w-[80px] py-4 px-2 rounded-2xl transition-all duration-500 ${activeTab === tab ? 'bg-white dark:bg-primary text-primary dark:text-white shadow-xl shadow-primary/10 dark:shadow-primary/20' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-white/50 dark:hover:bg-white/5'}`}
+                                        className={`flex flex-col items-center justify-center min-w-[70px] md:min-w-[80px] py-3 md:py-4 px-2 rounded-xl md:rounded-2xl transition-all duration-500 ${activeTab === tab ? 'bg-white dark:bg-primary text-primary dark:text-white shadow-xl shadow-primary/10 dark:shadow-primary/20' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-white/50 dark:hover:bg-white/5'}`}
                                     >
-                                        <Icon icon={tabIcons[tab as keyof typeof tabIcons]} width="22" className={`mb-1.5 transition-transform duration-500 ${activeTab === tab ? 'scale-110' : 'opacity-60'}`} />
-                                        <span className="text-[9px] font-black uppercase tracking-[0.15em]">{tab}</span>
+                                        <Icon icon={tabIcons[tab as keyof typeof tabIcons]} width="20" className={`mb-1 md:mb-1.5 transition-transform duration-500 md:w-[22px] ${activeTab === tab ? 'scale-110' : 'opacity-60'}`} />
+                                        <span className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.1em] md:tracking-[0.15em]">{tab}</span>
                                     </button>
                                 ))}
                             </div>
 
-                            <div className="p-10 h-[85vh] overflow-y-auto custom-scrollbar-premium bg-white dark:bg-slate-950">
+                            <div className="p-5 md:p-10 h-auto md:h-[75vh] 2xl:h-[85vh] overflow-y-auto custom-scrollbar-premium bg-white dark:bg-slate-950">
                                 {/* Personal Info */}
                                 {activeTab === 'personal' && (
-                                        <div className="grid grid-cols-2 gap-5">
+                                        <div className="grid grid-cols-2 gap-4 md:gap-5">
                                             <div className="col-span-2">
-                                                <div className="flex items-center gap-2 mb-3">
-                                                    <div className="w-1.5 h-6 bg-primary rounded-full"></div>
-                                                    <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Basic Information</h4>
+                                                <div className="flex items-center gap-2 mb-2 md:mb-3">
+                                                    <div className="w-1 md:w-1.5 h-5 md:h-6 bg-primary rounded-full"></div>
+                                                    <h4 className="text-[10px] md:text-[11px] font-black uppercase tracking-widest text-slate-400">Basic Information</h4>
                                                 </div>
                                             </div>
                                             <div className="col-span-2">
-                                                <label className="text-xs font-black text-slate-500 uppercase mb-2 block ml-1">Full Identity</label>
-                                                <input name="fullName" value={data.personalInfo.fullName} onChange={handlePersonalInfoChange} className="resume-input" placeholder="e.g. Hari Mishra" />
+                                                <label className="text-[10px] md:text-xs font-black text-slate-500 uppercase mb-1.5 md:mb-2 block ml-1">Full Identity</label>
+                                                <input name="fullName" value={data.personalInfo.fullName} onChange={handlePersonalInfoChange} className="resume-input text-sm md:text-base" placeholder="e.g. Hari Mishra" />
                                             </div>
                                             <div className="col-span-2">
-                                                <label className="text-xs font-black text-slate-500 uppercase mb-2 block ml-1">Professional Title</label>
-                                                <input name="jobTitle" value={data.personalInfo.jobTitle} onChange={handlePersonalInfoChange} className="resume-input" placeholder="e.g. Full Stack Developer" />
+                                                <label className="text-[10px] md:text-xs font-black text-slate-500 uppercase mb-1.5 md:mb-2 block ml-1">Professional Title</label>
+                                                <input name="jobTitle" value={data.personalInfo.jobTitle} onChange={handlePersonalInfoChange} className="resume-input text-sm md:text-base" placeholder="e.g. Full Stack Developer" />
                                             </div>
                                             <div className="col-span-2 sm:col-span-1">
-                                                <label className="text-xs font-black text-slate-500 uppercase mb-2 block ml-1">Email Address</label>
-                                                <input name="email" value={data.personalInfo.email} onChange={handlePersonalInfoChange} className="resume-input" placeholder="email@example.com" />
+                                                <label className="text-[10px] md:text-xs font-black text-slate-500 uppercase mb-1.5 md:mb-2 block ml-1">Email Address</label>
+                                                <input name="email" value={data.personalInfo.email} onChange={handlePersonalInfoChange} className="resume-input text-sm md:text-base" placeholder="email@example.com" />
                                             </div>
                                             <div className="col-span-2 sm:col-span-1">
-                                                <label className="text-xs font-black text-slate-500 uppercase mb-2 block ml-1">Contact Number</label>
-                                                <input name="phone" value={data.personalInfo.phone} onChange={handlePersonalInfoChange} className="resume-input" placeholder="+91 ..." />
+                                                <label className="text-[10px] md:text-xs font-black text-slate-500 uppercase mb-1.5 md:mb-2 block ml-1">Contact Number</label>
+                                                <input name="phone" value={data.personalInfo.phone} onChange={handlePersonalInfoChange} className="resume-input text-sm md:text-base" placeholder="+91 ..." />
                                             </div>
                                             <div className="col-span-2">
-                                                <div className="flex items-center gap-2 mb-3 mt-4">
-                                                    <div className="w-1.5 h-6 bg-primary/40 rounded-full"></div>
-                                                    <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Location & Presence</h4>
+                                                <div className="flex items-center gap-2 mb-2 md:mb-3 mt-3 md:mt-4">
+                                                    <div className="w-1 md:w-1.5 h-5 md:h-6 bg-primary/40 rounded-full"></div>
+                                                    <h4 className="text-[10px] md:text-[11px] font-black uppercase tracking-widest text-slate-400">Location & Presence</h4>
                                                 </div>
                                             </div>
                                             <div className="col-span-2">
-                                                <label className="text-xs font-black text-slate-500 uppercase mb-2 block ml-1">Physical Address</label>
-                                                <input name="address" value={data.personalInfo.address} onChange={handlePersonalInfoChange} className="resume-input" placeholder="City, Country" />
+                                                <label className="text-[10px] md:text-xs font-black text-slate-500 uppercase mb-1.5 md:mb-2 block ml-1">Physical Address</label>
+                                                <input name="address" value={data.personalInfo.address} onChange={handlePersonalInfoChange} className="resume-input text-sm md:text-base" placeholder="City, Country" />
                                             </div>
                                             <div className="col-span-2">
-                                                <label className="text-xs font-black text-slate-500 uppercase mb-2 block ml-1">Digital Presence (URL)</label>
-                                                <input name="website" value={data.personalInfo.website} onChange={handlePersonalInfoChange} className="resume-input" placeholder="portfolio.com" />
+                                                <label className="text-[10px] md:text-xs font-black text-slate-500 uppercase mb-1.5 md:mb-2 block ml-1">Digital Presence (URL)</label>
+                                                <input name="website" value={data.personalInfo.website} onChange={handlePersonalInfoChange} className="resume-input text-sm md:text-base" placeholder="portfolio.com" />
                                             </div>
                                             <div className="col-span-2">
-                                                <div className="flex items-center gap-2 mb-3 mt-4">
-                                                    <div className="w-1.5 h-6 bg-indigo-500 rounded-full"></div>
-                                                    <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Professional Summary</h4>
+                                                <div className="flex items-center gap-2 mb-2 md:mb-3 mt-3 md:mt-4">
+                                                    <div className="w-1 md:w-1.5 h-5 md:h-6 bg-indigo-500 rounded-full"></div>
+                                                    <h4 className="text-[10px] md:text-[11px] font-black uppercase tracking-widest text-slate-400">Professional Summary</h4>
                                                 </div>
-                                                <label className="text-xs font-black text-slate-500 uppercase mb-2 block ml-1">About Your Career</label>
-                                                <textarea name="summary" value={data.personalInfo.summary} onChange={handlePersonalInfoChange} rows={5} className="resume-input leading-relaxed" placeholder="Briefly describe your career, key achievements and value proposition..." />
+                                                <label className="text-[10px] md:text-xs font-black text-slate-500 uppercase mb-1.5 md:mb-2 block ml-1">About Your Career</label>
+                                                <textarea name="summary" value={data.personalInfo.summary} onChange={handlePersonalInfoChange} rows={5} className="resume-input leading-relaxed text-sm md:text-base" placeholder="Briefly describe your career..." />
                                             </div>
                                         </div>
                                 )}
 
                                 {/* Experience */}
                                 {activeTab === 'experience' && (
-                                    <div className="space-y-8 animate-fadeIn">
+                                    <div className="space-y-6 md:space-y-8 animate-fadeIn">
                                         {data.experience.map((exp, i) => (
-                                            <div key={i} className="group relative p-8 bg-slate-50 dark:bg-white/5 rounded-[2rem] border border-slate-100 dark:border-white/5 hover:border-primary/30 transition-all duration-500 hover:shadow-xl hover:shadow-primary/5">
+                                            <div key={i} className="group relative p-5 md:p-8 bg-slate-50 dark:bg-white/5 rounded-[1.5rem] md:rounded-[2rem] border border-slate-100 dark:border-white/5 hover:border-primary/30 transition-all duration-500 hover:shadow-xl hover:shadow-primary/5">
                                                 <button
                                                     onClick={() => removeItem('experience', i)}
-                                                    className="absolute -top-3 -right-3 w-10 h-10 bg-white dark:bg-darkmode text-red-500 rounded-full shadow-lg border border-red-100 dark:border-red-900/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-red-500 hover:text-white transform hover:scale-110"
+                                                    className="absolute -top-2 -right-2 w-8 h-8 md:w-10 md:h-10 bg-white dark:bg-darkmode text-red-500 rounded-full shadow-lg border border-red-100 dark:border-red-900/30 flex items-center justify-center lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 hover:bg-red-500 hover:text-white transform hover:scale-110 z-10"
                                                 >
-                                                    <Icon icon="solar:trash-bin-trash-bold" width="20" />
+                                                    <Icon icon="solar:trash-bin-trash-bold" width="16" className="md:w-[20px]" />
                                                 </button>
-                                                <div className="space-y-5">
+                                                <div className="space-y-4 md:space-y-5">
                                                     <div>
-                                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Company</label>
-                                                        <input value={exp.company} onChange={e => updateItem('experience', i, 'company', e.target.value)} className="resume-input-small text-lg font-bold" placeholder="e.g. Google" />
+                                                        <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-1.5 block">Company</label>
+                                                        <input value={exp.company} onChange={e => updateItem('experience', i, 'company', e.target.value)} className="resume-input-small text-base md:text-lg font-bold" placeholder="e.g. Google" />
                                                     </div>
                                                     <div>
-                                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Position</label>
-                                                        <input value={exp.position} onChange={e => updateItem('experience', i, 'position', e.target.value)} className="resume-input-small font-medium" placeholder="e.g. Senior Developer" />
+                                                        <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-1.5 block">Position</label>
+                                                        <input value={exp.position} onChange={e => updateItem('experience', i, 'position', e.target.value)} className="resume-input-small text-sm md:text-base font-medium" placeholder="e.g. Senior Developer" />
                                                     </div>
-                                                    <div className="grid grid-cols-2 gap-6">
+                                                    <div className="grid grid-cols-2 gap-4 md:gap-6">
                                                         <div>
-                                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Start Date</label>
-                                                            <input value={exp.startDate} onChange={e => updateItem('experience', i, 'startDate', e.target.value)} className="resume-input-small" placeholder="MM/YYYY" />
+                                                            <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-1.5 block">Start Date</label>
+                                                            <input value={exp.startDate} onChange={e => updateItem('experience', i, 'startDate', e.target.value)} className="resume-input-small text-xs md:text-sm" placeholder="MM/YYYY" />
                                                         </div>
                                                         <div>
-                                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">End Date</label>
-                                                            <input value={exp.endDate} onChange={e => updateItem('experience', i, 'endDate', e.target.value)} className="resume-input-small" placeholder="Present" />
+                                                            <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-1.5 block">End Date</label>
+                                                            <input value={exp.endDate} onChange={e => updateItem('experience', i, 'endDate', e.target.value)} className="resume-input-small text-xs md:text-sm" placeholder="Present" />
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Responsibilities</label>
-                                                        <textarea value={exp.description} onChange={e => updateItem('experience', i, 'description', e.target.value)} rows={4} className="resume-input-small text-sm leading-relaxed" placeholder="Describe your impact and achievements..." />
+                                                        <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-1.5 block">Responsibilities</label>
+                                                        <textarea value={exp.description} onChange={e => updateItem('experience', i, 'description', e.target.value)} rows={4} className="resume-input-small text-xs md:text-sm leading-relaxed" placeholder="Describe your impact..." />
                                                     </div>
                                                 </div>
                                             </div>
                                         ))}
-                                        <button onClick={() => addItem('experience')} className="w-full py-6 border-2 border-dashed border-slate-200 dark:border-white/10 text-slate-500 hover:text-primary hover:border-primary/50 font-black rounded-3xl flex items-center justify-center gap-3 transition-all duration-500 group">
-                                            <div className="w-10 h-10 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                                                <Icon icon="solar:add-circle-bold" width="24" />
+                                        <button onClick={() => addItem('experience')} className="w-full py-4 md:py-6 border-2 border-dashed border-slate-200 dark:border-white/10 text-slate-500 hover:text-primary hover:border-primary/50 font-black rounded-2xl md:rounded-3xl flex items-center justify-center gap-2 md:gap-3 transition-all duration-500 group">
+                                            <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-100 dark:bg-white/5 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                                <Icon icon="solar:add-circle-bold" width="20" className="md:w-[24px]" />
                                             </div>
-                                            Add Work Experience
+                                            <span className="text-[10px] md:text-sm">Add Work Experience</span>
                                         </button>
                                     </div>
                                 )}
 
                                 {/* Education */}
                                 {activeTab === 'education' && (
-                                    <div className="space-y-8 animate-fadeIn">
+                                    <div className="space-y-6 md:space-y-8 animate-fadeIn">
                                         {data.education.map((edu, i) => (
-                                            <div key={i} className="group relative p-8 bg-slate-50 dark:bg-white/5 rounded-[2.5rem] border border-slate-100 dark:border-white/5 hover:border-primary/30 transition-all duration-500">
-                                                <button onClick={() => removeItem('education', i)} className="absolute -top-3 -right-3 w-10 h-10 bg-white dark:bg-darkmode text-red-500 rounded-full shadow-lg border border-red-100 dark:border-red-900/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-red-500 hover:text-white transform hover:scale-110">
-                                                    <Icon icon="solar:trash-bin-trash-bold" width="18" />
+                                            <div key={i} className="group relative p-5 md:p-8 bg-slate-50 dark:bg-white/5 rounded-[1.5rem] md:rounded-[2.5rem] border border-slate-100 dark:border-white/5 hover:border-primary/30 transition-all duration-500">
+                                                <button onClick={() => removeItem('education', i)} className="absolute -top-2 -right-2 w-8 h-8 md:w-10 md:h-10 bg-white dark:bg-darkmode text-red-500 rounded-full shadow-lg border border-red-100 dark:border-red-900/30 flex items-center justify-center lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 hover:bg-red-500 hover:text-white transform hover:scale-110 z-10">
+                                                    <Icon icon="solar:trash-bin-trash-bold" width="16" className="md:w-[18px]" />
                                                 </button>
-                                                <div className="space-y-5">
+                                                <div className="space-y-4 md:space-y-5">
                                                     <div>
-                                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Institution</label>
-                                                        <input value={edu.school} onChange={e => updateItem('education', i, 'school', e.target.value)} className="resume-input-small text-lg font-bold" placeholder="e.g. Stanford University" />
+                                                        <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-1.5 block">Institution</label>
+                                                        <input value={edu.school} onChange={e => updateItem('education', i, 'school', e.target.value)} className="resume-input-small text-base md:text-lg font-bold" placeholder="e.g. Stanford University" />
                                                     </div>
                                                     <div>
-                                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Degree</label>
-                                                        <input value={edu.degree} onChange={e => updateItem('education', i, 'degree', e.target.value)} className="resume-input-small font-medium" placeholder="e.g. Bachelor of Science" />
+                                                        <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-1.5 block">Degree</label>
+                                                        <input value={edu.degree} onChange={e => updateItem('education', i, 'degree', e.target.value)} className="resume-input-small text-sm md:text-base font-medium" placeholder="e.g. Bachelor of Science" />
                                                     </div>
-                                                    <div className="grid grid-cols-2 gap-6">
+                                                    <div className="grid grid-cols-2 gap-4 md:gap-6">
                                                         <div>
-                                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Start Year</label>
-                                                            <input value={edu.startDate} onChange={e => updateItem('education', i, 'startDate', e.target.value)} className="resume-input-small" placeholder="20XX" />
+                                                            <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-1.5 block">Start Year</label>
+                                                            <input value={edu.startDate} onChange={e => updateItem('education', i, 'startDate', e.target.value)} className="resume-input-small text-xs md:text-sm" placeholder="20XX" />
                                                         </div>
                                                         <div>
-                                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">End Year</label>
-                                                            <input value={edu.endDate} onChange={e => updateItem('education', i, 'endDate', e.target.value)} className="resume-input-small" placeholder="20XX" />
+                                                            <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-1.5 block">End Year</label>
+                                                            <input value={edu.endDate} onChange={e => updateItem('education', i, 'endDate', e.target.value)} className="resume-input-small text-xs md:text-sm" placeholder="20XX" />
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         ))}
-                                        <button onClick={() => addItem('education')} className="w-full py-6 border-2 border-dashed border-slate-200 dark:border-white/10 text-slate-500 hover:text-primary hover:border-primary/50 font-black rounded-3xl flex items-center justify-center gap-3 transition-all duration-500 group">
-                                            <div className="w-10 h-10 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                                                <Icon icon="solar:add-circle-bold" width="24" />
+                                        <button onClick={() => addItem('education')} className="w-full py-4 md:py-6 border-2 border-dashed border-slate-200 dark:border-white/10 text-slate-500 hover:text-primary hover:border-primary/50 font-black rounded-2xl md:rounded-3xl flex items-center justify-center gap-2 md:gap-3 transition-all duration-500 group">
+                                            <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-100 dark:bg-white/5 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                                <Icon icon="solar:add-circle-bold" width="20" className="md:w-[24px]" />
                                             </div>
-                                            Add Academic Degree
+                                            <span className="text-[10px] md:text-sm">Add Academic Degree</span>
                                         </button>
                                     </div>
                                 )}
 
                                 {/* Skills */}
                                 {activeTab === 'skills' && (
-                                    <div className="space-y-6 animate-fadeIn">
+                                    <div className="space-y-5 md:space-y-6 animate-fadeIn">
                                         <div>
-                                            <label className="text-xs font-bold text-grey uppercase mb-2 block">Skills (Type & Press Enter or Comma)</label>
+                                            <label className="text-[10px] md:text-xs font-bold text-grey uppercase mb-2 block">Skills (Type & Press Enter)</label>
                                             <input
                                                 onChange={e => handleListInput('skills', e.target.value)}
                                                 onKeyDown={e => {
@@ -591,13 +593,13 @@ const ResumeBuilder = () => {
                                                     }
                                                 }}
                                                 value={skillInput}
-                                                className="resume-input"
+                                                className="resume-input text-sm md:text-base"
                                                 placeholder="React, Next.js, etc."
                                             />
                                         </div>
                                         <div className="flex flex-wrap gap-2">
                                             {data.skills.map((skill, i) => (
-                                                <span key={i} className="px-4 py-2 bg-primary/10 text-primary font-bold rounded-lg flex items-center gap-2 group">
+                                                <span key={i} className="px-3 md:px-4 py-1.5 md:py-2 bg-primary/10 text-primary font-bold rounded-lg text-xs md:text-sm flex items-center gap-2 group">
                                                     {skill}
                                                     <Icon onClick={() => removeItem('skills', i)} icon="solar:close-circle-bold" className="cursor-pointer opacity-50 hover:opacity-100" />
                                                 </span>
@@ -655,49 +657,49 @@ const ResumeBuilder = () => {
                     {/* RIGHT PANEL: LIVE PRINTER-READY PREVIEW */}
                     <div className="col-span-12 lg:col-span-6 2xl:col-span-6">
                         <div className="lg:sticky lg:top-28 group/preview">
-                            <div className="bg-slate-200/50 dark:bg-slate-900/50 rounded-[3rem] p-4 md:p-8 border border-white dark:border-slate-800 backdrop-blur-3xl shadow-inner">
-                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 px-4">
+                            <div className="bg-slate-200/50 dark:bg-slate-900/50 rounded-[2rem] md:rounded-[3rem] p-3 md:p-8 border border-white dark:border-slate-800 backdrop-blur-3xl shadow-inner">
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-6 md:mb-8 px-2 md:px-4">
                                     <div className="flex items-center gap-4">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-3 h-3 bg-red-400 rounded-full shadow-lg shadow-red-400/30"></div>
-                                            <div className="w-3 h-3 bg-amber-400 rounded-full shadow-lg shadow-amber-400/30"></div>
-                                            <div className="w-3 h-3 bg-emerald-400 rounded-full shadow-lg shadow-emerald-400/30"></div>
+                                        <div className="flex items-center gap-1.5 md:gap-2">
+                                            <div className="w-2 md:w-3 h-2 md:h-3 bg-red-400 rounded-full shadow-lg shadow-red-400/30"></div>
+                                            <div className="w-2 md:w-3 h-2 md:h-3 bg-amber-400 rounded-full shadow-lg shadow-amber-400/30"></div>
+                                            <div className="w-2 md:w-3 h-2 md:h-3 bg-emerald-400 rounded-full shadow-lg shadow-emerald-400/30"></div>
                                         </div>
-                                        <span className="text-xs font-black text-slate-400 uppercase tracking-[0.3em] hidden sm:block">Live Print Preview</span>
+                                        <span className="text-[9px] md:text-xs font-black text-slate-400 uppercase tracking-[0.2em] md:tracking-[0.3em]">Live Print Preview</span>
                                     </div>
 
                                     {/* QUICK CUSTOMIZATION BAR */}
-                                    <div className="flex flex-wrap items-center gap-6 bg-white/40 dark:bg-black/20 p-2.5 rounded-[1.5rem] border border-white dark:border-white/5 backdrop-blur-md">
+                                    <div className="flex flex-wrap items-center gap-3 md:gap-6 bg-white/40 dark:bg-black/20 p-2 md:p-2.5 rounded-xl md:rounded-[1.5rem] border border-white dark:border-white/5 backdrop-blur-md">
                                         {/* Color Quick Picker */}
-                                        <div className="flex items-center gap-2 pr-4 border-r border-slate-200 dark:border-white/10">
-                                            <div className="flex gap-1.5">
+                                        <div className="flex items-center gap-2 pr-3 md:pr-4 border-r border-slate-200 dark:border-white/10">
+                                            <div className="flex gap-1 md:gap-1.5">
                                                 {colors.slice(0, 5).map(color => (
                                                     <button
                                                         key={color}
                                                         onClick={() => handleCustomizationChange('primaryColor', color)}
-                                                        className={`w-6 h-6 rounded-full border-2 transition-all hover:scale-110 ${data.customization?.primaryColor?.toLowerCase() === color.toLowerCase() ? 'border-primary ring-2 ring-primary/20' : 'border-transparent'}`}
+                                                        className={`w-4 h-4 md:w-6 md:h-6 rounded-full border-2 transition-all hover:scale-110 ${data.customization?.primaryColor?.toLowerCase() === color.toLowerCase() ? 'border-primary ring-2 ring-primary/20' : 'border-transparent'}`}
                                                         style={{ backgroundColor: color }}
                                                     />
                                                 ))}
                                             </div>
-                                            <div className="relative w-6 h-6 rounded-full border border-slate-200 overflow-hidden bg-white dark:bg-darkmode flex items-center justify-center">
+                                            <div className="relative w-4 h-4 md:w-6 md:h-6 rounded-full border border-slate-200 overflow-hidden bg-white dark:bg-darkmode flex items-center justify-center">
                                                 <input
                                                     type="color"
                                                     value={data.customization?.primaryColor || "#3b82f6"}
                                                     onChange={(e) => handleCustomizationChange('primaryColor', e.target.value)}
                                                     className="absolute inset-0 w-full h-full scale-[3] cursor-pointer opacity-0"
                                                 />
-                                                <Icon icon="solar:pipette-bold" width="14" className="text-slate-400 pointer-events-none" />
+                                                <Icon icon="solar:pipette-bold" width="10" className="md:w-[14px] text-slate-400 pointer-events-none" />
                                             </div>
                                         </div>
 
                                         {/* Font Quick Picker */}
-                                        <div className="flex items-center gap-3">
-                                            <Icon icon="solar:letter-bold-duotone" width="18" className="text-primary" />
+                                        <div className="flex items-center gap-2 md:gap-3">
+                                            <Icon icon="solar:letter-bold-duotone" width="14" className="md:w-[18px] text-primary" />
                                             <select
                                                 value={data.customization?.fontFamily || 'Inter'}
                                                 onChange={(e) => handleCustomizationChange('fontFamily', e.target.value)}
-                                                className="bg-transparent text-xs font-black uppercase tracking-widest outline-none border-none cursor-pointer text-midnight_text dark:text-white"
+                                                className="bg-transparent text-[9px] md:text-xs font-black uppercase tracking-wider md:tracking-widest outline-none border-none cursor-pointer text-midnight_text dark:text-white"
                                             >
                                                 {fonts.map(font => (
                                                     <option key={font} value={font} className="bg-white dark:bg-darklight text-midnight_text dark:text-white">{font}</option>
@@ -705,18 +707,18 @@ const ResumeBuilder = () => {
                                             </select>
                                         </div>
 
-                                        <div className="h-4 w-px bg-slate-200 dark:bg-white/10"></div>
+                                        <div className="hidden sm:block h-4 w-px bg-slate-200 dark:bg-white/10"></div>
 
-                                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500">
+                                        <div className="hidden sm:flex items-center gap-1.5 md:gap-2 text-[9px] md:text-[10px] font-bold text-slate-500">
                                             <Icon icon="solar:magnifer-zoom-in-bold" />
-                                            <span>75% Zoom</span>
+                                            <span>Scale: Auto</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="h-[85vh] overflow-auto custom-scrollbar-premium rounded-[2rem] group-hover/preview:shadow-2xl transition-all duration-500 bg-slate-100 dark:bg-slate-950/40 p-1">
-                                    <div className="flex justify-center p-8 min-w-fit">
-                                        <div className="resume-preview-wrapper scale-[0.4] sm:scale-[0.55] md:scale-[0.7] lg:scale-[0.85] xl:scale-[0.95] 2xl:scale-[1] origin-top transition-all duration-700 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.4)] hover:shadow-primary/30 bg-white">
+                                <div className="h-[50vh] md:h-[75vh] 2xl:h-[85vh] overflow-auto custom-scrollbar-premium rounded-[1.5rem] md:rounded-[2rem] group-hover/preview:shadow-2xl transition-all duration-500 bg-slate-100 dark:bg-slate-950/40 p-1">
+                                    <div className="flex justify-center p-4 md:p-8 min-w-fit">
+                                        <div className="resume-preview-wrapper scale-[0.35] xs:scale-[0.45] sm:scale-[0.55] md:scale-[0.7] lg:scale-[0.8] xl:scale-[0.9] 2xl:scale-[0.95] origin-top transition-all duration-700 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] hover:shadow-primary/30 bg-white">
                                             <div ref={resumeRef} className="bg-white overflow-hidden" style={{ fontFamily: `${data.customization?.fontFamily || 'Inter'}, sans-serif` }}>
                                                 {renderTemplate()}
                                             </div>
@@ -726,23 +728,23 @@ const ResumeBuilder = () => {
                             </div>
 
                             {/* SMART TIP BOX */}
-                            <div className="mt-8 grid grid-cols-2 gap-4">
-                                <div className="bg-primary/5 border border-primary/10 p-5 rounded-3xl flex items-start gap-4 transform hover:-translate-y-1 transition-all duration-300">
-                                    <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary shrink-0">
-                                        <Icon icon="solar:lightbulb-bolt-bold-duotone" width="24" />
+                            <div className="mt-6 md:mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="bg-primary/5 border border-primary/10 p-4 md:p-5 rounded-[1.5rem] md:rounded-3xl flex items-start gap-3 md:gap-4 transform hover:-translate-y-1 transition-all duration-300">
+                                    <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-xl md:rounded-2xl flex items-center justify-center text-primary shrink-0">
+                                        <Icon icon="solar:lightbulb-bolt-bold-duotone" width="20" className="md:w-[24px]" />
                                     </div>
                                     <div>
-                                        <h4 className="text-sm font-black text-midnight_text dark:text-white uppercase tracking-tight">Pro Tip</h4>
-                                        <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">Try the 'Creative' templates for startups or 'Classic' for bigger firms.</p>
+                                        <h4 className="text-xs md:text-sm font-black text-midnight_text dark:text-white uppercase tracking-tight">Pro Tip</h4>
+                                        <p className="text-[10px] md:text-xs text-slate-500 font-medium mt-1 leading-relaxed">Choose templates based on your target industry for maximum impact.</p>
                                     </div>
                                 </div>
-                                <div className="bg-emerald-500/5 border border-emerald-500/10 p-5 rounded-3xl flex items-start gap-4 transform hover:-translate-y-1 transition-all duration-300">
-                                    <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500 shrink-0">
-                                        <Icon icon="solar:cloud-check-bold-duotone" width="24" />
+                                <div className="bg-emerald-500/5 border border-emerald-500/10 p-4 md:p-5 rounded-[1.5rem] md:rounded-3xl flex items-start gap-3 md:gap-4 transform hover:-translate-y-1 transition-all duration-300">
+                                    <div className="w-10 h-10 md:w-12 md:h-12 bg-emerald-500/10 rounded-xl md:rounded-2xl flex items-center justify-center text-emerald-500 shrink-0">
+                                        <Icon icon="solar:cloud-check-bold-duotone" width="20" className="md:w-[24px]" />
                                     </div>
                                     <div>
-                                        <h4 className="text-sm font-black text-midnight_text dark:text-white uppercase tracking-tight">Cloud Save</h4>
-                                        <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">Your progress is automatically cached in your local browser storage.</p>
+                                        <h4 className="text-xs md:text-sm font-black text-midnight_text dark:text-white uppercase tracking-tight">Cloud Save</h4>
+                                        <p className="text-[10px] md:text-xs text-slate-500 font-medium mt-1 leading-relaxed">Your data is synced automatically for uninterrupted progress.</p>
                                     </div>
                                 </div>
                             </div>

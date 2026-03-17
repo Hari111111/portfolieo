@@ -103,9 +103,9 @@ const Header: React.FC = () => {
 
   return (
     <header
-      className={`fixed h-20 top-0 z-50 w-full transition-all duration-500 ${sticky
+      className={`fixed h-20 top-0 z-[9999] w-full transition-all duration-500 ${sticky
         ? 'shadow-lg bg-white/95 dark:bg-darklight/95 backdrop-blur-md border-b border-border dark:border-dark_border'
-        : 'bg-white/80 dark:bg-transparent backdrop-blur-md border-b border-white/5 dark:border-transparent'
+        : 'bg-white/50 dark:bg-darkmode/20 backdrop-blur-sm border-b border-white/10 dark:border-transparent'
         }`}>
       <div className='container mx-auto max-w-7xl flex items-center justify-between px-6 h-full'>
         <Logo />
@@ -175,97 +175,107 @@ const Header: React.FC = () => {
           )}
           <button
             onClick={() => setNavbarOpen(!navbarOpen)}
-            className='block lg:hidden p-2 rounded-lg'
+            className='flex items-center gap-2 lg:hidden p-2 rounded-xl group transition-all hover:bg-slate-50 dark:hover:bg-white/5 active:scale-95'
             aria-label='Toggle mobile menu'>
-            <span className='block w-6 h-0.5 bg-black dark:bg-white'></span>
-            <span className='block w-6 h-0.5 bg-black dark:bg-white mt-1.5'></span>
-            <span className='block w-6 h-0.5 bg-black dark:bg-white mt-1.5'></span>
+            <span className="text-[10px] font-black text-midnight_text dark:text-white uppercase tracking-widest block">Menu</span>
+            <div className="flex flex-col gap-1.5 items-end">
+              <span className={`block h-0.5 rounded-full bg-midnight_text dark:bg-white transition-all duration-300 ${navbarOpen ? 'w-6' : 'w-6'}`}></span>
+              <span className={`block h-0.5 rounded-full bg-primary transition-all duration-300 ${navbarOpen ? 'w-4' : 'w-4'}`}></span>
+              <span className={`block h-0.5 rounded-full bg-midnight_text dark:bg-white transition-all duration-300 ${navbarOpen ? 'w-6' : 'w-2'}`}></span>
+            </div>
           </button>
         </div>
       </div>
       {navbarOpen && (
-        <div className='fixed top-0 left-0 w-full h-full bg-black/50 z-40' />
+        <div className='fixed inset-0 w-full h-full bg-black/60 backdrop-blur-sm z-[9998]' onClick={() => setNavbarOpen(false)} />
       )}
 
       <div
         ref={mobileMenuRef}
-        className={`lg:hidden fixed top-0 right-0 h-full w-full bg-white dark:bg-darkmode shadow-lg transform transition-transform duration-300 max-w-xs ${navbarOpen ? 'translate-x-0' : 'translate-x-full'
-          } z-50`}>
-        <div className='flex items-center justify-between p-4'>
-          <h2 className='text-lg font-bold text-midnight_text dark:text-white'>
-            Menu
-          </h2>
-          <button
-            onClick={() => setNavbarOpen(false)}
-            aria-label='Close mobile menu'>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              width='24'
-              height='24'
-              viewBox='0 0 24 24'
-              className='dark:text-white'>
-              <path
-                fill='none'
-                stroke='currentColor'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='M6 18L18 6M6 6l12 12'
-              />
-            </svg>
-          </button>
-        </div>
-        <nav className='flex flex-col items-start p-4'>
-          {headerData.map((item, index) => (
-            <MobileHeaderLink key={index} item={item} />
-          ))}
-          <div className='mt-4 flex flex-col gap-4 w-full'>
-            {user ? (
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/10">
-                  <div className="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center font-black text-sm">
-                    {user.name?.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-black text-midnight_text dark:text-white uppercase tracking-tight">
-                      {user.name}
-                    </span>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase">Member</span>
-                  </div>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center justify-center gap-2 bg-red-50 text-red-500 py-3 rounded-lg font-black text-xs uppercase tracking-widest hover:bg-red-100 transition-colors"
-                >
-                  <Icon icon="solar:logout-3-bold-duotone" width="18" />
-                  Logout Account
-                </button>
-              </div>
-            ) : (
-              <>
-                <Link
-                  href='#'
-                  className='bg-transparent border border-primary text-primary px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white'
-                  onClick={() => {
-                    setIsSignInOpen(true)
-                    setNavbarOpen(false)
-                  }}>
-                  Sign In
-                </Link>
-                <Link
-                  href='#'
-                  className='bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700'
-                  onClick={() => {
-                    setIsSignUpOpen(true)
-                    setNavbarOpen(false)
-                  }}>
-                  Sign Up
-                </Link>
-              </>
-            )}
+        className={`lg:hidden fixed top-0 right-0 h-screen w-[320px] max-w-[85vw] bg-white dark:bg-darklight transform transition-all duration-500 ease-in-out ${
+          navbarOpen ? 'translate-x-0' : 'translate-x-full'
+        } z-[99999] shadow-[0_0_50px_rgba(0,0,0,0.15)] border-l border-border dark:border-dark_border`}>
+        <div className='flex flex-col h-full bg-white dark:bg-darklight'>
+          {/* Header */}
+          <div className='flex items-center justify-between p-6 border-b border-slate-100 dark:border-white/10'>
+            <div className="flex flex-col">
+              <h2 className='text-lg font-black text-midnight_text dark:text-white uppercase tracking-tighter italic'>
+                System <span className="text-primary">Menu</span>
+              </h2>
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em]">V4.2.0 • PROTOCOL</span>
+            </div>
+            <button
+              onClick={() => setNavbarOpen(false)}
+              className="w-10 h-10 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-slate-400 dark:text-white/40 hover:text-primary rounded-full transition-all"
+              aria-label='Close mobile menu'>
+              <Icon icon="solar:close-circle-bold-duotone" width="28" />
+            </button>
           </div>
-        </nav>
+          
+          {/* Navigation Items */}
+          <nav className='flex-1 overflow-y-auto p-6 bg-white dark:bg-darklight'>
+            <div className="space-y-2">
+              {headerData.map((item, index) => (
+                <MobileHeaderLink 
+                  key={index} 
+                  item={item} 
+                  onClick={() => setNavbarOpen(false)} 
+                />
+              ))}
+            </div>
+
+            <div className='mt-10 pt-8 border-t border-slate-100 dark:border-white/10'>
+              {user ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 p-4 bg-primary/5 rounded-2xl border border-primary/10">
+                    <div className="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center font-black text-base shadow-lg shadow-primary/20">
+                      {user.name?.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex flex-col truncate">
+                      <span className="text-xs font-black text-midnight_text dark:text-white uppercase tracking-tight truncate">
+                        {user.name}
+                      </span>
+                      <span className="text-[9px] text-primary font-black uppercase tracking-widest">Active Member</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center justify-center gap-3 bg-red-500/10 text-red-500 p-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                  >
+                    <Icon icon="solar:logout-3-bold-duotone" width="20" />
+                    Close Session
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  <button
+                    className='w-full p-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-midnight_text dark:text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:border-primary transition-all'
+                    onClick={() => {
+                      setIsSignInOpen(true)
+                      setNavbarOpen(false)
+                    }}>
+                    Auth Access
+                  </button>
+                  <button
+                    className='w-full p-4 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-primary/90 transition-all shadow-lg shadow-primary/20'
+                    onClick={() => {
+                      setIsSignUpOpen(true)
+                      setNavbarOpen(false)
+                    }}>
+                    Create Account
+                  </button>
+                </div>
+              )}
+            </div>
+          </nav>
+
+          {/* Footer Branding */}
+          <div className="p-6 border-t border-slate-100 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-center">
+             <p className="text-[10px] font-black text-slate-400 dark:text-white/30 uppercase tracking-[0.4em]">Locked & Encrypted</p>
+          </div>
+        </div>
       </div>
+
       {/* Successsful Login Alert */}
       <div
         className={`fixed top-6 end-1/2 translate-x-1/2 z-50 ${authDialog?.isSuccessDialogOpen == true ? 'block' : 'hidden'

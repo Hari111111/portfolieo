@@ -1,10 +1,17 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { 
+  FiClock, 
+  FiType, 
+  FiRotateCcw, 
+  FiZap, 
+  FiTarget, 
+  FiActivity, 
+  FiAward, 
+  FiWifi 
+} from "react-icons/fi";
 
-// ─────────────────────────────────────────
-//  Word bank
-// ─────────────────────────────────────────
 const WORD_BANK = [
   "the", "be", "to", "of", "and", "in", "that", "have", "it", "for",
   "not", "on", "with", "he", "as", "you", "do", "at", "this", "but",
@@ -46,7 +53,7 @@ const WORD_BANK = [
   "front", "teach", "week", "final", "gave", "green", "oh", "quick",
   "develop", "ocean", "warm", "free", "minute", "strong", "special",
   "behind", "clear", "tail", "produce", "fact", "street", "inch", "lot",
-  "nothing", "course", "stay", "wheel", "full", "force", "blue", "object",
+  "nothing", "course", "stay", "weight", "force", "blue", "object",
   "decide", "surface", "deep", "moon", "island", "foot", "age", "copy",
   "rule", "among", "noun", "power", "cannot", "able", "six", "size",
   "dark", "ball", "material", "special", "heavy", "fine", "pair", "circle",
@@ -82,9 +89,6 @@ const WORD_BANK = [
   "joined", "foot", "law", "ears", "glass", "ye", "king", "town",
 ];
 
-// ─────────────────────────────────────────
-//  Quotes for quote mode
-// ─────────────────────────────────────────
 const QUOTES = [
   "The only way to do great work is to love what you do. If you haven't found it yet, keep looking. Don't settle.",
   "In the middle of every difficulty lies opportunity. Those who dare to imagine the impossible are the ones who break all human limitations.",
@@ -98,9 +102,6 @@ const QUOTES = [
   "The greatest glory in living lies not in never falling, but in rising every time we fall and moving forward.",
 ];
 
-// ─────────────────────────────────────────
-//  Helpers
-// ─────────────────────────────────────────
 function generateWords(count: number): string[] {
   const result: string[] = [];
   for (let i = 0; i < count; i++) {
@@ -113,9 +114,6 @@ function randomQuote(): string {
   return QUOTES[Math.floor(Math.random() * QUOTES.length)];
 }
 
-// ─────────────────────────────────────────
-//  Types
-// ─────────────────────────────────────────
 type CharStatus = "correct" | "incorrect" | "extra" | "pending";
 type TestMode = "time" | "words" | "quote";
 type TimeDuration = 60 | 120 | 180 | 300;
@@ -140,9 +138,6 @@ interface TestResult {
   duration: number;
 }
 
-// ─────────────────────────────────────────
-//  Hook: useTypingTest
-// ─────────────────────────────────────────
 function useTypingTest(mode: TestMode, timeDuration: TimeDuration, wordCount: WordCount) {
   const [words, setWords] = useState<WordData[]>([]);
   const [currentWordIdx, setCurrentWordIdx] = useState(0);
@@ -155,7 +150,6 @@ function useTypingTest(mode: TestMode, timeDuration: TimeDuration, wordCount: Wo
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
 
-  // Build word list
   const buildWords = useCallback((): WordData[] => {
     let raw: string[] = [];
     if (mode === "time") raw = generateWords(250);
@@ -183,7 +177,6 @@ function useTypingTest(mode: TestMode, timeDuration: TimeDuration, wordCount: Wo
 
   useEffect(() => { reset(); }, [reset]);
 
-  // Timer
   useEffect(() => {
     if (!started || finished) return;
     timerRef.current = setInterval(() => {
@@ -197,27 +190,23 @@ function useTypingTest(mode: TestMode, timeDuration: TimeDuration, wordCount: Wo
       }
     }, 1000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [started, finished, mode]);
 
   const endTest = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     setFinished(true);
     const durationSec = mode === "time" ? timeDuration : (Date.now() - startTimeRef.current) / 1000;
-    const mins = durationSec / 60;
+    const mins = Math.max(durationSec / 60, 1/60);
 
     setWords((prev) => {
       let correctChars = 0;
       let incorrectChars = 0;
-      let correctWords = 0;
       prev.forEach((w, wi) => {
         if (wi >= (mode === "time" ? prev.length : currentWordIdx + 1)) return;
         w.chars.forEach((c) => {
           if (c.status === "correct") correctChars++;
           if (c.status === "incorrect") incorrectChars++;
         });
-        const allCorrect = w.chars.every((c) => c.status === "correct") && w.typed === w.chars.map((c) => c.char).join("");
-        if (allCorrect) correctWords++;
       });
       const wpm = Math.round(correctChars / 5 / mins);
       const rawWpm = Math.round((correctChars + incorrectChars) / 5 / mins);
@@ -234,7 +223,6 @@ function useTypingTest(mode: TestMode, timeDuration: TimeDuration, wordCount: Wo
       startTimeRef.current = Date.now();
     }
 
-    // Space → advance word
     if (val.endsWith(" ")) {
       const typed = val.trimEnd();
       setWords((prev) => {
@@ -247,7 +235,6 @@ function useTypingTest(mode: TestMode, timeDuration: TimeDuration, wordCount: Wo
             ? (typed[i] === c.char ? "correct" : "incorrect")
             : "pending",
         }));
-        // Extra chars
         if (typed.length > w.chars.length) {
           const extra = typed.slice(w.chars.length).split("").map((ch) => ({
             char: ch,
@@ -271,7 +258,6 @@ function useTypingTest(mode: TestMode, timeDuration: TimeDuration, wordCount: Wo
       return;
     }
 
-    // Backspace on empty → go back
     if (val === "" && currentInput === "") {
       if (currentWordIdx > 0) {
         const prevIdx = currentWordIdx - 1;
@@ -279,14 +265,7 @@ function useTypingTest(mode: TestMode, timeDuration: TimeDuration, wordCount: Wo
         setWords((prev) => {
           const updated = [...prev];
           const w = { ...updated[prevIdx] };
-          // restore original chars, remove extras
-          const original = updated[prevIdx].typed;
           w.chars = w.chars.slice(0, w.typed.length);
-          // revert to original
-          const sourceChars = (mode === "quote"
-            ? randomQuote().split(" ")[prevIdx]
-            : WORD_BANK[0]).split(""); // not used
-          // just roll back to typed
           w.chars = w.typed.split("").map((ch, i) => {
             const original_char = updated[prevIdx].chars[i]?.char ?? ch;
             return {
@@ -305,12 +284,10 @@ function useTypingTest(mode: TestMode, timeDuration: TimeDuration, wordCount: Wo
     }
 
     setCurrentInput(val);
-    // Live update current word chars
     setWords((prev) => {
       const updated = [...prev];
       const w = { ...updated[currentWordIdx] };
       const baseLen = w.chars.filter((c) => c.status !== "extra").length;
-      // If typed shorter than word
       const newChars = w.chars.slice(0, Math.max(baseLen, val.length));
       w.chars = newChars.map((c, i) => {
         if (i >= val.length) return { char: c.char, status: "pending" as CharStatus };
@@ -329,60 +306,70 @@ function useTypingTest(mode: TestMode, timeDuration: TimeDuration, wordCount: Wo
   return { words, currentWordIdx, currentInput, handleInput, started, finished, timeLeft, elapsed, result, reset };
 }
 
-// ─────────────────────────────────────────
-//  Sub-components
-// ─────────────────────────────────────────
-
-function StatCard({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
+function StatCard({ label, value, icon, color }: { label: string; value: string | number; icon: React.ReactNode; color?: string }) {
   return (
-    <div className="typing-stat-card">
-      <span className="typing-stat-label">{label}</span>
-      <span className="typing-stat-value">{value}</span>
-      {sub && <span className="typing-stat-sub">{sub}</span>}
+    <div className={`flex items-center gap-3 md:gap-4 bg-white/5 border border-white/10 px-4 md:px-6 py-3 md:py-4 rounded-2xl md:rounded-3xl backdrop-blur-md shadow-xl transition-all hover:scale-105 ${color === 'emerald' ? 'hover:border-emerald-500/50' : 'hover:border-blue-500/50'}`}>
+      <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-xl shadow-lg ${color === 'emerald' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-blue-500/20 text-blue-500'}`}>
+        {icon}
+      </div>
+      <div>
+        <div className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-white/30 mb-0.5">{label}</div>
+        <div className="text-xl md:text-2xl font-black text-white leading-none">{value}</div>
+      </div>
     </div>
   );
 }
 
 function ResultScreen({ result, onRestart }: { result: TestResult; onRestart: () => void }) {
   return (
-    <div className="typing-result-overlay">
-      <div className="typing-result-box">
-        <h2 className="typing-result-title">Test Complete!</h2>
-        <div className="typing-result-grid">
-          <div className="typing-result-main">
-            <span className="typing-result-wpm">{result.wpm}</span>
-            <span className="typing-result-wpm-label">WPM</span>
+    <div className="fixed inset-0 bg-[#050505]/95 backdrop-blur-2xl z-[1000] flex items-center justify-center p-4 md:p-6 animate-in fade-in zoom-in duration-300">
+      <div className="bg-white/5 border border-white/10 rounded-[2.5rem] md:rounded-[3.5rem] p-6 md:p-12 w-full max-w-2xl text-center shadow-2xl relative overflow-hidden group">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-blue-500 to-emerald-500"></div>
+        
+        <div className="w-16 h-16 md:w-24 md:h-24 bg-emerald-500 rounded-2xl md:rounded-3xl flex items-center justify-center mx-auto mb-6 md:mb-10 shadow-2xl shadow-emerald-500/40 rotate-12 group-hover:rotate-0 transition-transform duration-500">
+          <FiAward className="text-3xl md:text-5xl text-white" />
+        </div>
+        
+        <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2 md:mb-4 italic">Analysis Complete</h2>
+        <p className="text-white/40 font-bold uppercase tracking-widest text-[8px] md:text-xs mb-8 md:mb-12">Neural link verified • Biometric data recorded</p>
+
+        <div className="grid grid-cols-2 gap-4 md:gap-8 mb-8 md:mb-12">
+          <div className="bg-white/5 border border-white/10 p-6 md:p-10 rounded-3xl md:rounded-[2.5rem] flex flex-col items-center gap-1 md:gap-2">
+            <span className="text-4xl md:text-6xl font-black text-emerald-500 tracking-tighter">{result.wpm}</span>
+            <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] text-white/30">Total WPM</span>
           </div>
-          <div className="typing-result-main">
-            <span className="typing-result-wpm" style={{ color: "var(--typing-accent-2)" }}>{result.accuracy}%</span>
-            <span className="typing-result-wpm-label">Accuracy</span>
+          <div className="bg-white/5 border border-white/10 p-6 md:p-10 rounded-3xl md:rounded-[2.5rem] flex flex-col items-center gap-1 md:gap-2">
+            <span className="text-4xl md:text-6xl font-black text-blue-500 tracking-tighter">{result.accuracy}%</span>
+            <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] text-white/30">Accuracy</span>
           </div>
         </div>
-        <div className="typing-result-details">
-          <div className="typing-result-detail">
-            <span>Raw WPM</span><span>{result.rawWpm}</span>
-          </div>
-          <div className="typing-result-detail">
-            <span>Correct</span><span style={{ color: "var(--typing-correct)" }}>{result.correctChars}</span>
-          </div>
-          <div className="typing-result-detail">
-            <span>Errors</span><span style={{ color: "var(--typing-incorrect)" }}>{result.incorrectChars}</span>
-          </div>
-          <div className="typing-result-detail">
-            <span>Duration</span><span>{result.duration}s</span>
-          </div>
+
+        <div className="grid grid-cols-3 gap-3 md:gap-6 mb-8 md:mb-12">
+           <div className="bg-white/5 py-3 md:py-4 rounded-xl md:rounded-2xl flex flex-col">
+              <span className="text-[8px] md:text-[10px] font-black text-white/20 uppercase tracking-widest">Correct</span>
+              <span className="text-base md:text-lg font-black text-emerald-400">{result.correctChars}</span>
+           </div>
+           <div className="bg-white/5 py-3 md:py-4 rounded-xl md:rounded-2xl flex flex-col">
+              <span className="text-[8px] md:text-[10px] font-black text-white/20 uppercase tracking-widest">Errors</span>
+              <span className="text-base md:text-lg font-black text-red-500">{result.incorrectChars}</span>
+           </div>
+           <div className="bg-white/5 py-3 md:py-4 rounded-xl md:rounded-2xl flex flex-col">
+              <span className="text-[8px] md:text-[10px] font-black text-white/20 uppercase tracking-widest">Time</span>
+              <span className="text-base md:text-lg font-black text-blue-400">{result.duration}s</span>
+           </div>
         </div>
-        <button className="typing-restart-btn" onClick={onRestart}>
-          Try Again
+
+        <button 
+          onClick={onRestart}
+          className="w-full py-4 md:py-6 bg-[#10b981] text-white rounded-[1.5rem] md:rounded-[2rem] text-xs md:text-sm font-black uppercase tracking-[0.3em] md:tracking-[0.5em] hover:bg-emerald-400 transition-all hover:scale-[1.02] shadow-2xl shadow-emerald-500/20 active:scale-95"
+        >
+          Initiate New Sequence
         </button>
       </div>
     </div>
   );
 }
 
-// ─────────────────────────────────────────
-//  Main Component
-// ─────────────────────────────────────────
 export default function TypingTest() {
   const [mode, setMode] = useState<TestMode>("time");
   const [timeDuration, setTimeDuration] = useState<TimeDuration>(60);
@@ -396,26 +383,12 @@ export default function TypingTest() {
     started, finished, timeLeft, elapsed, result, reset,
   } = useTypingTest(mode, timeDuration, wordCount);
 
-  // Focus input on mount
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
-  // Re-focus on reset
-  useEffect(() => {
-    if (!finished) inputRef.current?.focus();
-  }, [finished, words]);
-
-  // Scroll active word into view
-  useEffect(() => {
-    activeWordRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
-  }, [currentWordIdx]);
+  useEffect(() => { inputRef.current?.focus(); }, []);
+  useEffect(() => { if (!finished) inputRef.current?.focus(); }, [finished, words]);
+  useEffect(() => { activeWordRef.current?.scrollIntoView({ block: "center", behavior: "smooth" }); }, [currentWordIdx]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Tab") {
-      e.preventDefault();
-      reset();
-    }
+    if (e.key === "Tab") { e.preventDefault(); reset(); }
   };
 
   const progress = mode === "time"
@@ -433,620 +406,180 @@ export default function TypingTest() {
   const displayTime = formatTime(mode === "time" ? timeLeft : elapsed);
 
   return (
-    <div className="typing-root" onClick={() => inputRef.current?.focus()}>
-      {/* Styles */}
-      <style>{`
-        :root {
-          --typing-bg: #1a1a2e;
-          --typing-surface: #16213e;
-          --typing-card: #0f3460;
-          --typing-accent: #e94560;
-          --typing-accent-2: #533483;
-          --typing-text: #cdd6f4;
-          --typing-muted: #6c7086;
-          --typing-correct: #a6e3a1;
-          --typing-incorrect: #f38ba8;
-          --typing-extra: #fab387;
-          --typing-cursor: #e94560;
-          --typing-active-bg: rgba(233,69,96,0.08);
-          --typing-border: rgba(255,255,255,0.07);
-        }
-
-        .typing-root {
-          min-height: 100vh;
-          background: var(--typing-bg);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 3rem 1.5rem 4rem;
-          font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-          cursor: text;
-        }
-
-        .typing-hero {
-          text-align: center;
-          margin-bottom: 2.5rem;
-        }
-
-        .typing-hero-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: rgba(233,69,96,0.15);
-          border: 1px solid rgba(233,69,96,0.3);
-          border-radius: 99px;
-          padding: 0.35rem 1rem;
-          font-size: 0.75rem;
-          color: var(--typing-accent);
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          margin-bottom: 1rem;
-        }
-
-        .typing-hero h1 {
-          font-size: clamp(2rem, 5vw, 3.5rem);
-          font-weight: 800;
-          background: linear-gradient(135deg, #fff 0%, var(--typing-accent) 60%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          line-height: 1.15;
-          margin: 0 0 0.75rem;
-        }
-
-        .typing-hero p {
-          color: var(--typing-muted);
-          font-size: 1rem;
-          max-width: 480px;
-          margin: 0 auto;
-          font-family: 'Inter', sans-serif;
-        }
-
-        /* Controls */
-        .typing-controls {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          flex-wrap: wrap;
-          justify-content: center;
-          margin-bottom: 2rem;
-        }
-
-        .typing-mode-group {
-          display: flex;
-          background: var(--typing-surface);
-          border: 1px solid var(--typing-border);
-          border-radius: 12px;
-          overflow: hidden;
-        }
-
-        .typing-mode-btn {
-          padding: 0.55rem 1.25rem;
-          font-size: 0.82rem;
-          font-weight: 600;
-          letter-spacing: 0.03em;
-          background: transparent;
-          border: none;
-          color: var(--typing-muted);
-          cursor: pointer;
-          transition: all 0.2s;
-          font-family: inherit;
-        }
-        .typing-mode-btn:hover { color: var(--typing-text); }
-        .typing-mode-btn.active {
-          background: var(--typing-accent);
-          color: white;
-        }
-
-        .typing-divider {
-          width: 1px;
-          height: 2rem;
-          background: var(--typing-border);
-        }
-
-        .typing-opt-btn {
-          padding: 0.55rem 0.9rem;
-          font-size: 0.82rem;
-          font-weight: 600;
-          background: var(--typing-surface);
-          border: 1px solid var(--typing-border);
-          border-radius: 10px;
-          color: var(--typing-muted);
-          cursor: pointer;
-          transition: all 0.2s;
-          font-family: inherit;
-        }
-        .typing-opt-btn:hover { color: var(--typing-text); border-color: rgba(255,255,255,0.2); }
-        .typing-opt-btn.active {
-          color: var(--typing-accent);
-          border-color: var(--typing-accent);
-          background: rgba(233,69,96,0.1);
-        }
-
-        /* Stats bar */
-        .typing-stats-bar {
-          display: flex;
-          gap: 1.5rem;
-          align-items: center;
-          justify-content: center;
-          margin-bottom: 1.5rem;
-          flex-wrap: wrap;
-        }
-
-        .typing-timer {
-          font-size: 3rem;
-          font-weight: 700;
-          color: var(--typing-accent);
-          min-width: 5ch;
-          text-align: center;
-          line-height: 1;
-          transition: color 0.3s;
-        }
-        .typing-timer.warning { color: #f38ba8; animation: timerPulse 0.5s ease infinite alternate; }
-        @keyframes timerPulse { from { opacity: 1; } to { opacity: 0.5; } }
-
-        .typing-stat-card {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.15rem;
-        }
-        .typing-stat-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--typing-muted); }
-        .typing-stat-value { font-size: 1.4rem; font-weight: 700; color: var(--typing-text); }
-        .typing-stat-sub { font-size: 0.65rem; color: var(--typing-muted); }
-
-        /* Progress bar */
-        .typing-progress-track {
-          width: 100%;
-          max-width: 800px;
-          height: 3px;
-          background: var(--typing-surface);
-          border-radius: 99px;
-          margin-bottom: 1rem;
-          overflow: hidden;
-        }
-        .typing-progress-fill {
-          height: 100%;
-          background: linear-gradient(90deg, var(--typing-accent), var(--typing-accent-2));
-          border-radius: 99px;
-          transition: width 0.3s ease;
-        }
-
-        /* Word display */
-        .typing-words-wrapper {
-          width: 100%;
-          max-width: 800px;
-          position: relative;
-        }
-
-        .typing-words-container {
-          background: var(--typing-surface);
-          border: 1px solid var(--typing-border);
-          border-radius: 16px;
-          padding: 2rem;
-          height: 260px;
-          overflow: hidden;
-          position: relative;
-          cursor: text;
-        }
-
-        .typing-words-inner {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.6rem 0.8rem;
-          align-content: flex-start;
-        }
-
-        .typing-word {
-          display: inline-flex;
-          position: relative;
-          padding: 2px 0;
-          border-radius: 4px;
-          transition: background 0.15s;
-        }
-        .typing-word.active { background: var(--typing-active-bg); }
-        .typing-word.active::after {
-          content: '';
-          position: absolute;
-          bottom: -3px;
-          left: 0;
-          right: 0;
-          height: 2px;
-          background: var(--typing-accent);
-          border-radius: 99px;
-        }
-
-        .typing-char {
-          font-size: 1.3rem;
-          line-height: 1.6;
-          color: var(--typing-muted);
-          position: relative;
-          transition: color 0.08s;
-        }
-        .typing-char.correct { color: var(--typing-correct); }
-        .typing-char.incorrect { color: var(--typing-incorrect); text-decoration: underline; text-decoration-color: var(--typing-incorrect); }
-        .typing-char.extra { color: var(--typing-extra); }
-
-        /* Cursor */
-        .typing-char.cursor::before {
-          content: '';
-          position: absolute;
-          left: -2px;
-          top: 10%;
-          height: 80%;
-          width: 2px;
-          background: var(--typing-cursor);
-          border-radius: 99px;
-          animation: blink 0.8s step-end infinite;
-        }
-        @keyframes blink { 50% { opacity: 0; } }
-
-        /* Fade edges */
-        .typing-words-container::before,
-        .typing-words-container::after {
-          content: '';
-          position: absolute;
-          left: 0; right: 0;
-          height: 40px;
-          pointer-events: none;
-          z-index: 1;
-        }
-        .typing-words-container::before { top: 0; background: linear-gradient(180deg, var(--typing-surface), transparent); }
-        .typing-words-container::after { bottom: 0; background: linear-gradient(0deg, var(--typing-surface), transparent); }
-
-        /* Hidden input */
-        .typing-hidden-input {
-          position: absolute;
-          opacity: 0;
-          pointer-events: none;
-          top: 0; left: 0;
-          width: 1px; height: 1px;
-        }
-
-        /* Restart hint */
-        .typing-hint {
-          text-align: center;
-          margin-top: 1rem;
-          font-size: 0.78rem;
-          color: var(--typing-muted);
-          font-family: 'Inter', sans-serif;
-        }
-        .typing-hint kbd {
-          display: inline-block;
-          padding: 0.15rem 0.4rem;
-          background: var(--typing-surface);
-          border: 1px solid var(--typing-border);
-          border-radius: 4px;
-          font-size: 0.72rem;
-        }
-
-        /* Result overlay */
-        .typing-result-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(26, 26, 46, 0.9);
-          backdrop-filter: blur(12px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-          animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-
-        .typing-result-box {
-          background: var(--typing-surface);
-          border: 1px solid var(--typing-border);
-          border-radius: 24px;
-          padding: 2.5rem;
-          width: min(480px, 90vw);
-          text-align: center;
-          box-shadow: 0 40px 80px rgba(0,0,0,0.5);
-        }
-
-        .typing-result-title {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: var(--typing-text);
-          margin: 0 0 1.5rem;
-          font-family: 'Inter', sans-serif;
-        }
-
-        .typing-result-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1rem;
-          margin-bottom: 1.5rem;
-        }
-
-        .typing-result-main {
-          background: var(--typing-bg);
-          border-radius: 16px;
-          padding: 1.25rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.25rem;
-        }
-
-        .typing-result-wpm {
-          font-size: 3rem;
-          font-weight: 800;
-          color: var(--typing-accent);
-          line-height: 1;
-        }
-        .typing-result-wpm-label {
-          font-size: 0.7rem;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: var(--typing-muted);
-          font-family: 'Inter', sans-serif;
-        }
-
-        .typing-result-details {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 0.75rem;
-          margin-bottom: 1.75rem;
-        }
-
-        .typing-result-detail {
-          background: var(--typing-bg);
-          border-radius: 12px;
-          padding: 0.75rem 1rem;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 0.85rem;
-          font-family: 'Inter', sans-serif;
-        }
-        .typing-result-detail span:first-child { color: var(--typing-muted); }
-        .typing-result-detail span:last-child { color: var(--typing-text); font-weight: 600; }
-
-        .typing-restart-btn {
-          width: 100%;
-          padding: 0.9rem;
-          background: var(--typing-accent);
-          color: white;
-          border: none;
-          border-radius: 12px;
-          font-size: 1rem;
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.2s;
-          font-family: 'Inter', sans-serif;
-          letter-spacing: 0.03em;
-        }
-        .typing-restart-btn:hover {
-          background: #c73652;
-          transform: translateY(-1px);
-          box-shadow: 0 8px 24px rgba(233,69,96,0.4);
-        }
-
-        /* Leaderboard / Tips */
-        .typing-tips {
-          width: 100%;
-          max-width: 800px;
-          margin-top: 2.5rem;
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 1rem;
-        }
-
-        .typing-tip-card {
-          background: var(--typing-surface);
-          border: 1px solid var(--typing-border);
-          border-radius: 14px;
-          padding: 1.25rem 1.5rem;
-          display: flex;
-          gap: 1rem;
-          align-items: flex-start;
-          font-family: 'Inter', sans-serif;
-        }
-
-        .typing-tip-icon {
-          font-size: 1.5rem;
-          flex-shrink: 0;
-          margin-top: 2px;
-        }
-
-        .typing-tip-card h3 {
-          font-size: 0.88rem;
-          font-weight: 600;
-          color: var(--typing-text);
-          margin: 0 0 0.3rem;
-        }
-        .typing-tip-card p {
-          font-size: 0.78rem;
-          color: var(--typing-muted);
-          margin: 0;
-          line-height: 1.5;
-        }
-
-        @media (max-width: 600px) {
-          .typing-words-container { padding: 1.25rem; height: 180px; }
-          .typing-char { font-size: 1.1rem; }
-          .typing-result-grid { grid-template-columns: 1fr; }
-          .typing-result-details { grid-template-columns: 1fr; }
-        }
-      `}</style>
-
-      {/* Hero */}
-      <div className="typing-hero">
-        <div className="typing-hero-badge">⌨️ Speed Test</div>
-        <h1>Typing Speed Test</h1>
-        <p>Measure your WPM, track accuracy, and improve your typing skills.</p>
+    <div className="min-h-screen bg-[#050505] text-white font-mono selection:bg-emerald-500/30 overflow-x-hidden mt-10 md:mt-0" onClick={() => inputRef.current?.focus()}>
+      <div className="fixed inset-0 pointer-events-none opacity-20">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/20 blur-[150px] rounded-full animate-pulse"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/20 blur-[150px] rounded-full animate-pulse"></div>
       </div>
 
-      {/* Mode Controls */}
-      <div className="typing-controls">
-        <div className="typing-mode-group">
-          {(["time", "words", "quote"] as TestMode[]).map((m) => (
-            <button
-              key={m}
-              className={`typing-mode-btn${mode === m ? " active" : ""}`}
-              onClick={() => { setMode(m); reset(); }}
-            >
-              {m === "time" ? "⏱ Time" : m === "words" ? "📝 Words" : "💬 Quote"}
-            </button>
-          ))}
+      <main className="relative z-10 w-full px-4 md:px-12 lg:px-24 py-6 md:py-10 max-w-7xl mx-auto">
+        
+        <div className="flex flex-col xl:flex-row items-center justify-between gap-6 md:gap-8 bg-white/5 backdrop-blur-2xl border border-white/10 p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] mb-8 md:mb-12 shadow-2xl">
+           <div className="flex items-center gap-4 md:gap-6">
+              <div className="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-2xl shadow-2xl shadow-emerald-500/20 rotate-6">
+                 <FiZap className="text-white" />
+              </div>
+              <div>
+                 <h1 className="text-lg md:text-2xl font-black tracking-tighter uppercase leading-none italic text-white leading-tight">Quantum <span className="text-emerald-500">Typing</span> Engine</h1>
+                 <p className="text-white/20 text-[7px] md:text-[9px] font-black tracking-[0.4em] uppercase mt-1">Neural Speed Test Protocol</p>
+              </div>
+           </div>
+
+           <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6">
+              <div className="flex bg-black/40 p-1 rounded-xl md:rounded-2xl border border-white/10 shadow-inner overflow-x-auto no-scrollbar max-w-full">
+                {(["time", "words", "quote"] as TestMode[]).map((m) => (
+                  <button
+                    key={m}
+                    className={`px-4 md:px-8 py-2 md:py-3 rounded-lg md:rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-[0.1em] md:tracking-[0.2em] transition-all whitespace-nowrap ${mode === m ? 'bg-emerald-500 text-white shadow-lg' : 'text-white/30 hover:text-white'}`}
+                    onClick={() => { setMode(m); reset(); }}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex gap-2">
+                 {mode === "time" && [60, 120, 180, 300].map((t) => (
+                   <button key={t} onClick={() => { setTimeDuration(t as TimeDuration); reset(); }} className={`px-3 md:px-5 py-2 md:py-3 rounded-lg md:rounded-xl text-[8px] md:text-[10px] font-black border transition-all ${timeDuration === t ? 'bg-blue-600 border-blue-500 text-white' : 'bg-white/5 border-white/10 text-white/30 hover:border-white/40'}`}>
+                     {t/60}M
+                   </button>
+                 ))}
+                 {mode === "words" && [25, 50, 100].map((w) => (
+                   <button key={w} onClick={() => { setWordCount(w as WordCount); reset(); }} className={`px-3 md:px-5 py-2 md:py-3 rounded-lg md:rounded-xl text-[8px] md:text-[10px] font-black border transition-all ${wordCount === w ? 'bg-blue-600 border-blue-500 text-white' : 'bg-white/5 border-white/10 text-white/30 hover:border-white/40'}`}>
+                     {w}
+                   </button>
+                 ))}
+              </div>
+
+              <button 
+                onClick={reset}
+                className="w-10 h-10 md:w-14 md:h-14 bg-red-500 hover:bg-red-600 rounded-xl md:rounded-2xl flex items-center justify-center text-lg transition-all hover:scale-110 active:scale-90 shadow-lg shadow-red-500/20"
+                title="RESTART SYSTEM (TAB)"
+              >
+                 <FiRotateCcw />
+              </button>
+           </div>
         </div>
 
-        <div className="typing-divider" />
-
-        {mode === "time" && (
-          <>
-            {([60, 120, 180, 300] as TimeDuration[]).map((t) => (
-              <button
-                key={t}
-                className={`typing-opt-btn${timeDuration === t ? " active" : ""}`}
-                onClick={() => { setTimeDuration(t); reset(); }}
-              >{t / 60}m</button>
-            ))}
-          </>
-        )}
-
-        {mode === "words" && (
-          <>
-            {([10, 25, 50, 100] as WordCount[]).map((w) => (
-              <button
-                key={w}
-                className={`typing-opt-btn${wordCount === w ? " active" : ""}`}
-                onClick={() => { setWordCount(w); reset(); }}
-              >{w}</button>
-            ))}
-          </>
-        )}
-
-        {mode === "quote" && (
-          <button className="typing-opt-btn" onClick={reset}>New Quote</button>
-        )}
-
-        <div className="typing-divider" />
-        <button className="typing-opt-btn" onClick={reset} title="Restart (Tab)">↺ Restart</button>
-      </div>
-
-      {/* Stats Bar */}
-      <div className="typing-stats-bar">
-        <div className={`typing-timer${mode === "time" && timeLeft <= 5 && started ? " warning" : ""}`}>
-          {displayTime}
-        </div>
-        {started && (
-          <>
-            <StatCard label="WPM" value={Math.round(
-              (words.slice(0, currentWordIdx).reduce((a, w) =>
-                a + w.chars.filter((c) => c.status === "correct").length, 0) / 5) /
-              Math.max((mode === "time" ? timeDuration - timeLeft : elapsed) / 60, 1/60)
-            )} />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
+            <StatCard label="Time Remaining" value={displayTime} icon={<FiClock />} color="blue" />
+            <StatCard label="WPM Flow" value={Math.round((words.slice(0, currentWordIdx).reduce((a, w) => a + w.chars.filter((c) => c.status === "correct").length, 0) / 5) / Math.max((mode === "time" ? timeDuration - timeLeft : elapsed) / 60, 1/60))} icon={<FiZap />} color="emerald" />
             <StatCard label="Accuracy" value={(() => {
               let correct = 0, total = 0;
-              words.slice(0, currentWordIdx).forEach((w) =>
-                w.chars.forEach((c) => {
-                  if (c.status === "correct" || c.status === "incorrect") {
-                    if (c.status === "correct") correct++;
-                    total++;
-                  }
-                })
-              );
+              words.slice(0, currentWordIdx).forEach((w) => w.chars.forEach((c) => { if (c.status === "correct" || c.status === "incorrect") { if (c.status === "correct") correct++; total++; } }));
               return total === 0 ? "100%" : `${Math.round((correct / total) * 100)}%`;
-            })()} />
-            <StatCard label="Words" value={`${currentWordIdx}/${words.length}`} />
-          </>
-        )}
-      </div>
-
-      {/* Progress */}
-      <div className="typing-progress-track" style={{ width: "100%", maxWidth: 800 }}>
-        <div className="typing-progress-fill" style={{ width: `${Math.min(progress, 100)}%` }} />
-      </div>
-
-      {/* Word Display */}
-      <div className="typing-words-wrapper">
-        <div className="typing-words-container" onClick={() => inputRef.current?.focus()}>
-          {/* Tracks scroll to active word */}
-          <div className="typing-words-inner" ref={wordsContainerRef}>
-            {words.map((word, wi) => {
-              const isActive = wi === currentWordIdx;
-              const isDone = wi < currentWordIdx;
-              let typedLen = isActive ? currentInput.length : word.typed.length;
-
-              // Determine cursor position character index
-              let cursorIdx = isActive ? currentInput.length : (isDone ? -1 : -1);
-
-              return (
-                <span
-                  key={wi}
-                  ref={isActive ? activeWordRef : undefined}
-                  className={`typing-word${isActive ? " active" : ""}`}
-                >
-                  {word.chars.map((c, ci) => {
-                    const isCursor = isActive && ci === cursorIdx;
-                    return (
-                      <span
-                        key={ci}
-                        className={[
-                          "typing-char",
-                          c.status !== "pending" ? c.status : "",
-                          isCursor ? "cursor" : "",
-                        ].filter(Boolean).join(" ")}
-                      >
-                        {c.char}
-                      </span>
-                    );
-                  })}
-                  {/* Cursor at end of word if beyond all chars */}
-                  {isActive && cursorIdx >= word.chars.length && (
-                    <span className="typing-char cursor"> </span>
-                  )}
-                </span>
-              );
-            })}
-          </div>
+            })()} icon={<FiTarget />} color="blue" />
+            <StatCard label="Neural Load" value={`${currentWordIdx}/${words.length}`} icon={<FiWifi />} color="emerald" />
         </div>
 
-        {/* Hidden real input */}
-        <input
-          ref={inputRef}
-          className="typing-hidden-input"
-          type="text"
-          value={currentInput}
-          onChange={(e) => handleInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-          spellCheck={false}
-          disabled={finished}
-          aria-label="Typing input"
-        />
-      </div>
+        <div className="w-full h-1 bg-white/5 rounded-full mb-8 md:mb-12 overflow-hidden">
+           <div className="h-full bg-gradient-to-r from-emerald-500 to-blue-500 transition-all duration-500 shadow-[0_0_15px_#10b981]" style={{ width: `${Math.min(progress, 100)}%` }}></div>
+        </div>
 
-      {/* Hint */}
-      <p className="typing-hint">
-        Press <kbd>Tab</kbd> to restart &nbsp;·&nbsp; <kbd>Space</kbd> to advance word
-      </p>
+        <div className="relative group bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] md:rounded-[4rem] p-6 md:p-12 lg:p-20 shadow-2xl min-h-[300px] md:min-h-[450px] flex flex-col justify-center overflow-hidden">
+           <div className="absolute top-0 right-0 p-6 md:p-12 pointer-events-none opacity-5 group-hover:opacity-10 transition-opacity">
+              <FiType className="text-[150px] md:text-[300px]" />
+           </div>
 
-      {/* Results */}
+           <div className="flex flex-wrap gap-x-4 md:gap-x-8 gap-y-3 md:gap-y-6 relative z-20" ref={wordsContainerRef}>
+              {words.map((word, wi) => {
+                const isActive = wi === currentWordIdx;
+                return (
+                  <span key={wi} ref={isActive ? activeWordRef : undefined} className={`relative flex items-center transition-all duration-300 ${isActive ? 'bg-emerald-500/10 px-3 md:px-4 py-1 md:py-2 rounded-xl md:rounded-2xl scale-110 shadow-2xl shadow-emerald-500/20' : 'opacity-40'}`}>
+                    {word.chars.map((c, ci) => {
+                      const isCursor = isActive && ci === currentInput.length;
+                      return (
+                        <span key={ci} className={`text-lg md:text-2xl lg:text-3xl font-black relative transition-colors duration-200 ${c.status === 'correct' ? 'text-emerald-400' : c.status === 'incorrect' ? 'text-red-500 underline underline-offset-4 md:underline-offset-8' : c.status === 'extra' ? 'text-blue-400' : 'text-white'}`}>
+                           {isCursor && <span className="absolute -left-0.5 md:-left-1 top-[10%] w-[2px] md:w-[3px] h-[80%] bg-emerald-500 animate-pulse rounded-full shadow-[0_0_10px_#10b981]"></span>}
+                           {c.char}
+                        </span>
+                      );
+                    })}
+                    {isActive && currentInput.length >= word.chars.length && (
+                      <span className="text-lg md:text-2xl lg:text-3xl font-black relative">
+                         <span className="absolute -left-0.5 md:-left-1 top-[10%] w-[2px] md:w-[3px] h-[80%] bg-emerald-500 animate-pulse rounded-full shadow-[0_0_10px_#10b981]"></span>
+                         &nbsp;
+                      </span>
+                    )}
+                  </span>
+                );
+              })}
+           </div>
+
+           <input
+             ref={inputRef}
+             className="absolute inset-0 opacity-0 cursor-default"
+             type="text"
+             value={currentInput}
+             onChange={(e) => handleInput(e.target.value)}
+             onKeyDown={handleKeyDown}
+             autoComplete="off"
+             spellCheck={false}
+             disabled={finished}
+             aria-label="Quantum Input"
+           />
+        </div>
+
+        <div className="mt-8 md:mt-12 flex flex-col items-center gap-4 md:gap-6">
+           <div className="flex gap-6 md:gap-10">
+              <div className="flex items-center gap-2 md:gap-3 text-[8px] md:text-[10px] font-black text-white/20 uppercase tracking-[0.2em] md:tracking-[0.3em] text-center md:text-left">
+                 <kbd className="bg-white/10 px-2 md:px-3 py-1 rounded-lg border border-white/10 text-white/40">TAB</kbd> RESET
+              </div>
+              <div className="flex items-center gap-2 md:gap-3 text-[8px] md:text-[10px] font-black text-white/20 uppercase tracking-[0.2em] md:tracking-[0.3em] text-center md:text-left">
+                 <kbd className="bg-white/10 px-2 md:px-3 py-1 rounded-lg border border-white/10 text-white/40">SPACE</kbd> NEXT
+              </div>
+           </div>
+        </div>
+
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 mt-16 md:mt-32 pt-12 md:pt-20 border-t border-white/5">
+          <div className="space-y-6 md:space-y-8">
+            <h2 className="text-4xl md:text-6xl font-black tracking-tighter max-w-xl leading-none italic uppercase">
+              The <span className="text-[#10b981]">Next Generation</span> of Mastery.
+            </h2>
+            <div className="p-8 md:p-12 bg-white shadow-2xl rounded-[2.5rem] md:rounded-[4rem] border border-gray-100 text-black">
+               <h4 className="text-2xl md:text-3xl font-black mb-4 md:mb-6 tracking-tight uppercase">Scientific Analytics</h4>
+               <p className="text-gray-500 leading-relaxed text-base md:text-lg mb-8 md:mb-10 font-medium">
+                  Measure your speed with professional accuracy. Zero Latency engine provides an immersive high-fidelity experience.
+               </p>
+               <div className="grid grid-cols-2 gap-8 md:gap-12">
+                  <div className="space-y-2 md:space-y-3">
+                     <div className="text-emerald-500 font-black text-3xl md:text-5xl tracking-tighter">HD 4K</div>
+                     <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-gray-400">High Fidelity</div>
+                  </div>
+                  <div className="space-y-2 md:space-y-3">
+                     <div className="text-blue-600 font-black text-3xl md:text-5xl tracking-tighter">AES</div>
+                     <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-gray-400">Secure Processing</div>
+                  </div>
+               </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-6 md:gap-8 justify-center">
+            {[
+              { title: "Dynamic Flow", icon: <FiActivity />, color: "emerald", desc: "Engine adapts to your typing rhythm for maximum productivity." },
+              { title: "Quantum Feedback", icon: <FiZap />, color: "blue", desc: "Sub-1ms visual response time loop." },
+              { title: "Certification", icon: <FiAward />, color: "emerald", desc: "Standardized WPM scoring recognized by elite teams." }
+            ].map((item, i) => (
+              <div key={i} className={`group bg-white/5 p-8 md:p-12 rounded-[2.5rem] md:rounded-[3.5rem] border border-white/10 hover:border-emerald-500/30 transition-all duration-500 shadow-xl`}>
+                 <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4 flex items-center gap-4 md:gap-6">
+                    <span className="w-10 h-10 md:w-14 md:h-14 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center text-emerald-500 shadow-lg group-hover:bg-emerald-500 group-hover:text-white transition-all">{item.icon}</span>
+                    <span className="uppercase tracking-tighter italic">{item.title}</span>
+                 </h3>
+                 <p className="text-white/30 leading-relaxed font-bold text-sm md:text-base">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+      </main>
+
       {finished && result && (
         <ResultScreen result={result} onRestart={reset} />
       )}
 
-      {/* Tips */}
-      <div className="typing-tips">
-        {[
-          { icon: "🎯", title: "Focus on Accuracy", desc: "Accuracy is more important than speed. Errors slow you down." },
-          { icon: "🧘", title: "Stay Relaxed", desc: "Keep your fingers relaxed and hover naturally over home row keys." },
-          { icon: "👀", title: "Look Ahead", desc: "Read 2–3 words ahead of where you're typing to maintain rhythm." },
-          { icon: "⚡", title: "Practice Daily", desc: "Even 10 minutes a day of focused practice improves speed significantly." },
-        ].map((tip, i) => (
-          <div key={i} className="typing-tip-card">
-            <span className="typing-tip-icon">{tip.icon}</span>
-            <div>
-              <h3>{tip.title}</h3>
-              <p>{tip.desc}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      <footer className="p-12 md:p-16 text-center border-t border-white/5 bg-black mt-12 md:mt-20">
+         <p className="text-[8px] md:text-[10px] font-black text-emerald-500/30 uppercase tracking-[0.5em] md:tracking-[1em]">Engineered for Absolute Performance • 2026</p>
+      </footer>
     </div>
   );
 }
