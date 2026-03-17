@@ -10,6 +10,8 @@ import {
 } from './Templates'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-hot-toast'
+import { useEffect } from 'react'
+import axiosHelper from '@/utils/axiosHelper'
 
 const initialData: ResumeData = {
     personalInfo: {
@@ -127,6 +129,58 @@ const ResumeBuilder = () => {
     const contentRef = useRef<HTMLDivElement>(null)
     const [selectedCategory, setSelectedCategory] = useState<'All' | 'Classic' | 'Modern' | 'Creative' | 'Specialized'>('All');
     const handlePrint = useReactToPrint({ contentRef });
+
+    // Load data from DB if user is logged in
+    useEffect(() => {
+        const userInfo = localStorage.getItem('userInfo');
+        if (userInfo) {
+            const fetchResumeData = async () => {
+                const loadingToast = toast.loading('Synchronizing with account...');
+                try {
+                    const response: any = await axiosHelper.get('/resume');
+                    if (response) {
+                        setData(response);
+                        toast.success('Your resume data has been restored', { id: loadingToast });
+                    }
+                } catch (error: any) {
+                    if (error.response?.status === 404) {
+                        toast.dismiss(loadingToast);
+                    } else {
+                        console.error('Error fetching resume data:', error);
+                        toast.error('Could not sync with your account', { id: loadingToast });
+                    }
+                }
+            };
+            fetchResumeData();
+        } else {
+            // Check for locally saved data if guest? 
+            // For now, just stick to DB as requested.
+        }
+    }, []);
+
+    const saveResumeData = async (silent = false) => {
+        const userInfo = localStorage.getItem('userInfo');
+        if (!userInfo) {
+            if (!silent) toast.error('Please login to save your progress');
+            return false;
+        }
+
+        const loadingToast = silent ? null : toast.loading('Saving to account...');
+        try {
+            await axiosHelper.post('/resume', data);
+            if (!silent && loadingToast) toast.success('Progress saved to your account', { id: loadingToast });
+            return true;
+        } catch (error) {
+            console.error('Error saving resume data:', error);
+            if (!silent && loadingToast) toast.error('Failed to save to account', { id: loadingToast });
+            return false;
+        }
+    }
+
+    const onExportPDF = async () => {
+        await saveResumeData(true); // Silent save before exporting
+        handlePrint();
+    }
 
     const categories = {
         Classic: ['modern', 'minimal', 'professional', 'executive', 'chrono', 'minimalist_pro', 'board'],
@@ -264,19 +318,19 @@ const ResumeBuilder = () => {
     };
 
     return (
-        <section className="min-h-screen bg-[#f0f9ff] py-8 px-4 md:px-8 selection:bg-primary/20">
-            <div className="max-w-[1600px] mx-auto">
+        <section className="min-h-screen bg-slate-50 dark:bg-slate-950 py-4 px-2 md:px-6 selection:bg-primary/20 overflow-x-hidden">
+            <div className="max-w-[1920px] mx-auto">
                 {/* MODERN TOP BAR */}
-                <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-xl shadow-blue-900/5 border border-white p-4 mb-8 flex flex-wrap items-center justify-between gap-6 sticky top-6 z-40 transition-all duration-300">
+                <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-3xl shadow-2xl shadow-slate-200/50 dark:shadow-none border border-white/50 dark:border-slate-800 p-4 mb-6 flex flex-wrap items-center justify-between gap-6 sticky top-4 z-40 transition-all duration-300">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/20 rotate-3 hover:rotate-0 transition-transform duration-300">
+                        <div className="w-12 h-12 bg-gradient-to-br from-primary via-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 rotate-3 hover:rotate-0 transition-all duration-500 group-hover:scale-110">
                             <Icon icon="solar:document-bold-duotone" width="28" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-black text-midnight_text dark:text-white leading-none tracking-tight">ResumePro</h2>
-                            <p className="text-[10px] text-primary dark:text-primary font-black uppercase tracking-[0.2em] mt-1.5 flex items-center gap-1.5">
-                                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></span>
-                                AI-Powered Editor v2.5
+                            <h2 className="text-2xl font-black text-slate-900 dark:text-white leading-none tracking-tight">Resume<span className="text-primary">Canvas</span></h2>
+                            <p className="text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.25em] mt-1.5 flex items-center gap-1.5">
+                                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-ping"></span>
+                                Professional Builder v2.7
                             </p>
                         </div>
                     </div>
@@ -290,8 +344,16 @@ const ResumeBuilder = () => {
                         <div className="h-8 w-px bg-slate-200 dark:bg-white/10 mx-2"></div>
 
                         <button
-                            onClick={() => handlePrint()}
-                            className="bg-primary hover:bg-blue-600 text-white font-bold px-8 py-3 rounded-2xl shadow-xl shadow-primary/25 flex items-center gap-3 transform active:scale-95 transition-all duration-300 group"
+                            onClick={() => saveResumeData()}
+                            className="hidden sm:flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-black text-slate-600 dark:text-slate-300 hover:text-primary hover:bg-primary/5 dark:hover:bg-primary/10 transition-all duration-300 border border-slate-200 dark:border-slate-800"
+                        >
+                            <Icon icon="solar:cloud-upload-bold" width="20" className="opacity-70 group-hover:scale-110" />
+                            <span>Save Progress</span>
+                        </button>
+
+                        <button
+                            onClick={onExportPDF}
+                            className="bg-primary hover:bg-blue-600 text-white font-black px-8 py-3 rounded-2xl shadow-xl shadow-primary/25 flex items-center gap-3 transform active:scale-95 transition-all duration-300 group"
                         >
                             <Icon icon="solar:download-minimalistic-bold" width="20" className="group-hover:translate-y-0.5 transition-transform" />
                             <span>Export PDF</span>
@@ -300,22 +362,24 @@ const ResumeBuilder = () => {
                 </div>
 
                 {/* TEMPLATE GALLERY - COMPACT & ELEGANT */}
-                <div className="bg-white/60 backdrop-blur-sm rounded-[2rem] border border-white p-8 mb-10 group/gallery animate-fadeIn">
+                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-md rounded-[2.5rem] border border-white dark:border-slate-800 p-8 mb-8 group/gallery animate-fadeIn">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8">
                         <div className="space-y-1">
-                            <h3 className="text-2xl font-black text-midnight_text flex items-center gap-3">
-                                <Icon icon="solar:widget-bold-duotone" className="text-primary text-3xl" />
-                                Premium Templates
+                            <h3 className="text-3xl font-black text-slate-800 dark:text-white flex items-center gap-4">
+                                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                                    <Icon icon="solar:widget-bold-duotone" className="text-primary text-2xl" />
+                                </div>
+                                Template Library
                             </h3>
-                            <p className="text-sm text-slate-500 font-medium pl-10 italic">Select a blueprint that resonates with your professional identity</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium pl-14 italic max-w-xl">Curated modern designs optimized for ATS and professional visual impact</p>
                         </div>
 
-                        <div className="flex flex-wrap gap-1.5 p-1.5 bg-slate-100 rounded-2xl w-fit">
+                        <div className="flex flex-wrap gap-2 p-2 bg-slate-200/50 dark:bg-slate-800/50 rounded-2xl w-fit backdrop-blur-sm shadow-inner">
                             {['All', 'Classic', 'Modern', 'Creative', 'Specialized'].map(cat => (
                                 <button
                                     key={cat}
                                     onClick={() => setSelectedCategory(cat as any)}
-                                    className={`px-6 py-2.5 rounded-xl text-xs font-black transition-all duration-300 ${selectedCategory === cat ? 'bg-white dark:bg-primary text-primary dark:text-white shadow-md' : 'text-slate-500 hover:text-midnight_text dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}`}
+                                    className={`px-6 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all duration-300 ${selectedCategory === cat ? 'bg-white dark:bg-primary text-primary dark:text-white shadow-lg' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'}`}
                                 >
                                     {cat}
                                 </button>
@@ -355,10 +419,10 @@ const ResumeBuilder = () => {
 
                 <div className="grid grid-cols-12 gap-8 items-start">
                     {/* LEFT PANEL: SMART FORM */}
-                    <div className="col-span-12 lg:col-span-5 2xl:col-span-4 space-y-6 lg:sticky lg:top-32">
-                        <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-900/5 border border-white overflow-hidden">
-                            {/* NAVIGATION TABS - VERTICAL STYLE OR RICH HORIZONTAL */}
-                            <div className="flex bg-slate-50/50 border-b border-slate-100 overflow-x-auto no-scrollbar scroll-smooth p-2 gap-1">
+                    <div className="col-span-12 lg:col-span-6 2xl:col-span-6 space-y-6 lg:sticky lg:top-28">
+                        <div className="bg-white dark:bg-slate-950 rounded-[2.5rem] shadow-2xl shadow-slate-200 dark:shadow-black/50 border border-slate-100 dark:border-slate-800 overflow-hidden">
+                            {/* NAVIGATION TABS - SOLID BACKGROUND */}
+                            <div className="flex bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 overflow-x-auto no-scrollbar scroll-smooth p-2 gap-1">
                                 {Object.keys(tabIcons).map((tab) => (
                                     <button
                                         key={tab}
@@ -371,41 +435,55 @@ const ResumeBuilder = () => {
                                 ))}
                             </div>
 
-                            <div className="p-10 max-h-[calc(100vh-350px)] overflow-y-auto custom-scrollbar-premium">
+                            <div className="p-10 h-[85vh] overflow-y-auto custom-scrollbar-premium bg-white dark:bg-slate-950">
                                 {/* Personal Info */}
                                 {activeTab === 'personal' && (
-                                    <div className="space-y-6 animate-fadeIn">
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-2 gap-5">
                                             <div className="col-span-2">
-                                                <label className="text-sm font-black text-grey uppercase mb-2 block">Full Name</label>
+                                                <div className="flex items-center gap-2 mb-3">
+                                                    <div className="w-1.5 h-6 bg-primary rounded-full"></div>
+                                                    <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Basic Information</h4>
+                                                </div>
+                                            </div>
+                                            <div className="col-span-2">
+                                                <label className="text-xs font-black text-slate-500 uppercase mb-2 block ml-1">Full Identity</label>
                                                 <input name="fullName" value={data.personalInfo.fullName} onChange={handlePersonalInfoChange} className="resume-input" placeholder="e.g. Hari Mishra" />
                                             </div>
                                             <div className="col-span-2">
-                                                <label className="text-sm font-black text-grey uppercase mb-2 block">Job Title</label>
+                                                <label className="text-xs font-black text-slate-500 uppercase mb-2 block ml-1">Professional Title</label>
                                                 <input name="jobTitle" value={data.personalInfo.jobTitle} onChange={handlePersonalInfoChange} className="resume-input" placeholder="e.g. Full Stack Developer" />
                                             </div>
-                                            <div>
-                                                <label className="text-sm font-black text-grey uppercase mb-2 block">Email</label>
+                                            <div className="col-span-2 sm:col-span-1">
+                                                <label className="text-xs font-black text-slate-500 uppercase mb-2 block ml-1">Email Address</label>
                                                 <input name="email" value={data.personalInfo.email} onChange={handlePersonalInfoChange} className="resume-input" placeholder="email@example.com" />
                                             </div>
-                                            <div>
-                                                <label className="text-sm font-black text-grey uppercase mb-2 block">Phone</label>
+                                            <div className="col-span-2 sm:col-span-1">
+                                                <label className="text-xs font-black text-slate-500 uppercase mb-2 block ml-1">Contact Number</label>
                                                 <input name="phone" value={data.personalInfo.phone} onChange={handlePersonalInfoChange} className="resume-input" placeholder="+91 ..." />
                                             </div>
                                             <div className="col-span-2">
-                                                <label className="text-sm font-black text-grey uppercase mb-2 block">Address</label>
+                                                <div className="flex items-center gap-2 mb-3 mt-4">
+                                                    <div className="w-1.5 h-6 bg-primary/40 rounded-full"></div>
+                                                    <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Location & Presence</h4>
+                                                </div>
+                                            </div>
+                                            <div className="col-span-2">
+                                                <label className="text-xs font-black text-slate-500 uppercase mb-2 block ml-1">Physical Address</label>
                                                 <input name="address" value={data.personalInfo.address} onChange={handlePersonalInfoChange} className="resume-input" placeholder="City, Country" />
                                             </div>
                                             <div className="col-span-2">
-                                                <label className="text-sm font-black text-grey uppercase mb-2 block">Website</label>
+                                                <label className="text-xs font-black text-slate-500 uppercase mb-2 block ml-1">Digital Presence (URL)</label>
                                                 <input name="website" value={data.personalInfo.website} onChange={handlePersonalInfoChange} className="resume-input" placeholder="portfolio.com" />
                                             </div>
                                             <div className="col-span-2">
-                                                <label className="text-sm font-black text-grey uppercase mb-2 block">Professional Summary</label>
-                                                <textarea name="summary" value={data.personalInfo.summary} onChange={handlePersonalInfoChange} rows={4} className="resume-input" placeholder="Briefly describe your career..." />
+                                                <div className="flex items-center gap-2 mb-3 mt-4">
+                                                    <div className="w-1.5 h-6 bg-indigo-500 rounded-full"></div>
+                                                    <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-400">Professional Summary</h4>
+                                                </div>
+                                                <label className="text-xs font-black text-slate-500 uppercase mb-2 block ml-1">About Your Career</label>
+                                                <textarea name="summary" value={data.personalInfo.summary} onChange={handlePersonalInfoChange} rows={5} className="resume-input leading-relaxed" placeholder="Briefly describe your career, key achievements and value proposition..." />
                                             </div>
                                         </div>
-                                    </div>
                                 )}
 
                                 {/* Experience */}
@@ -575,9 +653,9 @@ const ResumeBuilder = () => {
                     </div>
 
                     {/* RIGHT PANEL: LIVE PRINTER-READY PREVIEW */}
-                    <div className="col-span-12 lg:col-span-7 2xl:col-span-8">
-                        <div className="lg:sticky lg:top-32 group/preview">
-                            <div className="bg-slate-900/5 dark:bg-black/40 rounded-[3rem] p-4 md:p-10 border border-slate-200/50 dark:border-white/5 backdrop-blur-3xl shadow-3xl">
+                    <div className="col-span-12 lg:col-span-6 2xl:col-span-6">
+                        <div className="lg:sticky lg:top-28 group/preview">
+                            <div className="bg-slate-200/50 dark:bg-slate-900/50 rounded-[3rem] p-4 md:p-8 border border-white dark:border-slate-800 backdrop-blur-3xl shadow-inner">
                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 px-4">
                                     <div className="flex items-center gap-4">
                                         <div className="flex items-center gap-2">
@@ -636,9 +714,9 @@ const ResumeBuilder = () => {
                                     </div>
                                 </div>
 
-                                <div className="max-h-[85vh] overflow-auto custom-scrollbar-premium rounded-3xl group-hover/preview:shadow-2xl transition-all duration-500">
-                                    <div className="flex justify-center p-8 bg-slate-200/50 dark:bg-black/30 rounded-3xl min-w-fit">
-                                        <div className="resume-preview-wrapper scale-[0.35] sm:scale-[0.5] md:scale-[0.65] lg:scale-[0.75] xl:scale-[0.8] 2xl:scale-[0.9] origin-top transition-all duration-700 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] hover:shadow-primary/20 bg-white">
+                                <div className="h-[85vh] overflow-auto custom-scrollbar-premium rounded-[2rem] group-hover/preview:shadow-2xl transition-all duration-500 bg-slate-100 dark:bg-slate-950/40 p-1">
+                                    <div className="flex justify-center p-8 min-w-fit">
+                                        <div className="resume-preview-wrapper scale-[0.4] sm:scale-[0.55] md:scale-[0.7] lg:scale-[0.85] xl:scale-[0.95] 2xl:scale-[1] origin-top transition-all duration-700 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.4)] hover:shadow-primary/30 bg-white">
                                             <div ref={resumeRef} className="bg-white overflow-hidden" style={{ fontFamily: `${data.customization?.fontFamily || 'Inter'}, sans-serif` }}>
                                                 {renderTemplate()}
                                             </div>
@@ -687,6 +765,13 @@ const ResumeBuilder = () => {
             <style jsx global>{`
                 #resume-content {
                     --primary: ${data.customization?.primaryColor || '#3b82f6'} !important;
+                    --base-font-size: 14px;
+                    --section-spacing: 28px;
+                    --summary-spacing: 24px;
+                    --experience-spacing: 24px;
+                    --projects-spacing: 24px;
+                    --education-spacing: 24px;
+                    --skills-spacing: 24px;
                     font-family: ${data.customization?.fontFamily || 'Inter'}, sans-serif !important;
                 }
                 #resume-content .text-primary { color: var(--primary) !important; }
@@ -753,28 +838,30 @@ const ResumeBuilder = () => {
                     width: 100%;
                     padding: 1rem 1.75rem;
                     border-radius: 1.5rem;
-                    border: 2.5px solid #e2e8f0;
+                    border: 2px solid #e2e8f0;
                     background-color: #ffffff;
                     color: #0f172a;
                     font-size: 0.9375rem;
                     font-weight: 600;
                     outline: none;
-                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
                 }
                 .dark .resume-input {
-                    background-color: #ffffff;
-                    border-color: #e2e8f0;
-                    color: #0f172a;
+                    background-color: #0f172a;
+                    border-color: #1e293b;
+                    color: #f8fafc;
                 }
                 .resume-input:focus {
                     background-color: white;
-                    border-color: var(--color-primary);
-                    box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.15);
+                    border-color: #3b82f6;
+                    box-shadow: 0 15px 30px -10px rgba(59, 130, 246, 0.2);
                     transform: translateY(-2px);
                 }
                 .dark .resume-input:focus {
-                    background-color: white;
+                    background-color: #1e293b;
+                    border-color: #3b82f6;
+                    box-shadow: 0 15px 30px -10px rgba(59, 130, 246, 0.4);
                 }
                 .resume-input::placeholder {
                     color: #94a3b8;
@@ -783,7 +870,7 @@ const ResumeBuilder = () => {
                     width: 100%;
                     background: transparent;
                     border: none;
-                    border-bottom: 2.5px solid #e2e8f0;
+                    border-bottom: 2px solid #e2e8f0;
                     padding: 0.75rem 0;
                     outline: none;
                     transition: all 0.3s;
@@ -791,12 +878,12 @@ const ResumeBuilder = () => {
                     font-weight: 700;
                 }
                 .dark .resume-input-small {
-                    border-bottom-color: #e2e8f0;
-                    color: #0f172a;
+                    border-bottom-color: #1e293b;
+                    color: #f8fafc;
                 }
                 .resume-input-small:focus {
-                    border-bottom-color: var(--primary);
-                    padding-left: 0.5rem;
+                    border-bottom-color: #3b82f6;
+                    padding-left: 0.75rem;
                 }
                 .resume-preview-wrapper {
                     width: 794px;
@@ -804,9 +891,10 @@ const ResumeBuilder = () => {
                     height: auto;
                     flex-shrink: 0;
                     background: white;
+                    border-radius: 4px;
                 }
                 .custom-scrollbar-premium::-webkit-scrollbar {
-                    width: 6px;
+                    width: 8px;
                 }
                 .custom-scrollbar-premium::-webkit-scrollbar-track {
                     background: transparent;
@@ -814,9 +902,12 @@ const ResumeBuilder = () => {
                 .custom-scrollbar-premium::-webkit-scrollbar-thumb {
                     background: #cbd5e1;
                     border-radius: 20px;
+                    border: 2px solid transparent;
+                    background-clip: content-box;
                 }
                 .dark .custom-scrollbar-premium::-webkit-scrollbar-thumb {
-                    background: #334155;
+                    background: #475569;
+                    background-clip: content-box;
                 }
                 @keyframes bounce-subtle {
                     0%, 100% { transform: translateY(0); }

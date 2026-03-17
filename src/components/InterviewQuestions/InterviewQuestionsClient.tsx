@@ -21,6 +21,7 @@ export default function InterviewQuestionsClient() {
     const [loading, setLoading] = useState(true);
     const [activeCategory, setActiveCategory] = useState('All');
     const [activeType, setActiveType] = useState('All');
+    const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
     const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
     const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
     const [searchQuery, setSearchQuery] = useState('');
@@ -33,8 +34,23 @@ export default function InterviewQuestionsClient() {
         setLoading(true);
         try {
             const cat = activeCategory === 'All' ? '' : activeCategory;
-            const res = await getQuestions(cat);
-            setQuestions(res.data.data || res.data || []);
+            const res: any = await getQuestions(cat);
+            console.log('Fetched res:', res);
+
+            // Safer data extraction
+            const fetchedQuestions = Array.isArray(res) ? res : (res.data || res.data?.data || []);
+            console.log('Final questions:', fetchedQuestions);
+            setQuestions(fetchedQuestions);
+
+            // Automatically select first question if none selected or if switching filters
+            if (fetchedQuestions.length > 0) {
+                const currentStillExists = fetchedQuestions.some((q: any) => q._id === selectedQuestionId);
+                if (!selectedQuestionId || !currentStillExists) {
+                    setSelectedQuestionId(fetchedQuestions[0]._id);
+                }
+            } else {
+                setSelectedQuestionId(null);
+            }
         } catch (err) {
             console.error("Failed to fetch questions", err);
         } finally {
@@ -67,80 +83,72 @@ export default function InterviewQuestionsClient() {
         { href: '/interview-questions', text: 'Interview Q&A' },
     ];
 
+    const selectedQuestion = questions.find(q => q._id === selectedQuestionId);
+    console.log('Rendering Questions Layout - Count:', questions.length, 'Selected:', selectedQuestionId);
+
     return (
-        <div className="dark:bg-[#0b0c10] min-h-screen">
-            <HeroSub
+        <div className="bg-slate-50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 transition-colors duration-500 mt-10 md:mt-0">
+            {/* <HeroSub
                 title="Interview Questions"
                 description="Comprehensive list of technical interview questions categorized for your preparation. Master your next interview!"
                 breadcrumbLinks={breadcrumbLinks}
-            />
+            /> */}
 
-            <section className="py-32 bg-[#f4f7fe] selection:bg-primary/10 min-h-screen">
-                <div className="container mx-auto max-w-7xl px-4">
-                    {/* ADVANCED FLOATING CONTROL HUB */}
-                    <div className="flex justify-between items-center mb-10 px-6">
-                        <PageTracker />
-                        <div className="text-[10px] uppercase font-black tracking-[0.3em] text-slate-400">Preparation Hub</div>
-                    </div>
-                    <div className="relative z-30 mb-20 animate-fadeIn">
-                        <div className="bg-white/80 backdrop-blur-3xl rounded-[3rem] border-2 border-white p-5 shadow-2xl shadow-blue-900/10 flex flex-col xl:flex-row items-center gap-6">
+            <section className="py-20 md:py-32 selection:bg-primary/10">
+                <div className="container mx-auto max-w-[1800px] px-4 md:px-8">
+
+                    <div className="relative z-30 mb-12 animate-fadeIn">
+                        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-3xl rounded-[3rem] border border-white/50 dark:border-slate-800 p-4 md:p-6 shadow-2xl shadow-blue-900/5 flex flex-col xl:flex-row items-center gap-6">
                             {/* Search Engine UI */}
-                            <div className="w-full xl:w-[450px] relative group">
-                                <div className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center text-primary group-focus-within:bg-primary group-focus-within:text-white transition-all duration-500">
-                                    <Icon icon="solar:magnifer-bold-duotone" width="24" />
+                            <div className="w-full xl:w-[400px] relative group">
+                                <div className="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary group-focus-within:bg-primary group-focus-within:text-white transition-all duration-500">
+                                    <Icon icon="solar:magnifer-bold-duotone" width="20" />
                                 </div>
                                 <input
                                     type="text"
-                                    placeholder="Search technical concepts..."
+                                    placeholder="Search concepts..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full bg-slate-50/50 border border-slate-100 py-5.5 pl-22 pr-8 rounded-[2rem] font-black text-sm outline-none focus:bg-white focus:border-primary/40 focus:ring-[6px] focus:ring-primary/5 transition-all text-slate-800 placeholder:text-slate-400"
+                                    className="w-full bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 py-4.5 pl-20 pr-6 rounded-[1.75rem] font-bold text-sm outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-primary/40 transition-all text-slate-800 dark:text-white"
                                 />
                             </div>
 
-                            <div className="hidden xl:block w-px h-12 bg-slate-200/60"></div>
+                            <div className="hidden xl:block w-px h-10 bg-slate-200/60 dark:bg-slate-700/60"></div>
 
                             {/* Dynamic Category Engine */}
-                            <div className="w-full xl:flex-1 overflow-x-auto no-scrollbar flex items-center gap-4 py-2">
+                            <div className="w-full xl:flex-1 overflow-x-auto no-scrollbar flex items-center gap-3 py-1">
                                 {categories.map((cat) => (
                                     <button
                                         key={cat.name}
                                         onClick={() => setActiveCategory(cat.name)}
-                                        className={`flex items-center gap-3.5 px-8 py-4.5 rounded-[1.75rem] text-[11px] font-black uppercase tracking-[0.2em] whitespace-nowrap transition-all duration-500 relative group/cat ${activeCategory === cat.name
-                                            ? 'bg-slate-900 text-white shadow-2xl shadow-slate-900/30 scale-105'
-                                            : 'bg-white/50 text-slate-500 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-100'
+                                        className={`flex items-center gap-3 px-6 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] whitespace-nowrap transition-all duration-500 relative group/cat ${activeCategory === cat.name
+                                            ? 'bg-primary text-white shadow-xl shadow-primary/20 scale-105'
+                                            : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
                                             }`}
                                     >
-                                        <Icon icon={cat.icon} className={`text-xl ${activeCategory === cat.name ? 'text-primary' : 'text-slate-400'}`} />
+                                        <Icon icon={cat.icon} className={`text-lg ${activeCategory === cat.name ? 'text-white' : 'text-slate-400'}`} />
                                         {cat.name}
-                                        {activeCategory === cat.name && (
-                                            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-6 h-1 bg-primary rounded-full shadow-lg shadow-primary/50" />
-                                        )}
                                     </button>
                                 ))}
                             </div>
                         </div>
 
                         {/* SUB-FILTERS: MCQ vs THEORY */}
-                        <div className="flex flex-wrap items-center gap-5 mt-10 px-8">
-                            <div className="flex items-center gap-3 px-6 py-3 bg-white/40 rounded-2xl border border-white shadow-sm">
-                                <Icon icon="solar:filter-bold-duotone" className="text-primary" />
-                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Type Matrix:</span>
-                            </div>
+                        <div className="flex flex-wrap items-center gap-4 mt-8 px-6">
                             {[
-                                { name: 'All', icon: 'solar:list-bold-duotone', label: 'Global View' },
-                                { name: 'MCQ', icon: 'solar:check-square-bold-duotone', label: 'Multiple Choice' },
-                                { name: 'Theory', icon: 'solar:document-text-bold-duotone', label: 'Conceptual Q&A' }
+                                { name: 'All', icon: 'solar:list-bold-duotone', label: 'All Questions' },
+                                { name: 'MCQ', icon: 'solar:check-square-bold-duotone', label: 'MCQs' },
+                                { name: 'Theory', icon: 'solar:document-text-bold-duotone', label: 'Theory' }
                             ].map((type) => (
                                 <button
                                     key={type.name}
                                     onClick={() => setActiveType(type.name)}
-                                    className={`flex items-center gap-3 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border-2 ${activeType === type.name
-                                            ? 'bg-primary border-primary text-white shadow-xl shadow-primary/30'
-                                            : 'bg-white border-white text-slate-400 hover:border-primary/20 hover:text-primary shadow-sm'
+                                    className={`flex items-center gap-2.5 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border ${activeType === type.name
+                                        ? 'bg-slate-900 dark:bg-primary border-slate-900 dark:border-primary text-white shadow-lg'
+                                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-primary/30'
                                         }`}
                                 >
-                                    <Icon icon={type.icon} className="text-lg" />
+                                    <Icon icon={type.icon} className="text-base" />
                                     {type.label}
                                 </button>
                             ))}
@@ -149,196 +157,161 @@ export default function InterviewQuestionsClient() {
 
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-48">
-                            <div className="relative">
-                                <div className="w-28 h-28 border-[8px] border-primary/5 border-t-primary rounded-full animate-spin"></div>
-                                <div className="absolute inset-0 flex items-center justify-center text-primary">
-                                    <Icon icon="solar:star-bold-duotone" width="40" className="animate-pulse" />
-                                </div>
-                            </div>
-                            <h3 className="mt-10 text-xl font-black uppercase tracking-[0.3em] text-slate-900">Loading Technical Assets</h3>
-                            <div className="flex gap-2 mt-4">
-                                <span className="w-2 h-2 rounded-full bg-primary animate-bounce"></span>
-                                <span className="w-2 h-2 rounded-full bg-primary animate-bounce delay-100"></span>
-                                <span className="w-2 h-2 rounded-full bg-primary animate-bounce delay-200"></span>
-                            </div>
+                            <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                            <h3 className="mt-8 text-sm font-black uppercase tracking-[0.3em] text-slate-400">Loading Questions</h3>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 gap-12">
-                            {questions.filter(q => {
-                                const matchesSearch = q.question.toLowerCase().includes(searchQuery.toLowerCase());
-                                const matchesType = activeType === 'All' ||
-                                    (activeType === 'MCQ' && q.type === 'MCQ') ||
-                                    (activeType === 'Theory' && q.type !== 'MCQ');
-                                return matchesSearch && matchesType;
-                            }).length > 0 ? (
-                                questions
-                                    .filter(q => {
-                                        const matchesSearch = q.question.toLowerCase().includes(searchQuery.toLowerCase());
-                                        const matchesType = activeType === 'All' ||
-                                            (activeType === 'MCQ' && q.type === 'MCQ') ||
-                                            (activeType === 'Theory' && q.type !== 'MCQ');
-                                        return matchesSearch && matchesType;
-                                    })
-                                    .sort((a, b) => {
-                                        const pA = a.priority || 0;
-                                        const pB = b.priority || 0;
-                                        if (pA !== pB) return pA - pB;
-                                        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-                                    })
-                                    .map((q, idx) => (
-                                        <div
-                                            key={q._id}
-                                            className="bg-white/80 backdrop-blur-xl rounded-[5rem] border-2 border-white shadow-3xl shadow-blue-900/5 hover:shadow-primary/20 transition-all duration-700 group/card relative overflow-hidden"
-                                            data-aos="fade-up"
-                                            data-aos-delay={idx * 50}
-                                        >
-                                            {/* Advanced Aesthetics */}
-                                            <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/5 rounded-full blur-[120px] group-hover/card:bg-primary/10 transition-all duration-1000"></div>
+                        <div className="grid grid-cols-12 gap-8 items-start">
+                            {/* LEFT SIDEBAR: QUESTION LIST */}
+                            <div className="col-span-12 lg:col-span-4 xl:col-span-4 space-y-4 lg:sticky lg:top-28">
+                                <div className="bg-white dark:bg-slate-900/80 backdrop-blur-3xl rounded-[2.5rem] border border-white/50 dark:border-slate-800 overflow-hidden shadow-2xl shadow-slate-200 dark:shadow-none flex flex-col h-[75vh]">
+                                    <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+                                        <div className="flex items-center justify-between">
+                                            <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Available Questions</h4>
+                                            <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black rounded-full">
+                                                {questions.filter(q => {
+                                                    const matchesSearch = q.question?.toLowerCase().includes(searchQuery.toLowerCase());
+                                                    const matchesType = activeType === 'All' || (activeType === 'MCQ' && q.type === 'MCQ') || (activeType === 'Theory' && q.type !== 'MCQ');
+                                                    return matchesSearch && matchesType;
+                                                }).length}
+                                            </span>
+                                        </div>
+                                    </div>
 
-                                            <div className="p-8 md:p-14 relative z-10">
-                                                <div className="flex flex-wrap items-center justify-between gap-8 mb-12">
-                                                    <div className="flex flex-wrap items-center gap-4">
-                                                        <div className="flex items-center gap-3 px-6 py-2.5 bg-slate-900 text-white text-[10px] font-black rounded-full uppercase tracking-[0.2em] shadow-xl shadow-slate-900/20">
-                                                            <Icon icon="solar:hashtag-bold-duotone" className="text-primary text-base" />
-                                                            {q.category}
-                                                        </div>
-                                                        <div className="flex items-center gap-3 px-6 py-2.5 bg-white border-2 border-slate-50 text-slate-500 text-[10px] font-black rounded-full uppercase tracking-[0.2em] shadow-sm">
-                                                            <Icon icon="solar:code-bold-duotone" className="text-primary text-base" />
-                                                            {q.language}
-                                                        </div>
+                                    <div className="flex-1 overflow-y-auto custom-scrollbar-premium p-4 space-y-3">
+                                        {questions.filter(q => {
+                                            const matchesSearch = q.question?.toLowerCase().includes(searchQuery.toLowerCase());
+                                            const matchesType = activeType === 'All' || (activeType === 'MCQ' && q.type === 'MCQ') || (activeType === 'Theory' && q.type !== 'MCQ');
+                                            return matchesSearch && matchesType;
+                                        }).map((q, idx) => (
+                                            <button
+                                                key={q._id}
+                                                onClick={() => setSelectedQuestionId(q._id)}
+                                                className={`w-full text-left p-5 rounded-[1.75rem] transition-all duration-300 group relative overflow-hidden ${selectedQuestionId === q._id
+                                                    ? 'bg-slate-950 dark:bg-primary text-white shadow-2xl shadow-primary/20'
+                                                    : 'bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 border border-transparent hover:border-slate-100 dark:hover:border-slate-700'
+                                                    }`}
+                                            >
+                                                <div className="flex items-start gap-4">
+                                                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs shrink-0 ${selectedQuestionId === q._id ? 'bg-white/20' : 'bg-slate-200 dark:bg-slate-700'}`}>
+                                                        {idx + 1}
                                                     </div>
-
-                                                    <div className={`flex items-center gap-4 px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-inner border-2 ${q.difficulty === 'Easy' ? 'bg-emerald-50 border-emerald-100/50 text-emerald-600' :
-                                                        q.difficulty === 'Medium' ? 'bg-amber-50 border-amber-100/50 text-amber-600' :
-                                                            'bg-rose-50 border-rose-100/50 text-rose-600'
-                                                        }`}>
-                                                        <span className={`w-3 h-3 rounded-full shadow-lg ${q.difficulty === 'Easy' ? 'bg-emerald-500 shadow-emerald-500/50' :
-                                                            q.difficulty === 'Medium' ? 'bg-amber-500 shadow-amber-500/50' :
-                                                                'bg-rose-500 shadow-rose-500/50'
-                                                            } animate-pulse`}></span>
-                                                        {q.difficulty}
-                                                    </div>
+                                                    <p className="text-sm font-bold leading-relaxed line-clamp-2">{q.question}</p>
                                                 </div>
-
-                                                <div className="flex flex-col lg:flex-row gap-12">
-                                                    <div className="hidden lg:flex flex-col items-center">
-                                                        <div className="w-20 h-20 bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-[2.5rem] flex items-center justify-center font-black text-3xl shadow-2xl shadow-slate-900/30 group-hover/card:scale-110 group-hover/card:rotate-12 transition-all duration-700">
-                                                            Q
-                                                        </div>
-                                                        <div className="w-1 h-full bg-slate-100 rounded-full mt-8 group-hover/card:bg-primary/20 transition-all duration-1000"></div>
+                                                {selectedQuestionId === q._id && (
+                                                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                                        <Icon icon="solar:alt-arrow-right-bold-duotone" width="20" className="animate-bounce-subtle" />
                                                     </div>
+                                                )}
+                                            </button>
+                                        ))}
+                                        {questions.filter(q => {
+                                            const matchesSearch = q.question?.toLowerCase().includes(searchQuery.toLowerCase());
+                                            const matchesType = activeType === 'All' || (activeType === 'MCQ' && q.type === 'MCQ') || (activeType === 'Theory' && q.type !== 'MCQ');
+                                            return matchesSearch && matchesType;
+                                        }).length === 0 && (
+                                                <div className="text-center py-20 opacity-40">
+                                                    <Icon icon="solar:magnifer-zoom-out-bold-duotone" width="48" className="mx-auto mb-4" />
+                                                    <p className="text-xs font-black uppercase tracking-widest">No Matches</p>
+                                                </div>
+                                            )}
+                                    </div>
+                                </div>
+                            </div>
 
-                                                    <div className="flex-1 min-w-0">
-                                                        <h3 className="text-xl md:text-[2.2rem] font-black text-slate-900 mb-10 leading-[1.3] group-hover/card:text-primary transition-all duration-500 tracking-tight break-words">
-                                                            {q.question}
-                                                        </h3>
+                            {/* RIGHT CONTENT: QUESTION DETAIL & ANSWER */}
+                            <div className="col-span-12 lg:col-span-8 xl:col-span-8">
+                                <div className="bg-white dark:bg-slate-900/80 backdrop-blur-3xl rounded-[3.5rem] border border-white/50 dark:border-slate-800 overflow-hidden shadow-2xl shadow-slate-200 dark:shadow-none min-h-[75vh]">
+                                    {selectedQuestion ? (
+                                        <div className="p-8 md:p-16 animate-fadeIn">
+                                            <div className="flex flex-wrap items-center gap-4 mb-10">
+                                                <span className="px-6 py-2 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400 border border-slate-200 dark:border-slate-700">
+                                                    {selectedQuestion.category}
+                                                </span>
+                                                <span className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border ${selectedQuestion.difficulty === 'Easy' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
+                                                    selectedQuestion.difficulty === 'Medium' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
+                                                        'bg-rose-500/10 text-rose-500 border-rose-500/20'
+                                                    }`}>
+                                                    {selectedQuestion.difficulty}
+                                                </span>
+                                            </div>
 
-                                                        {q.type === 'MCQ' && q.options && q.options.length > 0 && (
-                                                            <div className="grid md:grid-cols-2 gap-8 mb-16">
-                                                                {q.options.map((opt: string, i: number) => {
-                                                                    const isSelected = selectedAnswers[q._id] === opt;
-                                                                    const correct = isCorrect(opt, q.answer);
-                                                                    const hasAnswered = !!selectedAnswers[q._id];
-                                                                    
-                                                                    let statusClass = "bg-slate-50/50 border-slate-100 hover:border-primary/40 hover:bg-white hover:shadow-2xl hover:shadow-primary/5";
-                                                                    let iconClass = "bg-white text-primary border-slate-50 group-hover/opt:bg-primary group-hover/opt:text-white";
-                                                                    
-                                                                    if (hasAnswered) {
-                                                                        if (correct) {
-                                                                            statusClass = "bg-emerald-50 border-emerald-500 shadow-xl shadow-emerald-500/10 scale-[1.02]";
-                                                                            iconClass = "bg-emerald-500 text-white border-emerald-400";
-                                                                        } else if (isSelected) {
-                                                                            statusClass = "bg-rose-50 border-rose-500 shadow-xl shadow-rose-500/10";
-                                                                            iconClass = "bg-rose-500 text-white border-rose-400";
-                                                                        } else {
-                                                                            statusClass = "bg-slate-50 opacity-40 grayscale-[0.5]";
-                                                                        }
-                                                                    }
+                                            <h2 className="text-3xl md:text-[3rem] font-black text-slate-900 dark:text-white leading-[1.2] mb-12 tracking-tight">
+                                                {selectedQuestion.question}
+                                            </h2>
 
-                                                                    return (
-                                                                        <div
-                                                                            key={i}
-                                                                            onClick={() => handleOptionSelect(q._id, opt)}
-                                                                            className={`flex items-center gap-5 p-7 rounded-[2.25rem] border-2 transition-all duration-500 group/opt ${statusClass} ${!hasAnswered ? 'cursor-pointer active:scale-95' : 'cursor-default'}`}
-                                                                        >
-                                                                            <div className={`w-13 h-13 flex items-center justify-center rounded-2xl font-black shadow-md border transition-all duration-500 uppercase text-lg shrink-0 ${iconClass}`}>
-                                                                                {hasAnswered && correct ? (
-                                                                                    <Icon icon="solar:check-circle-bold" />
-                                                                                ) : hasAnswered && isSelected && !correct ? (
-                                                                                    <Icon icon="solar:close-circle-bold" />
-                                                                                ) : (
-                                                                                    String.fromCharCode(65 + i)
-                                                                                )}
-                                                                            </div>
-                                                                            <div className="flex-1 min-w-0">
-                                                                                <span className={`font-black text-lg break-words block ${hasAnswered && correct ? 'text-emerald-900' : hasAnswered && isSelected && !correct ? 'text-rose-900' : 'text-slate-700'}`}>
-                                                                                    {opt}
-                                                                                </span>
-                                                                            </div>
-                                                                        </div>
-                                                                    );
-                                                                })}
-                                                            </div>
-                                                        )}
+                                            {selectedQuestion.type === 'MCQ' && (
+                                                <div className="grid sm:grid-cols-2 gap-6 mb-16">
+                                                    {selectedQuestion.options?.map((opt: string, i: number) => {
+                                                        const isSelected = selectedAnswers[selectedQuestion._id] === opt;
+                                                        const correct = isCorrect(opt, selectedQuestion.answer);
+                                                        const hasAnswered = !!selectedAnswers[selectedQuestion._id];
 
-                                                        <div className="flex flex-wrap items-center justify-between gap-8 pt-10 border-t-2 border-slate-50">
+                                                        return (
                                                             <button
-                                                                onClick={() => toggleReveal(q._id)}
-                                                                className={`flex items-center gap-5 px-14 py-7 rounded-[2.5rem] font-black uppercase tracking-[0.25em] text-xs transition-all duration-700 active:scale-95 ${revealedIds.has(q._id)
-                                                                    ? 'bg-slate-900 text-white shadow-2xl shadow-slate-900/30'
-                                                                    : 'bg-primary text-white shadow-3xl shadow-primary/30 hover:shadow-primary/50 translate-y-[-2px]'
+                                                                key={i}
+                                                                onClick={() => handleOptionSelect(selectedQuestion._id, opt)}
+                                                                className={`flex items-center gap-5 p-6 rounded-[2rem] border-2 text-left transition-all duration-300 ${hasAnswered
+                                                                    ? correct
+                                                                        ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-500 text-emerald-900 dark:text-emerald-400'
+                                                                        : isSelected
+                                                                            ? 'bg-rose-50 dark:bg-rose-500/10 border-rose-500 text-rose-900 dark:text-rose-400'
+                                                                            : 'bg-slate-50 dark:bg-slate-800 opacity-40 border-slate-200 dark:border-slate-700'
+                                                                    : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 hover:border-primary/50'
                                                                     }`}
                                                             >
-                                                                <Icon
-                                                                    icon={revealedIds.has(q._id) ? "solar:eye-closed-bold-duotone" : "solar:eye-bold-duotone"}
-                                                                    className="text-4xl"
-                                                                />
-                                                                {revealedIds.has(q._id) ? 'Conceal Solution' : 'Reveal Answer'}
-                                                            </button>
-
-                                                            <div className="flex items-center gap-8">
-                                                                <button className="w-16 h-16 rounded-3xl bg-white border-2 border-slate-50 text-slate-300 hover:text-primary hover:border-primary/30 flex items-center justify-center transition-all duration-500 shadow-sm active:scale-90"><Icon icon="solar:share-bold-duotone" width="28" /></button>
-                                                                <button className="w-16 h-16 rounded-3xl bg-white border-2 border-slate-50 text-slate-300 hover:text-primary hover:border-primary/30 flex items-center justify-center transition-all duration-500 shadow-sm active:scale-90"><Icon icon="solar:bookmark-bold-duotone" width="28" /></button>
-                                                            </div>
-                                                        </div>
-
-                                                        {revealedIds.has(q._id) && (
-                                                            <div className="mt-14 p-12 md:p-16 bg-white/80 backdrop-blur-xl rounded-[4rem] border-2 border-white shadow-2xl shadow-blue-900/5 animate-fadeIn relative overflow-hidden group/ans">
-                                                                <div className="absolute top-0 right-0 p-16 opacity-[0.03] rotate-12 group-hover/ans:rotate-0 transition-all duration-1000">
-                                                                    <Icon icon="solar:check-read-bold-duotone" width="180" />
+                                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black shrink-0 ${hasAnswered && correct ? 'bg-emerald-500 text-white' :
+                                                                    hasAnswered && isSelected ? 'bg-rose-500 text-white' :
+                                                                        'bg-slate-100 dark:bg-slate-700 text-slate-400'
+                                                                    }`}>
+                                                                    {String.fromCharCode(65 + i)}
                                                                 </div>
-                                                                <h4 className="flex items-center gap-5 text-primary font-black uppercase tracking-[0.4em] text-[10px] mb-12">
-                                                                    <div className="w-12 h-12 rounded-[1.25rem] bg-primary/10 flex items-center justify-center shadow-lg shadow-primary/5">
-                                                                        <Icon icon="solar:verified-check-bold" className="text-2xl" />
-                                                                    </div>
-                                                                    Verified Technical Documentation
-                                                                </h4>
-                                                                <div
-                                                                    className="text-slate-700 leading-[2.2] whitespace-pre-line text-xl qna-content prose max-w-none prose-slate prose-p:text-slate-600 prose-strong:text-slate-900 prose-strong:font-black break-words overflow-hidden"
-                                                                    dangerouslySetInnerHTML={{ __html: q.answer }}
-                                                                />
-                                                            </div>
-                                                        )}
-                                                    </div>
+                                                                <span className="font-bold">{opt}</span>
+                                                            </button>
+                                                        );
+                                                    })}
                                                 </div>
+                                            )}
+
+                                            <div className="mt-20 pt-12 border-t border-slate-100 dark:border-slate-800">
+                                                <button
+                                                    onClick={() => toggleReveal(selectedQuestion._id)}
+                                                    className={`group relative overflow-hidden px-14 py-7 rounded-[2.25rem] font-black uppercase tracking-[0.3em] text-[10px] transition-all duration-500 ${revealedIds.has(selectedQuestion._id)
+                                                        ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                                                        : 'bg-primary text-white shadow-3xl shadow-primary/30'
+                                                        }`}
+                                                >
+                                                    <span className="relative z-10 flex items-center gap-3">
+                                                        <Icon icon={revealedIds.has(selectedQuestion._id) ? "solar:eye-closed-bold" : "solar:eye-bold"} width="24" />
+                                                        {revealedIds.has(selectedQuestion._id) ? 'Conceal Expert View' : 'Reveal Solution'}
+                                                    </span>
+                                                </button>
+
+                                                {revealedIds.has(selectedQuestion._id) && (
+                                                    <div className="mt-12 p-10 md:p-14 bg-slate-50 dark:bg-slate-800/40 rounded-[3rem] border border-slate-100 dark:border-slate-700/50 animate-fadeIn overflow-hidden">
+                                                        <div className="flex items-center gap-4 mb-8">
+                                                            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                                                                <Icon icon="solar:verified-check-bold" width="22" />
+                                                            </div>
+                                                            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Verified Technical Solution</h4>
+                                                        </div>
+                                                        <div
+                                                            className="text-slate-700 dark:text-slate-300 leading-relaxed text-lg qna-content prose dark:prose-invert max-w-none"
+                                                            dangerouslySetInnerHTML={{ __html: selectedQuestion.answer }}
+                                                        />
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
-                                    ))
-                            ) : (
-                                <div className="text-center py-48 bg-white/40 backdrop-blur-xl rounded-[4rem] border-2 border-dashed border-slate-200 shadow-inner group/empty animate-fadeIn">
-                                    <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mx-auto mb-10 shadow-2xl shadow-blue-900/10 group-hover/empty:scale-110 transition-transform duration-500">
-                                        <Icon icon="solar:document-add-bold-duotone" width="64" className="text-slate-300 group-hover/empty:text-primary transition-colors" />
-                                    </div>
-                                    <h3 className="text-4xl font-black text-slate-900 uppercase tracking-tight">Zero Matches Found</h3>
-                                    <p className="text-slate-500 font-medium mt-4 max-w-md mx-auto text-lg">We couldn't find any questions matching your search. Try adjusting your filters or clearing your search query.</p>
-                                    <button
-                                        onClick={() => { setSearchQuery(''); setActiveCategory('All'); setActiveType('All'); }}
-                                        className="mt-12 px-12 py-5 bg-slate-900 text-white font-black rounded-[2rem] uppercase tracking-[0.2em] text-[10px] shadow-2xl shadow-slate-900/20 hover:bg-primary transition-all duration-300 hover:scale-105 active:scale-95"
-                                    >
-                                        Reset All Filters
-                                    </button>
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center min-h-[75vh] p-12 text-center opacity-30">
+                                            <Icon icon="solar:ghost-bold-duotone" width="100" className="mb-6" />
+                                            <h3 className="text-xl font-black uppercase tracking-[0.3em]">Select a question to begin</h3>
+                                            <p className="mt-4 text-sm font-bold">Pick a concept from the list to explore the technical documentation.</p>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
+                            </div>
                         </div>
                     )}
                 </div>
@@ -352,12 +325,22 @@ export default function InterviewQuestionsClient() {
                 .animate-fadeIn {
                     animation: fadeIn 0.4s ease-out forwards;
                 }
+                @keyframes bounce-subtle {
+                    0%, 100% { transform: translate(-50%, -50%) translateX(0); }
+                    50% { transform: translate(-50%, -50%) translateX(5px); }
+                }
+                .animate-bounce-subtle {
+                    animation: bounce-subtle 1.5s infinite ease-in-out;
+                }
                 .qna-content {
                     word-break: break-word;
                     overflow-wrap: break-word;
                 }
                 .qna-content p {
                     margin-bottom: 1.5rem;
+                }
+                .dark .qna-content strong {
+                    color: #f8fafc;
                 }
                 .qna-content strong {
                     color: #0f172a;
@@ -371,6 +354,10 @@ export default function InterviewQuestionsClient() {
                     color: #2563eb;
                     word-break: break-all;
                     white-space: pre-wrap;
+                }
+                .dark .qna-content code {
+                    background: #1e293b;
+                    color: #60a5fa;
                 }
                 .qna-content ul, .qna-content ol {
                     margin-bottom: 1.5rem;
