@@ -15,6 +15,7 @@ export const headerData: HeaderItem[] = [
       { label: "Typing Test", href: "/typing" },
     ],
   },
+  { label: "Chat Hub", href: "/chat" },
   {
     label: "Resume Builder",
     href: "/resume-builder",

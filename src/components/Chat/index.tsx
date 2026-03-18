@@ -5,6 +5,8 @@ import { io, Socket } from "socket.io-client";
 import { Icon } from "@iconify/react";
 import EmojiPicker, { Theme as EmojiTheme } from "emoji-picker-react";
 import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const SOCKET_SERVER_URL =
     process.env.NEXT_PUBLIC_SOCKET_URL || "https://portfolio-socket-server-rv84.onrender.com";
@@ -57,6 +59,7 @@ const Chat: React.FC = () => {
     const [isCreatingRoom, setIsCreatingRoom] = useState(false);
     const [isJoiningGroup, setIsJoiningGroup] = useState(false);
     const { theme } = useTheme();
+    const pathname = usePathname();
 
     const socketRef = useRef<Socket | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -351,6 +354,8 @@ const Chat: React.FC = () => {
     const isGroupMode = chatMode === "group";
     const canSend = Boolean(input.trim()) && (isGroupMode || Boolean(activeRoomId));
 
+    if (pathname === "/chat") return null;
+
     return (
         <div className="fixed bottom-6 right-6 z-[9999]">
             <button
@@ -388,13 +393,23 @@ const Chat: React.FC = () => {
                                 </p>
                             </div>
                         </div>
-                        <button
-                            onClick={leaveCurrentMode}
-                            title="Clear current chat mode"
-                            className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10"
-                        >
-                            <Icon icon="ion:trash-outline" />
-                        </button>
+                        <div className="flex gap-1">
+                            <Link
+                                href="/chat"
+                                onClick={() => setIsOpen(false)}
+                                title="Open full chat page"
+                                className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10"
+                            >
+                                <Icon icon="ion:expand-outline" />
+                            </Link>
+                            <button
+                                onClick={leaveCurrentMode}
+                                title="Clear current chat mode"
+                                className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10"
+                            >
+                                <Icon icon="ion:trash-outline" />
+                            </button>
+                        </div>
                     </div>
 
                     <div className="space-y-3 border-b border-white/10 bg-white/5 p-4">
