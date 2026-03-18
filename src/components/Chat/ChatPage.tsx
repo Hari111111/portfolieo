@@ -61,6 +61,7 @@ const ChatPage: React.FC = () => {
     const [isCreatingRoom, setIsCreatingRoom] = useState(false);
     const [isJoiningGroup, setIsJoiningGroup] = useState(false);
     const [activeUserList, setActiveUserList] = useState<string[]>([]);
+    const [selectedFile, setSelectedFile] = useState<FileData | null>(null);
     const { theme } = useTheme();
 
     const socketRef = useRef<Socket | null>(null);
@@ -261,20 +262,23 @@ const ChatPage: React.FC = () => {
     };
 
     const handleSendMessage = () => {
-        if (!input.trim() || !socketRef.current || !chatMode) return;
+        if (!socketRef.current || !chatMode) return;
+        if (!input.trim() && !selectedFile) return;
         if (chatMode === "private" && !activeRoomId) return;
 
         const messageData: Message = {
             id: Date.now().toString(),
-            mode: chatMode,
+            mode: chatMode as NonNullable<ChatMode>,
             roomId: chatMode === "private" ? activeRoomId : "",
             senderId: userId,
-            text: input.trim(),
+            text: input.trim() || (selectedFile?.type === "image" ? "Shared an image" : "Shared a PDF"),
             timestamp: new Date().toISOString(),
+            file: selectedFile || undefined,
         };
 
         socketRef.current.emit("send-message", messageData);
         setInput("");
+        setSelectedFile(null);
         setShowEmojiPicker(false);
     };
 
@@ -303,26 +307,20 @@ const ChatPage: React.FC = () => {
         const reader = new FileReader();
         reader.onload = (event) => {
             const base64Data = event.target?.result as string;
-            const messageData: Message = {
-                id: Date.now().toString(),
-                mode: chatMode,
-                roomId: chatMode === "private" ? activeRoomId : "",
-                senderId: userId,
-                text: isImage ? "Shared an image" : "Shared a PDF",
-                timestamp: new Date().toISOString(),
-                file: {
-                    name: file.name,
-                    type: isImage ? "image" : "pdf",
-                    data: base64Data,
-                },
-            };
-
-            socketRef.current?.emit("send-message", messageData);
+            setSelectedFile({
+                name: file.name,
+                type: isImage ? "image" : "pdf",
+                data: base64Data,
+            });
         };
         reader.readAsDataURL(file);
         
         // Reset input
         if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+
+    const cancelFileSelection = () => {
+        setSelectedFile(null);
     };
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -630,6 +628,26 @@ const ChatPage: React.FC = () => {
 
                 {/* Message Input Container */}
                 <div className="relative mt-6">
+                    {selectedFile && (
+                        <div className="mb-4 relative animate-in slide-in-from-bottom-2 duration-200">
+                            <div className="group relative w-32 h-32 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-xl">
+                                {selectedFile.type === "image" ? (
+                                    <img src={selectedFile.data} className="object-cover w-full h-full" alt="Preview" />
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center w-full h-full gap-2 p-4">
+                                        <Icon icon="ion:document-text" className="text-4xl text-red-500" />
+                                        <p className="text-[10px] truncate w-full text-center font-bold">{selectedFile.name}</p>
+                                    </div>
+                                )}
+                                <button 
+                                    onClick={cancelFileSelection}
+                                    className="absolute top-2 right-2 bg-black/60 text-white rounded-full p-1 hover:bg-black/80 transition-colors shadow-lg"
+                                >
+                                    <Icon icon="ion:close" className="text-sm" />
+                                </button>
+                            </div>
+                        </div>
+                    )}
                     {showEmojiPicker && (
                         <div
                             ref={emojiPickerRef}
@@ -648,7 +666,7 @@ const ChatPage: React.FC = () => {
                     <div className="group relative flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-2 transition-all focus-within:border-blue-500/50 focus-within:bg-white/10 focus-within:shadow-xl focus-within:shadow-blue-500/5">
                         <button
                             onClick={() => setShowEmojiPicker((prev) => !prev)}
-                            className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all ${showEmojiPicker ? "bg-blue-600 text-white" : "text-gray-500 hover:bg-white/10 hover:text-gray-300"
+                            className={`flex h-11 w-11 items-center justify-center rounded-xl mr-1 transition-all ${showEmojiPicker ? "bg-blue-600 text-white" : "text-gray-500 hover:bg-white/10 hover:text-gray-300"
                                 }`}
                         >
                             <Icon icon="ion:happy-outline" className="text-2xl" />
@@ -666,7 +684,7 @@ const ChatPage: React.FC = () => {
                             onClick={() => fileInputRef.current?.click()}
                             disabled={!chatMode || (isPrivate && !activeRoomId)}
                             title="Share image or PDF"
-                            className="flex h-11 w-11 items-center justify-center rounded-xl text-gray-500 transition-all hover:bg-white/10 hover:text-gray-300 disabled:cursor-not-allowed disabled:opacity-40"
+                            className="flex h-11 w-11 items-center justify-center rounded-xl mr-2 text-gray-500 transition-all hover:bg-white/10 hover:text-gray-300 disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             <Icon icon="ion:attach-outline" className="text-2xl" />
                         </button>
