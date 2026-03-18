@@ -12,6 +12,12 @@ const SOCKET_SERVER_URL =
 
 type ChatMode = "group" | "private" | null;
 
+interface FileData {
+    name: string;
+    type: "image" | "pdf";
+    data: string; // Base64 string
+}
+
 interface Message {
     id: string;
     roomId: string;
@@ -19,6 +25,7 @@ interface Message {
     text: string;
     timestamp: string;
     mode: Exclude<ChatMode, null>;
+    file?: FileData;
 }
 
 interface RoomResponse {
@@ -53,9 +60,11 @@ const ChatPage: React.FC = () => {
     const [isJoiningRoom, setIsJoiningRoom] = useState(false);
     const [isCreatingRoom, setIsCreatingRoom] = useState(false);
     const [isJoiningGroup, setIsJoiningGroup] = useState(false);
+    const [activeUserList, setActiveUserList] = useState<string[]>([]);
     const { theme } = useTheme();
 
     const socketRef = useRef<Socket | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const emojiPickerRef = useRef<HTMLDivElement>(null);
     const chatModeRef = useRef<ChatMode>(null);
@@ -77,7 +86,9 @@ const ChatPage: React.FC = () => {
         }
         setUserId(storedId);
 
-        const socket = io(SOCKET_SERVER_URL);
+        const socket = io(SOCKET_SERVER_URL, {
+            query: { userId: storedId }
+        });
         socketRef.current = socket;
 
         socket.on("connect", () => {
@@ -134,6 +145,10 @@ const ChatPage: React.FC = () => {
 
         socket.on("chat-error", ({ message }: { message: string }) => {
             setStatusMessage(message);
+        });
+
+        socket.on("update-user-list", (userList: string[]) => {
+            setActiveUserList(userList);
         });
 
         return () => {
@@ -263,6 +278,53 @@ const ChatPage: React.FC = () => {
         setShowEmojiPicker(false);
     };
 
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !socketRef.current || !chatMode) return;
+
+        if (chatMode === "private" && !activeRoomId) {
+            setStatusMessage("Connect to a private room first.");
+            return;
+        }
+
+        const isImage = file.type.startsWith("image/");
+        const isPDF = file.type === "application/pdf";
+
+        if (!isImage && !isPDF) {
+            setStatusMessage("Only images and PDFs are allowed.");
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            setStatusMessage("File size must be under 5MB.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const base64Data = event.target?.result as string;
+            const messageData: Message = {
+                id: Date.now().toString(),
+                mode: chatMode,
+                roomId: chatMode === "private" ? activeRoomId : "",
+                senderId: userId,
+                text: isImage ? "Shared an image" : "Shared a PDF",
+                timestamp: new Date().toISOString(),
+                file: {
+                    name: file.name,
+                    type: isImage ? "image" : "pdf",
+                    data: base64Data,
+                },
+            };
+
+            socketRef.current?.emit("send-message", messageData);
+        };
+        reader.readAsDataURL(file);
+        
+        // Reset input
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") handleSendMessage();
     };
@@ -358,6 +420,26 @@ const ChatPage: React.FC = () => {
                                     </div>
                                 )}
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Active User List */}
+                    <div className="rounded-2xl border border-white/5 bg-white/5 p-4 mt-4">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-3">All Active Protocols</p>
+                        <div className="flex flex-col gap-2 max-h-[140px] overflow-y-auto no-scrollbar scroll-smooth">
+                            {activeUserList.map((id) => (
+                                <div 
+                                    key={id} 
+                                    className={`flex items-center gap-2 p-1.5 rounded-lg border text-[11px] font-mono transition-all ${
+                                        id === userId 
+                                            ? "bg-blue-600/10 border-blue-500/20 text-blue-500 shadow-sm" 
+                                            : "bg-white/5 border-white/5 text-gray-400 opacity-80"
+                                    }`}
+                                >
+                                    <div className={`h-1.5 w-1.5 rounded-full ${id === userId ? "bg-blue-500" : "bg-gray-600"} animate-pulse`} />
+                                    <span className="truncate">{id === userId ? "YOU (Local Protocol)" : id}</span>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
@@ -489,7 +571,49 @@ const ChatPage: React.FC = () => {
                                                     : "rounded-tl-none border border-white/10 bg-white/5 text-gray-800 dark:text-gray-200"
                                                     }`}
                                             >
-                                                <p className="leading-relaxed break-words">{msg.text}</p>
+                                                {msg.file ? (
+                                                    <div className="space-y-3">
+                                                        {msg.file.type === "image" ? (
+                                                            <div className="overflow-hidden rounded-lg">
+                                                                <img
+                                                                    src={msg.file.data}
+                                                                    alt={msg.file.name}
+                                                                    className="max-h-[300px] w-full object-contain"
+                                                                />
+                                                            </div>
+                                                        ) : (
+                                                            <a
+                                                                href={msg.file.data}
+                                                                download={msg.file.name}
+                                                                className={`flex items-center gap-4 rounded-xl border p-4 transition-all ${
+                                                                    isMe
+                                                                        ? "border-white/20 bg-white/10 hover:bg-white/20"
+                                                                        : "border-gray-200 bg-gray-50/50 hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+                                                                }`}
+                                                            >
+                                                                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-red-500/10 text-red-500">
+                                                                    <Icon icon="ion:document-text-outline" className="text-2xl" />
+                                                                </div>
+                                                                <div className="min-w-0 flex-1">
+                                                                    <p className={`truncate text-sm font-bold ${isMe ? "text-white" : "text-gray-800 dark:text-white"}`}>
+                                                                        {msg.file.name}
+                                                                    </p>
+                                                                    <p className={`text-[10px] uppercase font-black tracking-widest opacity-60 ${isMe ? "text-blue-100" : "text-gray-500"}`}>
+                                                                        PDF Document
+                                                                    </p>
+                                                                </div>
+                                                                <Icon icon="ion:download-outline" className={`text-xl opacity-60 ${isMe ? "text-white" : ""}`} />
+                                                            </a>
+                                                        )}
+                                                        {msg.text && msg.text !== "Shared an image" && msg.text !== "Shared a PDF" && (
+                                                            <p className={`leading-relaxed break-words pt-2 border-t ${isMe ? "border-white/10" : "border-gray-100 dark:border-white/10"}`}>
+                                                                {msg.text}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <p className="leading-relaxed break-words">{msg.text}</p>
+                                                )}
                                             </div>
                                             <div className={`mt-1 flex items-center gap-2 px-1 text-[9px] uppercase tracking-tighter text-gray-500 ${isMe ? "justify-end" : "justify-start"}`}>
                                                 <span>{!isMe && msg.senderId.substring(0, 8)}</span>
@@ -528,6 +652,23 @@ const ChatPage: React.FC = () => {
                                 }`}
                         >
                             <Icon icon="ion:happy-outline" className="text-2xl" />
+                        </button>
+
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileSelect}
+                            accept="image/*,application/pdf"
+                            className="hidden"
+                        />
+
+                        <button
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={!chatMode || (isPrivate && !activeRoomId)}
+                            title="Share image or PDF"
+                            className="flex h-11 w-11 items-center justify-center rounded-xl text-gray-500 transition-all hover:bg-white/10 hover:text-gray-300 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                            <Icon icon="ion:attach-outline" className="text-2xl" />
                         </button>
 
                         <input
