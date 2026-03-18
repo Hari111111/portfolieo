@@ -413,7 +413,7 @@ const Chat: React.FC = () => {
 
     const isPrivateMode = chatMode === "private";
     const isGroupMode = chatMode === "group";
-    const canSend = Boolean(input.trim()) && (isGroupMode || Boolean(activeRoomId));
+    const canSend = (Boolean(input.trim()) || Boolean(selectedFile)) && (isGroupMode || Boolean(activeRoomId));
 
     if (pathname === "/chat") return null;
 

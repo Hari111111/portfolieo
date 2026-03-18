@@ -701,7 +701,7 @@ const ChatPage: React.FC = () => {
 
                         <button
                             onClick={handleSendMessage}
-                            disabled={!input.trim() || !chatMode || (isPrivate && !activeRoomId)}
+                            disabled={(!input.trim() && !selectedFile) || !chatMode || (isPrivate && !activeRoomId)}
                             className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/30 transition-all hover:scale-105 hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
                         >
                             <Icon icon="ion:send" className="text-xl" />
