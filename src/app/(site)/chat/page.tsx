@@ -3,34 +3,58 @@ import HeroSub from "@/components/SharedComponent/HeroSub";
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Real-time Chat & Private Messaging | Hari Mishra - Full Stack Developer Tools",
-  description: "Experience lightning-fast real-time communication on our interactive chat platform. Join global group discussions or create secure, ephemeral private rooms for confidential messaging. No data storage—completely private and secure.",
+  title: "Real-Time Chat App with Private Rooms | Secure Socket.IO Messaging - Hari Mishra",
+
+  description:
+    "Fast, secure real-time chat application built with Socket.IO. Join group chats or create private, anonymous rooms with zero data storage. تجربة lightning-fast messaging with complete privacy.",
+
   keywords: [
-    "real-time chat",
-    "group chat",
-    "private messaging",
-    "ephemeral chat",
-    "socket.io chat",
-    "developer tools",
-    "secure communication",
-    "web-based chat app",
-    "Hari Mishra",
-    "full stack developer tools",
-    "anonymous chat platform"
+    "real time chat app",
+    "socket.io chat application",
+    "private chat rooms online",
+    "anonymous messaging platform",
+    "secure chat app no data storage",
+    "group chat web app",
+    "real time messaging app",
+    "next js chat app",
+    "hari mishra developer",
+    "full stack chat application",
+    "ephemeral messaging app"
   ],
-  openGraph: {
-    title: "Real-time Chat & Private Messaging Protocol",
-    description: "Secure, real-time messaging platform with group and private room capabilities. Built with Socket.io for maximum performance.",
-    type: "website",
-    url: "https://portfolieo-five.vercel.app/chat",
+
+  authors: [{ name: "Hari Mishra" }],
+  creator: "Hari Mishra",
+
+  metadataBase: new URL("https://portfolieo-five.vercel.app"),
+
+  alternates: {
+    canonical: "/chat",
   },
+
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+  },
+
+  openGraph: {
+    title: "Real-Time Chat App | Private & Secure Messaging Platform",
+    description:
+      "Experience high-performance real-time chat with private rooms and anonymous messaging. Built using Socket.IO for speed and scalability.",
+    url: "https://portfolieo-five.vercel.app/chat",
+    siteName: "Hari Mishra Chat App",
+    type: "website",
+  },
+
   twitter: {
     card: "summary_large_image",
-    title: "Real-time Chat | Secure Messaging Platform",
-    description: "Join our real-time community or host private encrypted rooms. No data stored.",
-  }
-};
+    title: "Secure Real-Time Chat App | Private Messaging",
+    description:
+      "Join group chats or create private rooms instantly. Anonymous, fast, and secure messaging powered by Socket.IO.",
+  },
 
+  category: "technology",
+};
 export default function ChatMainPage() {
   return (
     <div className="container mx-auto px-4 py-8">      {/* <HeroSub 

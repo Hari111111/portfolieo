@@ -1,27 +1,49 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Online JSON Formatter - Best Free JSON Beautifier & Validator",
-  description: "Free online JSON Formatter and Validator. Beautify, minify, and convert JSON. Secure local processing, professional-grade developer tool for JSON debugging and data management.",
+  title: "Online JSON Formatter & Validator | Free JSON Beautifier Tool",
+  description:
+    "Free online JSON formatter, beautifier, and validator. Easily format, minify, and validate JSON data with secure browser-based processing. Perfect for developers and debugging.",
+
   keywords: [
-    "JSON formatter", "JSON beautifier", "JSON validator", "minify JSON", 
-    "format JSON online", "developer tools", "JSON tool", "beautify JSON",
-    "JSON viewer", "JSON editor", "online JSON parser", "check JSON syntax"
+    "json formatter",
+    "json beautifier",
+    "json validator",
+    "format json online",
+    "json minifier",
+    "json parser online",
+    "json viewer tool",
+    "json editor online",
+    "check json syntax",
+    "fix invalid json",
+    "pretty print json",
+    "minify json online",
+    "developer json tools",
+    "online json utilities",
+    "json debugging tool",
+    "secure json formatter",
+    "browser json formatter",
+    "free json formatter tool"
   ],
+
   alternates: {
     canonical: "https://harimishra.com/json-formatter",
   },
+
   openGraph: {
-    title: "Best Professional JSON Formatter & Validator Online",
-    description: "Instantly beautify, minify, and validate your JSON data with our free, secure online tool. 100% private browser-side processing.",
+    title: "Free Online JSON Formatter & Validator Tool",
+    description:
+      "Beautify, validate, and minify JSON instantly. Secure, fast, and 100% browser-based JSON tool for developers.",
     url: "https://harimishra.com/json-formatter",
     type: "website",
   },
+
   twitter: {
     card: "summary_large_image",
-    title: "Elite Online JSON Formatter | Hari Mishra",
-    description: "The most advanced tool for JSON developers. Format, minify and download JSON easily.",
-  }
+    title: "JSON Formatter & Validator Tool | Hari Mishra",
+    description:
+      "Format, validate, and minify JSON easily with this fast and secure online developer tool.",
+  },
 };
 
 export default function JsonFormatterLayout({
