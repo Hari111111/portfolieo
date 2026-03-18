@@ -51,14 +51,14 @@ export const metadata: Metadata = {
   ],
 
   alternates: {
-    canonical: "https://harimishra.com/tools",
+    canonical: "https://portfolieo-five.vercel.app/code-tools",
   },
 
   openGraph: {
     title: "All-in-One Free Developer Tools Suite",
     description:
       "Access powerful developer tools like JSON formatter, Bcrypt generator, Base64 encoder, regex tester, and more — all in one place.",
-    url: "https://harimishra.com/tools",
+    url: "https://portfolieo-five.vercel.app/code-tools",
     type: "website",
     images: [
       {
