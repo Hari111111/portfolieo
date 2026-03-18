@@ -116,7 +116,13 @@ const initialData: ResumeData = {
     ],
     customization: {
         primaryColor: "#3b82f6",
-        fontFamily: "Inter"
+        fontFamily: "Inter",
+        fontSize: 14,
+        sectionSpacing: 28,
+        lineHeight: 1.5,
+        letterSpacing: 0,
+        visibleSections: ['summary', 'experience', 'projects', 'education', 'skills', 'languages'],
+        sectionOrder: ['summary', 'experience', 'projects', 'education', 'skills', 'languages']
     }
 };
 const ResumeBuilder = () => {
@@ -125,6 +131,7 @@ const ResumeBuilder = () => {
     const [activeTab, setActiveTab] = useState('personal')
     const [skillInput, setSkillInput] = useState('')
     const [langInput, setLangInput] = useState('')
+    const [activeSubTab, setActiveSubTab] = useState<'Typography' | 'Spacing' | 'Sections'>('Typography');
     const resumeRef = useRef<HTMLDivElement>(null)
     const contentRef = useRef<HTMLDivElement>(null)
     const [selectedCategory, setSelectedCategory] = useState<'All' | 'Classic' | 'Modern' | 'Creative' | 'Specialized'>('All');
@@ -200,15 +207,31 @@ const ResumeBuilder = () => {
         ? allTemplates
         : (categories[selectedCategory as keyof typeof categories] as TemplateId[]);
 
-    const handleCustomizationChange = (field: 'primaryColor' | 'fontFamily', value: string) => {
+    const handleCustomizationChange = (field: keyof NonNullable<ResumeData['customization']>, value: any) => {
         setData(prev => ({
             ...prev,
             customization: {
-                primaryColor: prev.customization?.primaryColor || "#3b82f6",
-                fontFamily: prev.customization?.fontFamily || "Inter",
+                ...prev.customization,
                 [field]: value
             }
         }))
+    }
+
+    const toggleSectionVisibility = (section: string) => {
+        const current = data.customization?.visibleSections || ['summary', 'experience', 'projects', 'education', 'skills', 'languages'];
+        const next = current.includes(section) 
+            ? current.filter(s => s !== section)
+            : [...current, section];
+        handleCustomizationChange('visibleSections', next);
+    }
+    
+    const moveItem = (section: 'education' | 'experience' | 'projects', fromIndex: number, toIndex: number) => {
+        setData(prev => {
+            const newList = [...(prev[section] as any)];
+            const [movedItem] = newList.splice(fromIndex, 1);
+            newList.splice(toIndex, 0, movedItem);
+            return { ...prev, [section]: newList };
+        });
     }
 
     const resetData = () => {
@@ -435,6 +458,13 @@ const ResumeBuilder = () => {
                                         <span className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.1em] md:tracking-[0.15em]">{tab}</span>
                                     </button>
                                 ))}
+                                <button
+                                    onClick={() => setActiveTab('appearance')}
+                                    className={`flex flex-col items-center justify-center min-w-[70px] md:min-w-[80px] py-3 md:py-4 px-2 rounded-xl md:rounded-2xl transition-all duration-500 ${activeTab === 'appearance' ? 'bg-white dark:bg-primary text-primary dark:text-white shadow-xl shadow-primary/10 dark:shadow-primary/20' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-white/50 dark:hover:bg-white/5'}`}
+                                >
+                                    <Icon icon="solar:settings-bold-duotone" width="22" className={`mb-1.5 ${activeTab === 'appearance' ? 'scale-110' : 'opacity-60'}`} />
+                                    <span className="text-[9px] font-black uppercase tracking-widest">Layout</span>
+                                </button>
                             </div>
 
                             <div className="p-5 md:p-10 h-auto md:h-[75vh] 2xl:h-[85vh] overflow-y-auto custom-scrollbar-premium bg-white dark:bg-slate-950">
@@ -491,8 +521,13 @@ const ResumeBuilder = () => {
                                 {/* Experience */}
                                 {activeTab === 'experience' && (
                                     <div className="space-y-6 md:space-y-8 animate-fadeIn">
-                                        {data.experience.map((exp, i) => (
+                                {data.experience.map((exp, i) => (
                                             <div key={i} className="group relative p-5 md:p-8 bg-slate-50 dark:bg-white/5 rounded-[1.5rem] md:rounded-[2rem] border border-slate-100 dark:border-white/5 hover:border-primary/30 transition-all duration-500 hover:shadow-xl hover:shadow-primary/5">
+                                                {/* Reorder Controls */}
+                                                <div className="absolute -top-2 left-6 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                                                    <button onClick={() => moveItem('experience', i, i - 1)} disabled={i === 0} className="w-8 h-8 bg-white dark:bg-slate-800 rounded-full shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-primary disabled:opacity-30 disabled:hover:text-slate-400"><Icon icon="solar:arrow-up-bold" /></button>
+                                                    <button onClick={() => moveItem('experience', i, i + 1)} disabled={i === data.experience.length - 1} className="w-8 h-8 bg-white dark:bg-slate-800 rounded-full shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-primary disabled:opacity-30 disabled:hover:text-slate-400"><Icon icon="solar:arrow-down-bold" /></button>
+                                                </div>
                                                 <button
                                                     onClick={() => removeItem('experience', i)}
                                                     className="absolute -top-2 -right-2 w-8 h-8 md:w-10 md:h-10 bg-white dark:bg-darkmode text-red-500 rounded-full shadow-lg border border-red-100 dark:border-red-900/30 flex items-center justify-center lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 hover:bg-red-500 hover:text-white transform hover:scale-110 z-10"
@@ -519,8 +554,11 @@ const ResumeBuilder = () => {
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-1.5 block">Responsibilities</label>
-                                                        <textarea value={exp.description} onChange={e => updateItem('experience', i, 'description', e.target.value)} rows={4} className="resume-input-small text-xs md:text-sm leading-relaxed" placeholder="Describe your impact..." />
+                                                        <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-1.5 block flex justify-between">
+                                                            Responsibilities
+                                                            <span className="text-[8px] opacity-60">Separate lines for bullet points</span>
+                                                        </label>
+                                                        <textarea value={exp.description} onChange={e => updateItem('experience', i, 'description', e.target.value)} rows={4} className="resume-input-small text-xs md:text-sm leading-relaxed" placeholder="• Achieved X using Y...&#10;• Led a team of..." />
                                                     </div>
                                                 </div>
                                             </div>
@@ -539,6 +577,10 @@ const ResumeBuilder = () => {
                                     <div className="space-y-6 md:space-y-8 animate-fadeIn">
                                         {data.education.map((edu, i) => (
                                             <div key={i} className="group relative p-5 md:p-8 bg-slate-50 dark:bg-white/5 rounded-[1.5rem] md:rounded-[2.5rem] border border-slate-100 dark:border-white/5 hover:border-primary/30 transition-all duration-500">
+                                                <div className="absolute -top-2 left-6 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                                                    <button onClick={() => moveItem('education', i, i - 1)} disabled={i === 0} className="w-8 h-8 bg-white dark:bg-slate-800 rounded-full shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-primary disabled:opacity-30 disabled:hover:text-slate-400"><Icon icon="solar:arrow-up-bold" /></button>
+                                                    <button onClick={() => moveItem('education', i, i + 1)} disabled={i === data.education.length - 1} className="w-8 h-8 bg-white dark:bg-slate-800 rounded-full shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-primary disabled:opacity-30 disabled:hover:text-slate-400"><Icon icon="solar:arrow-down-bold" /></button>
+                                                </div>
                                                 <button onClick={() => removeItem('education', i)} className="absolute -top-2 -right-2 w-8 h-8 md:w-10 md:h-10 bg-white dark:bg-darkmode text-red-500 rounded-full shadow-lg border border-red-100 dark:border-red-900/30 flex items-center justify-center lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300 hover:bg-red-500 hover:text-white transform hover:scale-110 z-10">
                                                     <Icon icon="solar:trash-bin-trash-bold" width="16" className="md:w-[18px]" />
                                                 </button>
@@ -636,11 +678,21 @@ const ResumeBuilder = () => {
                                     <div className="space-y-8 animate-fadeIn">
                                         {data.projects.map((proj, i) => (
                                             <div key={i} className="p-6 bg-[#f8f9fa] dark:bg-black/20 rounded-2xl relative group">
+                                                <div className="absolute -top-2 left-6 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                                                    <button onClick={(e) => { e.stopPropagation(); moveItem('projects', i, i - 1); }} disabled={i === 0} className="w-8 h-8 bg-white dark:bg-slate-800 rounded-full shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-primary disabled:opacity-30 disabled:hover:text-slate-400"><Icon icon="solar:arrow-up-bold" /></button>
+                                                    <button onClick={(e) => { e.stopPropagation(); moveItem('projects', i, i + 1); }} disabled={i === data.projects.length - 1} className="w-8 h-8 bg-white dark:bg-slate-800 rounded-full shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-primary disabled:opacity-30 disabled:hover:text-slate-400"><Icon icon="solar:arrow-down-bold" /></button>
+                                                </div>
                                                 <button onClick={() => removeItem('projects', i)} className="absolute -top-3 -right-3 bg-red-500 text-white p-1.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all"><Icon icon="solar:trash-bin-trash-bold" /></button>
                                                 <div className="space-y-4">
                                                     <input value={proj.name} onChange={e => updateItem('projects', i, 'name', e.target.value)} className="resume-input-small font-bold" placeholder="Project Name" />
                                                     <input value={proj.link} onChange={e => updateItem('projects', i, 'link', e.target.value)} className="resume-input-small" placeholder="Project Link" />
-                                                    <textarea value={proj.description} onChange={e => updateItem('projects', i, 'description', e.target.value)} rows={2} className="resume-input-small" placeholder="Brief description..." />
+                                                    <div>
+                                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block flex justify-between">
+                                                            Brief Description
+                                                            <span className="text-[8px] opacity-60">Supports bullet points via new lines</span>
+                                                        </label>
+                                                        <textarea value={proj.description} onChange={e => updateItem('projects', i, 'description', e.target.value)} rows={2} className="resume-input-small" placeholder="• Built using React...&#10;• Optimized for speed..." />
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}
@@ -650,6 +702,110 @@ const ResumeBuilder = () => {
                                     </div>
                                 )}
 
+                                {/* Configuration - Advanced Config */}
+                                {activeTab === 'appearance' && (
+                                    <div className="space-y-6 pb-10 animate-fadeIn h-full overflow-y-auto no-scrollbar">
+                                        {/* Configuration Tabs */}
+                                        <div className="flex gap-2 p-1.5 bg-slate-100 dark:bg-white/5 rounded-2xl mb-2">
+                                            {['Typography', 'Spacing', 'Sections'].map((subtab) => (
+                                                <button
+                                                    key={subtab}
+                                                    onClick={() => setActiveSubTab(subtab as any)}
+                                                    className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${activeSubTab === subtab ? 'bg-primary text-white shadow-lg' : 'text-slate-400'}`}
+                                                >
+                                                    {subtab}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        {activeSubTab === 'Typography' && (
+                                            <div className="space-y-6 animate-fadeIn">
+                                                <div className="bg-white dark:bg-white/5 rounded-3xl p-8 border border-slate-100 dark:border-white/5">
+                                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-8 flex items-center gap-2">
+                                                        <Icon icon="solar:text-bold-duotone" width="18" /> Detail Control
+                                                    </h4>
+                                                    
+                                                    <div className="space-y-8">
+                                                        <div>
+                                                            <div className="flex justify-between mb-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                                                <span>Text Height</span>
+                                                                <span className="text-primary">{data.customization?.lineHeight || 1.5}</span>
+                                                            </div>
+                                                            <input type="range" min="1" max="2.5" step="0.1" value={data.customization?.lineHeight || 1.5} onChange={(e) => handleCustomizationChange('lineHeight', parseFloat(e.target.value))} className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary" />
+                                                        </div>
+                                                        <div>
+                                                            <div className="flex justify-between mb-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                                                <span>Letter Spacing</span>
+                                                                <span className="text-primary">{data.customization?.letterSpacing || 0}px</span>
+                                                            </div>
+                                                            <input type="range" min="-1" max="10" step="0.5" value={data.customization?.letterSpacing || 0} onChange={(e) => handleCustomizationChange('letterSpacing', parseFloat(e.target.value))} className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {activeSubTab === 'Spacing' && (
+                                            <div className="space-y-6 animate-fadeIn">
+                                                <div className="bg-white dark:bg-white/5 rounded-3xl p-6 border border-slate-100 dark:border-white/5 shadow-sm">
+                                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 mb-6 flex items-center gap-2">
+                                                        <Icon icon="solar:tuning-square-bold-duotone" width="18" /> Vertical Gaps
+                                                    </h4>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                                        {[
+                                                            { id: 'summarySpacing', label: 'Summary' },
+                                                            { id: 'experienceSpacing', label: 'Experience' },
+                                                            { id: 'projectsSpacing', label: 'Projects' },
+                                                            { id: 'educationSpacing', label: 'Education' }
+                                                        ].map((ctrl) => (
+                                                            <div key={ctrl.id}>
+                                                                <div className="flex justify-between items-center mb-2.5">
+                                                                    <label className="text-[9px] font-black uppercase tracking-widest text-slate-500">{ctrl.label}</label>
+                                                                    <span className="text-indigo-500 text-[9px] font-bold">{data.customization?.[ctrl.id as keyof typeof data.customization] || 28}px</span>
+                                                                </div>
+                                                                <input type="range" min="0" max="80" step="2" value={data.customization?.[ctrl.id as keyof typeof data.customization] || 28} onChange={(e) => handleCustomizationChange(ctrl.id as any, parseInt(e.target.value))} className="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full appearance-none cursor-pointer accent-indigo-500" />
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {activeSubTab === 'Sections' && (
+                                            <div className="space-y-6 animate-fadeIn">
+                                                <div className="bg-white dark:bg-white/5 rounded-3xl p-6 border border-slate-100 dark:border-white/5 shadow-sm">
+                                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 mb-6 flex items-center gap-2">
+                                                        <Icon icon="solar:hamburger-menu-bold-duotone" width="18" /> Availability
+                                                    </h4>
+                                                    <div className="space-y-2">
+                                                        {['summary', 'experience', 'projects', 'education', 'skills', 'languages'].map(sec => (
+                                                            <button 
+                                                                key={sec}
+                                                                onClick={() => toggleSectionVisibility(sec)}
+                                                                className={`w-full p-4 rounded-2xl flex items-center justify-between border transition-all ${data.customization?.visibleSections?.includes(sec) ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 opacity-50'}`}
+                                                            >
+                                                                <div className="flex items-center gap-3">
+                                                                    <Icon icon={data.customization?.visibleSections?.includes(sec) ? "solar:eye-bold-duotone" : "solar:eye-closed-bold-duotone"} className={data.customization?.visibleSections?.includes(sec) ? "text-emerald-500" : "text-slate-400"} />
+                                                                    <span className="text-[10px] font-black uppercase tracking-widest">{sec}</span>
+                                                                </div>
+                                                                {data.customization?.visibleSections?.includes(sec) && <Icon icon="solar:check-circle-bold" className="text-emerald-500" />}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="bg-emerald-500/5 rounded-3xl p-8 border border-emerald-500/10 text-center">
+                                            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-emerald-600 mb-4 px-2 italic font-serif">Advanced Configuration v4.1</h4>
+                                            
+                                            <button onClick={onExportPDF} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-3 active:scale-95 transition-all group">
+                                                <Icon icon="solar:file-download-bold" width="24" className=" group-hover:translate-y-1 transition-transform" />
+                                                PRO-GENERATE PDF
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -767,15 +923,27 @@ const ResumeBuilder = () => {
             <style jsx global>{`
                 #resume-content {
                     --primary: ${data.customization?.primaryColor || '#3b82f6'} !important;
-                    --base-font-size: 14px;
-                    --section-spacing: 28px;
-                    --summary-spacing: 24px;
-                    --experience-spacing: 24px;
-                    --projects-spacing: 24px;
-                    --education-spacing: 24px;
-                    --skills-spacing: 24px;
+                    --base-font-size: ${data.customization?.fontSize || 14}px;
+                    --section-spacing: ${data.customization?.sectionSpacing || 28}px;
+                    --summary-spacing: ${data.customization?.summarySpacing || data.customization?.sectionSpacing || 28}px;
+                    --experience-spacing: ${data.customization?.experienceSpacing || data.customization?.sectionSpacing || 28}px;
+                    --projects-spacing: ${data.customization?.projectsSpacing || data.customization?.sectionSpacing || 28}px;
+                    --education-spacing: ${data.customization?.educationSpacing || data.customization?.sectionSpacing || 28}px;
+                    --skills-spacing: ${data.customization?.skillsSpacing || data.customization?.sectionSpacing || 28}px;
+                    --line-height: ${data.customization?.lineHeight || 1.5} !important;
+                    --letter-spacing: ${data.customization?.letterSpacing || 0}px !important;
                     font-family: ${data.customization?.fontFamily || 'Inter'}, sans-serif !important;
                 }
+                #resume-content section { line-height: var(--line-height); letter-spacing: var(--letter-spacing); }
+                #resume-content h1, #resume-content h2, #resume-content h3 { letter-spacing: var(--letter-spacing); }
+                
+                #resume-content section[data-sec="summary"] { display: ${data.customization?.visibleSections?.includes('summary') ? 'block' : 'none'}; }
+                #resume-content section[data-sec="experience"] { display: ${data.customization?.visibleSections?.includes('experience') ? 'block' : 'none'}; }
+                #resume-content section[data-sec="projects"] { display: ${data.customization?.visibleSections?.includes('projects') ? 'block' : 'none'}; }
+                #resume-content section[data-sec="education"] { display: ${data.customization?.visibleSections?.includes('education') ? 'block' : 'none'}; }
+                #resume-content section[data-sec="skills"] { display: ${data.customization?.visibleSections?.includes('skills') ? 'block' : 'none'}; }
+                #resume-content section[data-sec="languages"] { display: ${data.customization?.visibleSections?.includes('languages') ? 'block' : 'none'}; }
+                
                 #resume-content .text-primary { color: var(--primary) !important; }
                 #resume-content .bg-primary { background-color: var(--primary) !important; }
                 #resume-content .border-primary { border-color: var(--primary) !important; }

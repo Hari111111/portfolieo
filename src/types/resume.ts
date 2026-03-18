@@ -40,6 +40,10 @@ export interface ResumeData {
     educationSpacing?: number;
     skillsSpacing?: number;
     projectsSpacing?: number;
+    lineHeight?: number;
+    letterSpacing?: number;
+    sectionOrder?: string[];
+    visibleSections?: string[];
   };
 }
 

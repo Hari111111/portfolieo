@@ -26,7 +26,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
 
             {/* Summary */}
             {data.personalInfo.summary && (
-                <section style={{ marginBottom: 'var(--summary-spacing)' }}>
+                <section data-sec="summary" style={{ marginBottom: 'var(--summary-spacing)' }}>
                     <h2 className="font-bold uppercase tracking-widest text-primary mb-2 border-b border-grey/20 pb-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Professional Summary</h2>
                     <p className="text-black leading-relaxed italic" style={{ fontSize: 'var(--base-font-size)' }}>{data.personalInfo.summary}</p>
                 </section>
@@ -35,7 +35,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
             <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-8">
                     {/* Experience */}
-                    <section style={{ marginBottom: 'var(--experience-spacing)' }}>
+                    <section data-sec="experience" style={{ marginBottom: 'var(--experience-spacing)' }}>
                         <h2 className="font-bold uppercase tracking-widest text-primary mb-3 border-b border-grey/20 pb-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Experience</h2>
                         <div className="space-y-4">
                             {data.experience.map((exp, i) => (
@@ -53,7 +53,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                     {/* Projects */}
                     {data.projects.length > 0 && (
-                        <section style={{ marginBottom: 'var(--projects-spacing)' }}>
+                        <section data-sec="projects" style={{ marginBottom: 'var(--projects-spacing)' }}>
                             <h2 className="font-bold uppercase tracking-widest text-primary mb-3 border-b border-grey/20 pb-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Projects</h2>
                             <div className="space-y-3">
                                 {data.projects.map((proj, i) => (
@@ -69,7 +69,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                 <div className="col-span-4">
                     {/* Skills */}
-                    <section style={{ marginBottom: 'var(--skills-spacing)' }}>
+                    <section data-sec="skills" style={{ marginBottom: 'var(--skills-spacing)' }}>
                         <h2 className="font-bold uppercase tracking-widest text-primary mb-2 border-b border-grey/20 pb-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Skills</h2>
                         <div className="flex flex-wrap gap-2">
                             {data.skills.map((skill, i) => (
@@ -79,7 +79,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
                     </section>
 
                     {/* Education */}
-                    <section style={{ marginBottom: 'var(--education-spacing)' }}>
+                    <section data-sec="education" style={{ marginBottom: 'var(--education-spacing)' }}>
                         <h2 className="font-bold uppercase tracking-widest text-primary mb-2 border-b border-grey/20 pb-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Education</h2>
                         <div className="space-y-3">
                             {data.education.map((edu, i) => (
@@ -94,7 +94,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                     {/* Languages */}
                     {data.languages.length > 0 && (
-                        <section style={{ marginBottom: 'calc(var(--section-spacing) * 1.25)' }}>
+                        <section data-sec="languages" style={{ marginBottom: 'calc(var(--section-spacing) * 1.25)' }}>
                             <h2 className="font-bold uppercase tracking-widest text-primary mb-4 border-b border-grey/20 pb-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Languages</h2>
                             <div className="space-y-1">
                                 {data.languages.map((lang, i) => (
@@ -130,7 +130,7 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
                         </div>
                     </section>
 
-                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                    <section data-sec="skills" style={{ marginBottom: 'var(--section-spacing)' }}>
                         <h2 className="text-[#bdc3c7] font-black uppercase tracking-widest mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 0.8)' }}>Top Skills</h2>
                         <div className="space-y-2">
                             {data.skills.map((skill, i) => (
@@ -144,7 +144,7 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
                         </div>
                     </section>
 
-                    <section style={{ marginBottom: 'var(--education-spacing)' }}>
+                    <section data-sec="education" style={{ marginBottom: 'var(--education-spacing)' }}>
                         <h2 className="text-[#bdc3c7] font-black uppercase tracking-widest mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 0.8)' }}>Education</h2>
                         <div className="space-y-6">
                             {data.education.map((edu, i) => (
@@ -161,7 +161,7 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
 
             {/* Main Content */}
             <main className="w-2/3 bg-white p-8">
-                <section style={{ marginBottom: 'var(--summary-spacing)' }}>
+                <section data-sec="summary" style={{ marginBottom: 'var(--summary-spacing)' }}>
                     <h2 className="font-bold text-[#2c3e50] uppercase tracking-widest mb-2 flex items-center gap-3" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>
                         About Me
                         <div className="h-[2px] bg-[#2c3e50] flex-grow"></div>
@@ -169,7 +169,7 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
                     <p className="leading-relaxed text-[#34495e]" style={{ fontSize: 'calc(var(--base-font-size) * 0.95)' }}>{data.personalInfo.summary}</p>
                 </section>
 
-                <section style={{ marginBottom: 'var(--experience-spacing)' }}>
+                <section data-sec="experience" style={{ marginBottom: 'var(--experience-spacing)' }}>
                     <h2 className="font-bold text-[#2c3e50] uppercase tracking-widest mb-4 flex items-center gap-3" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>
                         Professional Experience
                         <div className="h-[2px] bg-[#2c3e50] flex-grow"></div>
@@ -188,7 +188,7 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
                     </div>
                 </section>
 
-                <section>
+                <section data-sec="projects">
                     <h2 className="text-lg font-bold text-[#2c3e50] uppercase tracking-widest mb-4 flex items-center gap-3">
                         Projects
                         <div className="h-[2px] bg-[#2c3e50] flex-grow"></div>
@@ -222,12 +222,12 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
             </div>
 
-            <section style={{ marginBottom: 'var(--section-spacing)' }}>
+            <section data-sec="summary" style={{ marginBottom: 'var(--section-spacing)' }}>
                 <p className="text-center italic leading-relaxed text-gray-600 px-10" style={{ fontSize: 'calc(var(--base-font-size) * 1.05)' }}>{data.personalInfo.summary}</p>
             </section>
 
             <div className="space-y-8">
-                <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                <section data-sec="experience" style={{ marginBottom: 'var(--section-spacing)' }}>
                     <h2 className="font-black uppercase tracking-[0.3em] text-black border-l-4 border-black pl-3 mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 0.7)' }}>Experience</h2>
                     <div className="space-y-6">
                         {data.experience.map((exp, i) => (
@@ -243,7 +243,7 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
                     </div>
                 </section>
 
-                <section>
+                <section data-sec="education">
                     <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-black border-l-4 border-black pl-3 mb-4">Education</h2>
                     <div className="grid grid-cols-2 gap-6">
                         {data.education.map((edu, i) => (
@@ -257,13 +257,13 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </section>
 
                 <div className="grid grid-cols-2 gap-12">
-                    <section>
+                    <section data-sec="skills">
                         <h2 className="text-xs font-black uppercase tracking-[0.3em] text-black border-l-4 border-black pl-3 mb-6">Expertise</h2>
                         <div className="text-[13px] leading-loose text-gray-700">
                             {data.skills.join(' • ')}
                         </div>
                     </section>
-                    <section>
+                    <section data-sec="languages">
                         <h2 className="text-xs font-black uppercase tracking-[0.3em] text-black border-l-4 border-black pl-3 mb-6">Languages</h2>
                         <div className="text-[13px] leading-loose text-gray-700">
                             {data.languages.join(', ')}
@@ -291,12 +291,12 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 {data.personalInfo.website && <p className="text-sm mt-1 underline italic">{data.personalInfo.website}</p>}
             </div>
 
-            <section style={{ marginBottom: 'var(--section-spacing)' }}>
+            <section data-sec="summary" style={{ marginBottom: 'var(--section-spacing)' }}>
                 <h2 className="font-bold uppercase border-b border-gray-300 pb-1 mb-3" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Professional Profile</h2>
                 <p className="leading-relaxed" style={{ fontSize: 'var(--base-font-size)' }}>{data.personalInfo.summary}</p>
             </section>
 
-            <section style={{ marginBottom: 'var(--section-spacing)' }}>
+            <section data-sec="experience" style={{ marginBottom: 'var(--section-spacing)' }}>
                 <h2 className="font-bold uppercase border-b border-gray-300 pb-1 mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Professional Experience</h2>
                 <div className="space-y-6">
                     {data.experience.map((exp, i) => (
@@ -316,7 +316,7 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
             </section>
 
-            <section style={{ marginBottom: 'var(--section-spacing)' }}>
+            <section data-sec="education" style={{ marginBottom: 'var(--section-spacing)' }}>
                 <h2 className="font-bold uppercase border-b border-gray-300 pb-1 mb-4" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Academic Background</h2>
                 <div className="space-y-4">
                     {data.education.map((edu, i) => (
@@ -332,7 +332,7 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
             </section>
 
             <div className="grid grid-cols-2 gap-10">
-                <section>
+                <section data-sec="skills">
                     <h2 className="text-base font-bold uppercase border-b border-gray-300 pb-1 mb-3">Key Competencies</h2>
                     <ul className="grid grid-cols-1 gap-x-4 gap-y-1 text-sm list-disc pl-5">
                         {data.skills.map((skill, i) => (
@@ -340,7 +340,7 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
                         ))}
                     </ul>
                 </section>
-                <section>
+                <section data-sec="languages">
                     <h2 className="text-base font-bold uppercase border-b border-gray-300 pb-1 mb-3">Languages</h2>
                     <p className="text-sm">{data.languages.join(', ')}</p>
                 </section>
@@ -368,7 +368,7 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
             <div className="flex grow">
                 {/* Left Column */}
                 <div className="w-[35%] bg-[#222] p-10 space-y-12 border-r border-white/5">
-                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                    <section data-sec="personalInfo" style={{ marginBottom: 'var(--section-spacing)' }}>
                         <h2 className="text-primary text-xs font-black uppercase tracking-[0.4em] mb-6">Contact</h2>
                         <div className="space-y-4 opacity-80 uppercase font-black" style={{ fontSize: 'calc(var(--base-font-size) * 0.75)' }}>
                             <p className="border-b border-white/10 pb-2 truncate">{data.personalInfo.email}</p>
@@ -377,7 +377,7 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                         </div>
                     </section>
 
-                    <section>
+                    <section data-sec="skills">
                         <h2 className="text-primary text-xs font-black uppercase tracking-[0.4em] mb-6">Expertise</h2>
                         <div className="flex flex-wrap gap-2">
                             {data.skills.map((skill, i) => (
@@ -386,7 +386,7 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                         </div>
                     </section>
 
-                    <section>
+                    <section data-sec="languages">
                         <h2 className="text-primary text-xs font-black uppercase tracking-[0.4em] mb-6">Languages</h2>
                         <div className="space-y-2">
                             {data.languages.map((lang, i) => (
@@ -401,7 +401,7 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                 {/* Right Column */}
                 <div className="w-[65%] bg-[#1a1a1a] p-12 space-y-12">
-                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                    <section data-sec="experience" style={{ marginBottom: 'var(--section-spacing)' }}>
                         <div className="flex items-center gap-4 mb-6">
                             <h2 className="font-black uppercase italic tracking-widest text-primary" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>Experience</h2>
                             <div className="h-[1px] bg-white/10 grow"></div>
@@ -420,7 +420,7 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                         </div>
                     </section>
 
-                    <section>
+                    <section data-sec="education">
                         <div className="flex items-center gap-4 mb-6">
                             <h2 className="text-lg font-black uppercase italic tracking-widest text-primary">Education</h2>
                             <div className="h-[1px] bg-white/10 grow"></div>
@@ -468,13 +468,13 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
                 {/* Main Side */}
                 <div className="w-[70%] p-12 pr-10 border-r border-slate-50">
                     {data.personalInfo.summary && (
-                        <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                        <section data-sec="summary" style={{ marginBottom: 'var(--section-spacing)' }}>
                             <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-4 border-b border-slate-100 pb-2">Profile</h2>
                             <p className="leading-relaxed text-slate-700" style={{ fontSize: 'var(--base-font-size)' }}>{data.personalInfo.summary}</p>
                         </section>
                     )}
 
-                    <section style={{ marginBottom: 'var(--section-spacing)' }}>
+                    <section data-sec="experience" style={{ marginBottom: 'var(--section-spacing)' }}>
                         <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-6 border-b border-slate-100 pb-2">Professional Experience</h2>
                         <div className="space-y-8">
                             {data.experience.map((exp, i) => (
@@ -493,7 +493,7 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
                     </section>
 
                     {data.projects.length > 0 && (
-                        <section>
+                        <section data-sec="projects">
                             <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-6 border-b border-slate-100 pb-2">Select Projects</h2>
                             <div className="grid grid-cols-1 gap-6">
                                 {data.projects.map((proj, i) => (
@@ -512,7 +512,7 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                 {/* Right Column Side */}
                 <div className="w-[30%] bg-slate-50/50 p-10 py-12 space-y-12">
-                    <section>
+                    <section data-sec="skills">
                         <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-6">Expertise</h2>
                         <div className="space-y-3">
                             {data.skills.map((skill, i) => (
@@ -528,7 +528,7 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
                         </div>
                     </section>
 
-                    <section>
+                    <section data-sec="education">
                         <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-6">Education</h2>
                         <div className="space-y-6">
                             {data.education.map((edu, i) => (
@@ -542,7 +542,7 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
                     </section>
 
                     {data.languages.length > 0 && (
-                        <section>
+                        <section data-sec="languages">
                             <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-6">Communication</h2>
                             <div className="space-y-2">
                                 {data.languages.map((lang, i) => (
@@ -818,7 +818,7 @@ export const GeometricTemplate: React.FC<TemplateProps> = ({ data }) => {
 
             <header className="p-16 pb-12 relative flex justify-between items-end">
                 <div>
-                    <h1 className="text-6xl font-black text-[#2d3436] leading-none tracking-tighter uppercase">{data.personalInfo.fullName.split(' ')[0]}<br/><span className="text-indigo-600 italic font-serif lowercase border-b-8 border-rose-400 leading-[0.8]">{data.personalInfo.fullName.split(' ')[1]}</span></h1>
+                    <h1 className="text-6xl font-black text-[#2d3436] leading-none tracking-tighter uppercase">{data.personalInfo.fullName.split(' ')[0]}<br /><span className="text-indigo-600 italic font-serif lowercase border-b-8 border-rose-400 leading-[0.8]">{data.personalInfo.fullName.split(' ')[1]}</span></h1>
                     <p className="text-lg font-bold text-grey mt-6 uppercase tracking-[0.3em]">{data.personalInfo.jobTitle}</p>
                 </div>
                 <div className="text-right text-[11px] font-black uppercase tracking-widest text-[#2d3436]/60 leading-relaxed border-l-4 border-rose-400 pl-6 h-fit">
@@ -967,7 +967,7 @@ export const HighImpactTemplate: React.FC<TemplateProps> = ({ data }) => {
             <header className="bg-[#1a1c1e] text-white p-16 pb-12">
                 <div className="flex justify-between items-start">
                     <div>
-                        <h1 className="text-7xl font-black uppercase tracking-tighter leading-[0.85]">{data.personalInfo.fullName.split(' ')[0]}<br/><span className="text-primary">{data.personalInfo.fullName.split(' ')[1]}</span></h1>
+                        <h1 className="text-7xl font-black uppercase tracking-tighter leading-[0.85]">{data.personalInfo.fullName.split(' ')[0]}<br /><span className="text-primary">{data.personalInfo.fullName.split(' ')[1]}</span></h1>
                         <p className="text-xl font-bold mt-8 flex items-center gap-4">
                             <span className="w-12 h-1 bg-primary"></span>
                             {data.personalInfo.jobTitle}
@@ -1557,7 +1557,7 @@ export const InfographicTemplate: React.FC<TemplateProps> = ({ data }) => {
                             <div className="space-y-10">
                                 {data.experience.map((exp, i) => (
                                     <div key={i} className="relative pl-12">
-                                        <div className="absolute left-0 top-0 w-8 h-8 rounded-full border-4 border-primary/20 bg-white flex items-center justify-center text-[10px] font-black text-primary" style={{ fontSize: 'calc(var(--base-font-size) * 0.65)' }}>#{i+1}</div>
+                                        <div className="absolute left-0 top-0 w-8 h-8 rounded-full border-4 border-primary/20 bg-white flex items-center justify-center text-[10px] font-black text-primary" style={{ fontSize: 'calc(var(--base-font-size) * 0.65)' }}>#{i + 1}</div>
                                         <div className="flex justify-between items-baseline mb-2">
                                             <h3 className="font-black text-[#1e293b]" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>{exp.position}</h3>
                                             <span className="font-black opacity-30 uppercase" style={{ fontSize: 'calc(var(--base-font-size) * 0.7)' }}>{exp.startDate} - {exp.endDate}</span>
@@ -1907,7 +1907,7 @@ export const JournalTemplate: React.FC<TemplateProps> = ({ data }) => {
             <header className="mb-20 grid grid-cols-12 gap-10 items-end">
                 <div className="col-span-8">
                     <span className="text-[10px] font-black uppercase tracking-[0.8em] text-rose-400 mb-6 block font-sans">Creatives Journal Vol. 01</span>
-                    <h1 className="text-7xl font-light italic leading-[0.85] tracking-tighter">{data.personalInfo.fullName.split(' ')[0]}<br/><span className="text-8xl font-black not-italic -mt-4 block">{data.personalInfo.fullName.split(' ')[1]}</span></h1>
+                    <h1 className="text-7xl font-light italic leading-[0.85] tracking-tighter">{data.personalInfo.fullName.split(' ')[0]}<br /><span className="text-8xl font-black not-italic -mt-4 block">{data.personalInfo.fullName.split(' ')[1]}</span></h1>
                 </div>
                 <div className="col-span-4 text-sm font-medium italic opacity-60 flex flex-col gap-1 border-l border-rose-200 pl-8 pb-2">
                     <p>{data.personalInfo.email}</p>
@@ -1952,7 +1952,7 @@ export const JournalTemplate: React.FC<TemplateProps> = ({ data }) => {
                         <div className="space-y-20">
                             {data.experience.map((exp, i) => (
                                 <div key={i} className="relative">
-                                    <div className="absolute -left-12 top-2 text-[10px] font-black opacity-10 font-sans rotate-[-90deg]">EXP_{i+1}</div>
+                                    <div className="absolute -left-12 top-2 text-[10px] font-black opacity-10 font-sans rotate-[-90deg]">EXP_{i + 1}</div>
                                     <h3 className="text-3xl font-black tracking-tighter mb-2">{exp.position}</h3>
                                     <div className="flex justify-between items-baseline mb-6 border-b border-rose-50/50 pb-2">
                                         <p className="text-sm font-black italic text-rose-400">{exp.company}</p>
