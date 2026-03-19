@@ -11,6 +11,7 @@ import NextTopLoader from 'nextjs-toploader';
 import { AuthDialogProvider } from "./context/AuthDialogContext";
 import Script from "next/script";
 import { Metadata } from 'next';
+import PageTracker from "@/components/Common/PageTracker";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -109,6 +110,7 @@ export default function RootLayout({
         </Script>
         <NextTopLoader />
         <AuthDialogProvider>
+          <PageTracker showCount={false} />
           <ThemeProvider
             attribute="class"
             enableSystem={true}

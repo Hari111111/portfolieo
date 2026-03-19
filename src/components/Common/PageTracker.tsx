@@ -11,8 +11,31 @@ const PageTracker = ({ showCount = true }) => {
 
     useEffect(() => {
         const track = async () => {
-            // Record the view
-            await recordPageView(pathname);
+            if (typeof window === 'undefined') return;
+
+            // Simple device/browser detection
+            const ua = window.navigator.userAgent;
+            const width = window.innerWidth;
+
+            let browser = "Other";
+            if (ua.includes("Chrome")) browser = "Chrome";
+            else if (ua.includes("Firefox")) browser = "Firefox";
+            else if (ua.includes("Safari") && !ua.includes("Chrome")) browser = "Safari";
+            else if (ua.includes("Edge")) browser = "Edge";
+
+            let os = "Other";
+            if (ua.includes("Win")) os = "Windows";
+            else if (ua.includes("Mac")) os = "MacOS";
+            else if (ua.includes("Android")) os = "Android";
+            else if (ua.includes("iPhone") || ua.includes("iPad")) os = "iOS";
+            else if (ua.includes("Linux")) os = "Linux";
+
+            let device = "Desktop";
+            if (width < 768) device = "Mobile";
+            else if (width < 1024) device = "Tablet";
+
+            // Record the view with stats
+            await recordPageView(pathname, { browser, os, device });
             // Get the updated count
             const count = await getPageViewCount(pathname);
             setViewCount(count);

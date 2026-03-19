@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import HeroSub from '@/components/SharedComponent/HeroSub';
 import { getQuestions } from '@/app/api/users/question.services';
 import { Icon } from '@iconify/react';
-import PageTracker from '@/components/Common/PageTracker';
 
 const categories = [
     { name: 'All', icon: 'solar:layers-bold-duotone' },
