@@ -303,15 +303,25 @@ const Resume = () => {
 
                 {/* Download Resume Button */}
                 <div className='text-center mt-20' data-aos='fade-up'>
-                    <a
-                        href={profile?.resumeLink || '#'}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className='inline-flex items-center gap-4 px-12 py-5 bg-primary text-white rounded-2xl font-black uppercase tracking-[0.3em] hover:bg-blue-700 transition-all duration-300 shadow-2xl shadow-blue-500/30 hover:scale-105 active:scale-95 text-xs'
-                    >
-                        <Icon icon='solar:download-bold' className='text-xl' />
-                        Download Neural Resume
-                    </a>
+                    {(() => {
+                        let downloadUrl = profile?.resumeLink || '#';
+                        if (downloadUrl.includes('cloudinary.com') && !downloadUrl.includes('fl_attachment')) {
+                            downloadUrl = downloadUrl.replace('/upload/', '/upload/fl_attachment/');
+                        }
+                        
+                        return (
+                            <a
+                                href={downloadUrl}
+                                download="Resume.pdf"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className='inline-flex items-center gap-4 px-12 py-5 bg-primary text-white rounded-2xl font-black uppercase tracking-[0.3em] hover:bg-blue-700 transition-all duration-300 shadow-2xl shadow-blue-500/30 hover:scale-105 active:scale-95 text-xs'
+                            >
+                                <Icon icon='solar:download-bold' className='text-xl' />
+                                Download Neural Resume
+                            </a>
+                        );
+                    })()}
                 </div>
             </div>
         </section>

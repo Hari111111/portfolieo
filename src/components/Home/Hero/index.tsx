@@ -68,7 +68,8 @@ const Hero = () => {
             </Link>
             {profile?.resumeLink && (
               <a
-                href={profile.resumeLink}
+                href={profile.resumeLink.includes('cloudinary.com') ? profile.resumeLink.replace('/upload/', '/upload/fl_attachment/') : profile.resumeLink}
+                download="Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className='px-10 py-5 border-2 border-border dark:border-dark_border text-midnight_text dark:text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] hover:border-primary transition-all hover:scale-105 flex items-center justify-center min-w-[180px]'>
