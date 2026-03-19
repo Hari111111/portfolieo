@@ -230,9 +230,21 @@ export default function InterviewQuestionsClient() {
                                     {selectedQuestion ? (
                                         <div className="p-6 md:p-16 animate-fadeIn">
                                             <div className="flex flex-wrap items-center gap-3 md:gap-4 mb-6 md:mb-10">
-                                                <span className="px-4 md:px-6 py-1.5 md:py-2 bg-slate-100 dark:bg-slate-800 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 border border-slate-200 dark:border-slate-700">
-                                                    {selectedQuestion.category}
-                                                </span>
+                                                {/* Category Badges */}
+                                                {(Array.isArray(selectedQuestion.category) ? selectedQuestion.category : [selectedQuestion.category]).map((cat: string, index: number) => (
+                                                    <span key={`cat-${index}`} className="px-4 md:px-6 py-1.5 md:py-2 bg-slate-100 dark:bg-slate-800 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 border border-slate-200 dark:border-slate-700">
+                                                        {cat}
+                                                    </span>
+                                                ))}
+
+                                                {/* Language Badges */}
+                                                {(Array.isArray(selectedQuestion.language) ? selectedQuestion.language : [selectedQuestion.language]).map((lang: string, index: number) => (
+                                                    <span key={`lang-${index}`} className="px-4 md:px-6 py-1.5 md:py-2 bg-blue-500/10 text-blue-500 border border-blue-500/20 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest">
+                                                        {lang}
+                                                    </span>
+                                                ))}
+
+                                                {/* Difficulty Badge */}
                                                 <span className={`px-4 md:px-6 py-1.5 md:py-2 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest border ${selectedQuestion.difficulty === 'Easy' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
                                                     selectedQuestion.difficulty === 'Medium' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
                                                         'bg-rose-500/10 text-rose-500 border-rose-500/20'
