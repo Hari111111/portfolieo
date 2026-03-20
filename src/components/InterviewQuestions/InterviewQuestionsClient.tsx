@@ -1,9 +1,23 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import HeroSub from '@/components/SharedComponent/HeroSub';
 import { getQuestions } from '@/app/api/users/question.services';
 import { Icon } from '@iconify/react';
+
+const debounce = (fn: Function, delay: number) => {
+    let timeoutId: any;
+    const debouncedFn = (...args: any[]) => {
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            fn(...args);
+        }, delay);
+    };
+    debouncedFn.cancel = () => {
+        if (timeoutId) clearTimeout(timeoutId);
+    };
+    return debouncedFn as ((...args: any[]) => void) & { cancel: () => void };
+};
 
 const categories = [
     { name: 'All', icon: 'solar:layers-bold-duotone' },
@@ -18,44 +32,85 @@ const categories = [
 export default function InterviewQuestionsClient() {
     const [questions, setQuestions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [fetchingMore, setFetchingMore] = useState(false);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [totalQuestions, setTotalQuestions] = useState(0);
     const [activeCategory, setActiveCategory] = useState('All');
     const [activeType, setActiveType] = useState('All');
     const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
     const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
     const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
     const [searchQuery, setSearchQuery] = useState('');
+    const observer = useRef<IntersectionObserver | null>(null);
 
-    useEffect(() => {
-        fetchData();
-    }, [activeCategory]);
+    const fetchData = async (pageNum: number, isInitial: boolean = false) => {
+        if (isInitial) setLoading(true);
+        else setFetchingMore(true);
 
-    const fetchData = async () => {
-        setLoading(true);
         try {
             const cat = activeCategory === 'All' ? '' : activeCategory;
-            const res: any = await getQuestions(cat);
+            const res: any = await getQuestions(cat, pageNum, 10, searchQuery);
             console.log('Fetched res:', res);
 
-            // Safer data extraction
             const fetchedQuestions = Array.isArray(res) ? res : (res.data || res.data?.data || []);
-            console.log('Final questions:', fetchedQuestions);
-            setQuestions(fetchedQuestions);
+            const total = res.total || res.data?.total || 0;
+            setTotalQuestions(total);
 
-            // Automatically select first question if none selected or if switching filters
-            if (fetchedQuestions.length > 0) {
-                const currentStillExists = fetchedQuestions.some((q: any) => q._id === selectedQuestionId);
-                if (!selectedQuestionId || !currentStillExists) {
+            if (pageNum === 1) {
+                setQuestions(fetchedQuestions);
+                // Automatically select first question if none selected OR if it's a fresh load
+                if (fetchedQuestions.length > 0) {
                     setSelectedQuestionId(fetchedQuestions[0]._id);
+                } else {
+                    setSelectedQuestionId(null);
                 }
             } else {
-                setSelectedQuestionId(null);
+                setQuestions(prev => [...prev, ...fetchedQuestions]);
             }
+
+            setHasMore(pageNum * 10 < total);
         } catch (err) {
             console.error("Failed to fetch questions", err);
         } finally {
             setLoading(false);
+            setFetchingMore(false);
         }
     };
+
+    // Debounced search
+    const debouncedFetch = useCallback(
+        debounce(() => {
+            setPage(1);
+            fetchData(1, true);
+        }, 500),
+        [activeCategory, searchQuery]
+    );
+
+    useEffect(() => {
+        if (searchQuery) {
+            debouncedFetch();
+        } else {
+            setPage(1);
+            fetchData(1, true);
+        }
+        return () => debouncedFetch.cancel();
+    }, [activeCategory, searchQuery]);
+
+    const lastQuestionRef = useCallback((node: any) => {
+        if (loading || fetchingMore) return;
+        if (observer.current) observer.current.disconnect();
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+                setPage(prevPage => {
+                    const nextPage = prevPage + 1;
+                    fetchData(nextPage);
+                    return nextPage;
+                });
+            }
+        });
+        if (node) observer.current.observe(node);
+    }, [loading, fetchingMore, hasMore]);
 
     const toggleReveal = (id: string) => {
         const newRevealed = new Set(revealedIds);
@@ -172,11 +227,7 @@ export default function InterviewQuestionsClient() {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <span className="px-3 py-1 bg-primary/10 text-primary text-[9px] md:text-[10px] font-black rounded-full">
-                                                    {questions.filter(q => {
-                                                        const matchesSearch = q.question?.toLowerCase().includes(searchQuery.toLowerCase());
-                                                        const matchesType = activeType === 'All' || (activeType === 'MCQ' && q.type === 'MCQ') || (activeType === 'Theory' && q.type !== 'MCQ');
-                                                        return matchesSearch && matchesType;
-                                                    }).length} Matches
+                                                    {totalQuestions} Matches
                                                 </span>
                                                 {selectedQuestionId && (
                                                     <button 
@@ -192,33 +243,41 @@ export default function InterviewQuestionsClient() {
 
                                     <div className="flex-1 overflow-y-auto custom-scrollbar-premium p-3 md:p-4 space-y-2 md:space-y-3">
                                         {questions.filter(q => {
-                                            const matchesSearch = q.question?.toLowerCase().includes(searchQuery.toLowerCase());
                                             const matchesType = activeType === 'All' || (activeType === 'MCQ' && q.type === 'MCQ') || (activeType === 'Theory' && q.type !== 'MCQ');
-                                            return matchesSearch && matchesType;
-                                        }).map((q, idx) => (
-                                            <button
-                                                key={q._id}
-                                                onClick={() => {
-                                                    setSelectedQuestionId(q._id);
-                                                    if (window.innerWidth < 1024) {
-                                                        setTimeout(() => {
-                                                            document.getElementById('question-detail')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                                        }, 100);
-                                                    }
-                                                }}
-                                                className={`w-full text-left p-4 md:p-5 rounded-2xl md:rounded-[1.75rem] transition-all duration-300 group relative overflow-hidden ${selectedQuestionId === q._id
-                                                    ? 'bg-slate-950 dark:bg-primary text-white shadow-2xl shadow-primary/20'
-                                                    : 'bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 border border-transparent hover:border-slate-100 dark:hover:border-slate-700'
-                                                    }`}
-                                            >
-                                                <div className="flex items-start gap-4">
-                                                    <div className={`w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl flex items-center justify-center font-black text-[10px] md:text-xs shrink-0 ${selectedQuestionId === q._id ? 'bg-white/20' : 'bg-slate-200 dark:bg-slate-700'}`}>
-                                                        {idx + 1}
+                                            return matchesType;
+                                        }).map((q, idx) => {
+                                            const isLast = questions.length === idx + 1;
+                                            return (
+                                                <button
+                                                    key={q._id}
+                                                    ref={isLast ? lastQuestionRef : null}
+                                                    onClick={() => {
+                                                        setSelectedQuestionId(q._id);
+                                                        if (window.innerWidth < 1024) {
+                                                            setTimeout(() => {
+                                                                document.getElementById('question-detail')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                                            }, 100);
+                                                        }
+                                                    }}
+                                                    className={`w-full text-left p-4 md:p-5 rounded-2xl md:rounded-[1.75rem] transition-all duration-300 group relative overflow-hidden ${selectedQuestionId === q._id
+                                                        ? 'bg-slate-950 dark:bg-primary text-white shadow-2xl shadow-primary/20'
+                                                        : 'bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 border border-transparent hover:border-slate-100 dark:hover:border-slate-700'
+                                                        }`}
+                                                >
+                                                    <div className="flex items-start gap-4">
+                                                        <div className={`w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl flex items-center justify-center font-black text-[10px] md:text-xs shrink-0 ${selectedQuestionId === q._id ? 'bg-white/20' : 'bg-slate-200 dark:bg-slate-700'}`}>
+                                                            {idx + 1}
+                                                        </div>
+                                                        <p className="text-xs md:text-sm font-bold leading-relaxed line-clamp-2">{q.question}</p>
                                                     </div>
-                                                    <p className="text-xs md:text-sm font-bold leading-relaxed line-clamp-2">{q.question}</p>
-                                                </div>
-                                            </button>
-                                        ))}
+                                                </button>
+                                            )
+                                        })}
+                                        {fetchingMore && (
+                                            <div className="flex justify-center py-4">
+                                                <div className="w-6 h-6 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
