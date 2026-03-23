@@ -40,6 +40,18 @@ export interface ResumeData {
     educationSpacing?: number;
     skillsSpacing?: number;
     projectsSpacing?: number;
+    languagesSpacing?: number;
+    // Multi-page spacing controls
+    personalInfoSpacing?: number;
+    headerSpacing?: number;
+    pageBreakSpacing?: number;
+    secondPageTopSpacing?: number;
+    secondPageBottomSpacing?: number;
+    thirdPageTopSpacing?: number;
+    thirdPageBottomSpacing?: number;
+    additionalPageTopSpacing?: number;
+    additionalPageBottomSpacing?: number;
+    footerSpacing?: number;
     lineHeight?: number;
     letterSpacing?: number;
     sectionOrder?: string[];

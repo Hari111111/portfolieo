@@ -9,9 +9,9 @@ interface TemplateProps {
 // 1. MODERN TEMPLATE
 export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
     return (
-        <div id="resume-content" className="bg-white text-black p-8 sm:p-10 h-auto w-[794px] mx-auto shadow-2xl origin-top transition-all duration-300">
+        <div id="resume-content" className="bg-white text-black p-8 sm:p-10 h-auto w-[794px] mx-auto shadow-2xl origin-top transition-all duration-300" style={{ paddingTop: 'var(--personal-info-spacing)' }}>
             {/* Header */}
-            <header className="border-b-4 border-primary pb-6 mb-8 flex justify-between items-end">
+            <header className="border-b-4 border-primary pb-6 flex justify-between items-end" style={{ marginBottom: 'var(--header-spacing)' }}>
                 <div>
                     <h1 className="font-black uppercase tracking-tighter text-black" style={{ fontSize: 'calc(var(--base-font-size) * 2.5)' }}>{data.personalInfo.fullName || 'Full Name'}</h1>
                     <p className="text-primary font-bold mt-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.25)' }}>{data.personalInfo.jobTitle || 'Your Job Title'}</p>
@@ -94,7 +94,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                     {/* Languages */}
                     {data.languages.length > 0 && (
-                        <section data-sec="languages" style={{ marginBottom: 'calc(var(--section-spacing) * 1.25)' }}>
+                        <section data-sec="languages" style={{ marginBottom: 'var(--languages-spacing)' }}>
                             <h2 className="font-bold uppercase tracking-widest text-primary mb-4 border-b border-grey/20 pb-1" style={{ fontSize: 'calc(var(--base-font-size) * 1.1)' }}>Languages</h2>
                             <div className="space-y-1">
                                 {data.languages.map((lang, i) => (
@@ -105,6 +105,8 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
                     )}
                 </div>
             </div>
+            {/* Footer with spacing */}
+            <div style={{ marginBottom: 'var(--footer-spacing)' }}></div>
         </div>
     )
 }

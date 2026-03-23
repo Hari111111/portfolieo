@@ -121,6 +121,23 @@ const initialData: ResumeData = {
         fontFamily: "Inter",
         fontSize: 14,
         sectionSpacing: 28,
+        summarySpacing: 28,
+        experienceSpacing: 28,
+        projectsSpacing: 28,
+        educationSpacing: 28,
+        skillsSpacing: 28,
+        languagesSpacing: 28,
+        // Multi-page spacing controls
+        pageBreakSpacing: 40,
+        secondPageTopSpacing: 60,
+        secondPageBottomSpacing: 40,
+        thirdPageTopSpacing: 60,
+        thirdPageBottomSpacing: 40,
+        additionalPageTopSpacing: 50,
+        additionalPageBottomSpacing: 30,
+        personalInfoSpacing: 20,
+        headerSpacing: 30,
+        footerSpacing: 20,
         lineHeight: 1.5,
         letterSpacing: 0,
         visibleSections: ['summary', 'experience', 'projects', 'education', 'skills', 'languages'],
@@ -152,12 +169,15 @@ const ResumeBuilder = () => {
     const [activeTab, setActiveTab] = useState('personal')
     const [skillInput, setSkillInput] = useState('')
     const [langInput, setLangInput] = useState('')
-    const [activeSubTab, setActiveSubTab] = useState<'Typography' | 'Spacing' | 'Sections'>('Typography');
+    const [activeSubTab, setActiveSubTab] = useState<'Typography' | 'Spacing' | 'MultiPage' | 'Sections'>('Typography');
     const [aiPrompt, setAiPrompt] = useState('')
     const [aiLoading, setAiLoading] = useState(false)
     const resumeRef = useRef<HTMLDivElement>(null)
     const contentRef = useRef<HTMLDivElement>(null)
     const [selectedCategory, setSelectedCategory] = useState<'All' | 'Classic' | 'Modern' | 'Creative' | 'Specialized'>('All');
+    const [showAdvancedMode, setShowAdvancedMode] = useState(false)
+    const [livePreviewMode, setLivePreviewMode] = useState(true)
+    const [autoSaveEnabled, setAutoSaveEnabled] = useState(true)
     const handlePrint = useReactToPrint({ contentRef });
 
     // Load data from DB if user is logged in
@@ -487,22 +507,46 @@ const ResumeBuilder = () => {
     return (
         <section className="min-h-screen bg-slate-50 dark:bg-slate-950 py-4 px-3 md:px-6 selection:bg-primary/20 overflow-x-hidden">
             <div className="max-w-[1920px] mx-auto">
-                {/* MODERN TOP BAR */}
-                <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[2rem] md:rounded-3xl shadow-2xl shadow-slate-200/50 dark:shadow-none border border-white/50 dark:border-slate-800 p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-6 sticky top-4 z-40 transition-all duration-300">
+                {/* ENHANCED TOP BAR */}
+                <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[2rem] md:rounded-3xl shadow-2xl shadow-slate-200/50 dark:shadow-none border border-white/50 dark:border-slate-800 p-4 mb-6 flex flex-col lg:flex-row items-center justify-between gap-6 sticky top-4 z-40 transition-all duration-300">
                     <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-primary via-blue-600 to-indigo-700 rounded-xl md:rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 rotate-3 hover:rotate-0 transition-all duration-500 group-hover:scale-110">
-                            <Icon icon="solar:document-bold-duotone" width="24" className="md:w-[28px]" />
+                        <div className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-primary via-blue-600 to-indigo-700 rounded-xl md:rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 rotate-3 hover:rotate-0 transition-all duration-500 group-hover:scale-110">
+                            <Icon icon="solar:document-bold-duotone" width="28" className="md:w-[32px]" />
                         </div>
                         <div>
                             <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white leading-none tracking-tight">Resume<span className="text-primary">Canvas</span></h2>
                             <p className="text-[8px] md:text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.25em] mt-1.5 flex items-center gap-1.5 whitespace-nowrap">
                                 <span className="w-1.5 h-1.5 bg-primary rounded-full animate-ping"></span>
-                                Professional Builder v2.7
+                                Professional Builder v3.0
                             </p>
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between w-full sm:w-auto gap-2 md:gap-3">
+                    {/* ENHANCED CONTROL PANEL */}
+                    <div className="flex items-center justify-between w-full lg:w-auto gap-2 md:gap-3">
+                        {/* Mode Toggle */}
+                        <div className="hidden md:flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                            <button
+                                onClick={() => setShowAdvancedMode(!showAdvancedMode)}
+                                className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${showAdvancedMode ? 'bg-primary text-white' : 'text-slate-500 hover:text-slate-700'}`}
+                            >
+                                {showAdvancedMode ? 'Advanced' : 'Simple'}
+                            </button>
+                        </div>
+
+                        {/* Live Preview Toggle */}
+                        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                            <span className="text-[8px] font-black text-slate-500">Live</span>
+                            <button
+                                onClick={() => setLivePreviewMode(!livePreviewMode)}
+                                className={`w-8 h-4 rounded-full transition-all duration-300 ${livePreviewMode ? 'bg-primary' : 'bg-slate-300'} relative`}
+                            >
+                                <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all duration-300 ${livePreviewMode ? 'translate-x-4' : 'translate-x-0.5'}`}></div>
+                            </button>
+                        </div>
+
+                        <div className="h-6 md:h-8 w-px bg-slate-200 dark:bg-white/10 mx-1 md:mx-2"></div>
+
                         <button onClick={resetData} className="group flex items-center gap-2 px-3 md:px-4 py-2.5 rounded-xl text-[10px] md:text-sm font-bold text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-300">
                             <Icon icon="solar:restart-bold" className="text-base md:text-lg group-hover:rotate-180 transition-transform duration-500" />
                             <span className="hidden xs:inline">Reset</span>
@@ -521,7 +565,7 @@ const ResumeBuilder = () => {
 
                         <button
                             onClick={onExportPDF}
-                            className="bg-primary hover:bg-blue-600 text-white font-black px-5 md:px-8 py-2.5 md:py-3 rounded-xl md:rounded-2xl shadow-xl shadow-primary/25 flex items-center gap-2 md:gap-3 transform active:scale-95 transition-all duration-300 group"
+                            className="bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-indigo-700 text-white font-black px-5 md:px-8 py-2.5 md:py-3 rounded-xl md:rounded-2xl shadow-xl shadow-primary/25 flex items-center gap-2 md:gap-3 transform active:scale-95 transition-all duration-300 group"
                         >
                             <Icon icon="solar:download-minimalistic-bold" width="18" className="md:w-[20px] group-hover:translate-y-0.5 transition-transform" />
                             <span className="text-[10px] md:text-sm">Export <span className="hidden xs:inline">PDF</span></span>
@@ -539,17 +583,17 @@ const ResumeBuilder = () => {
                     />
                 </div>
 
-                {/* TEMPLATE GALLERY - COMPACT & ELEGANT */}
+                {/* ENHANCED TEMPLATE GALLERY */}
                 <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-md rounded-[2rem] md:rounded-[2.5rem] border border-white dark:border-slate-800 p-4 md:p-8 mb-8 group/gallery animate-fadeIn">
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 md:gap-8 mb-6 md:mb-8">
                         <div className="space-y-1">
                             <h3 className="text-xl md:text-3xl font-black text-slate-800 dark:text-white flex items-center gap-3 md:gap-4">
-                                <div className="w-8 h-8 md:w-10 md:h-10 bg-primary/10 rounded-lg md:rounded-xl flex items-center justify-center">
-                                    <Icon icon="solar:widget-bold-duotone" width="20" className="text-primary md:w-[24px]" />
+                                <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-primary to-blue-600 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+                                    <Icon icon="solar:widget-bold-duotone" width="20" className="text-white md:w-[24px]" />
                                 </div>
-                                Template Library
+                                Template Gallery
                             </h3>
-                            <p className="text-[10px] md:text-sm text-slate-500 dark:text-slate-400 font-medium pl-11 md:pl-14 italic max-w-xl">Curated modern designs optimized for ATS and professional impact</p>
+                            <p className="text-[10px] md:text-sm text-slate-500 dark:text-slate-400 font-medium pl-11 md:pl-14 italic max-w-xl">Choose from 27+ professional templates designed for every industry</p>
                         </div>
 
                         <div className="flex flex-wrap gap-1.5 md:gap-2 p-1.5 md:p-2 bg-slate-200/50 dark:bg-slate-800/50 rounded-xl md:rounded-2xl w-full sm:w-fit backdrop-blur-sm shadow-inner">
@@ -557,7 +601,7 @@ const ResumeBuilder = () => {
                                 <button
                                     key={cat}
                                     onClick={() => setSelectedCategory(cat as any)}
-                                    className={`flex-1 sm:flex-none px-3 md:px-6 py-2 md:py-2.5 rounded-lg md:rounded-xl text-[9px] md:text-[11px] font-black uppercase tracking-wider transition-all duration-300 ${selectedCategory === cat ? 'bg-white dark:bg-primary text-primary dark:text-white shadow-lg' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'}`}
+                                    className={`flex-1 sm:flex-none px-3 md:px-6 py-2 md:py-2.5 rounded-lg md:rounded-xl text-[9px] md:text-[11px] font-black uppercase tracking-wider transition-all duration-300 ${selectedCategory === cat ? 'bg-gradient-to-r from-primary to-blue-600 text-white shadow-lg transform scale-105' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white hover:bg-white/50'}`}
                                 >
                                     {cat}
                                 </button>
@@ -570,17 +614,17 @@ const ResumeBuilder = () => {
                             <button
                                 key={t}
                                 onClick={() => setActiveTemplate(t)}
-                                className={`group relative p-1.5 md:p-2 rounded-xl md:rounded-2xl transition-all duration-500 border-2 ${activeTemplate === t ? 'border-primary bg-primary/5 scale-[1.02]' : 'border-transparent hover:bg-slate-50 dark:hover:bg-white/5'}`}
+                                className={`group relative p-1.5 md:p-2 rounded-xl md:rounded-2xl transition-all duration-500 border-2 ${activeTemplate === t ? 'border-primary bg-gradient-to-br from-primary/5 to-blue-50 scale-[1.02] shadow-lg shadow-primary/20' : 'border-transparent hover:bg-slate-50 dark:hover:bg-white/5 hover:border-primary/30'}`}
                             >
-                                <div className={`aspect-[3/4] rounded-lg md:rounded-xl overflow-hidden transition-all duration-500 shadow-sm group-hover:shadow-md ${activeTemplate === t ? 'shadow-primary/20 ring-2 md:ring-4 ring-primary/10' : 'bg-slate-100 dark:bg-black/20'}`}>
-                                    <div className="w-full h-full flex items-center justify-center relative bg-gradient-to-b from-white to-slate-50 dark:from-darklight dark:to-black">
+                                <div className={`aspect-[3/4] rounded-lg md:rounded-xl overflow-hidden transition-all duration-500 shadow-sm group-hover:shadow-md ${activeTemplate === t ? 'shadow-primary/20 ring-2 md:ring-4 ring-primary/10 bg-gradient-to-br from-primary/10 to-blue-50' : 'bg-slate-100 dark:bg-black/20'}`}>
+                                    <div className="w-full h-full flex items-center justify-center relative">
                                         <Icon
                                             icon={activeTemplate === t ? "solar:check-read-linear" : "solar:file-text-bold-duotone"}
                                             width="24"
-                                            className={`md:w-[32px] transition-all duration-500 ${activeTemplate === t ? 'text-primary' : 'text-slate-300 group-hover:text-primary/40 group-hover:scale-110'}`}
+                                            className={`md:w-[32px] transition-all duration-500 ${activeTemplate === t ? 'text-primary scale-110' : 'text-slate-300 group-hover:text-primary/40 group-hover:scale-110'}`}
                                         />
                                         {activeTemplate === t && (
-                                            <div className="absolute inset-0 bg-primary/10 backdrop-blur-[1px] flex items-center justify-center">
+                                            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-blue-50 flex items-center justify-center">
                                                 <div className="w-6 h-6 md:w-8 md:h-8 bg-primary text-white rounded-full flex items-center justify-center shadow-lg animate-bounce-subtle">
                                                     <Icon icon="solar:check-circle-bold" className="text-xs md:text-base" />
                                                 </div>
@@ -588,11 +632,23 @@ const ResumeBuilder = () => {
                                         )}
                                     </div>
                                 </div>
-                                <span className={`mt-2 md:mt-3 text-[8px] md:text-[10px] font-black uppercase tracking-widest block text-center truncate px-1 transition-colors duration-300 ${activeTemplate === t ? 'text-primary' : 'text-slate-400 group-hover:text-midnight_text dark:group-hover:text-white'}`}>
+                                <span className={`mt-2 md:mt-3 text-[8px] md:text-[10px] font-black uppercase tracking-widest block text-center truncate px-1 transition-colors duration-300 ${activeTemplate === t ? 'text-primary font-bold' : 'text-slate-400 group-hover:text-midnight_text dark:group-hover:text-white'}`}>
                                     {t.replace('_', ' ')}
                                 </span>
                             </button>
                         ))}
+                    </div>
+
+                    {/* Template Stats */}
+                    <div className="mt-6 flex items-center justify-between text-[8px] md:text-[10px] text-slate-500">
+                        <span className="flex items-center gap-2">
+                            <Icon icon="solar:sparkles-bold" width="12" className="text-primary" />
+                            {filteredTemplates.length} templates available
+                        </span>
+                        <span className="flex items-center gap-2">
+                            <Icon icon="solar:clock-circle-bold" width="12" className="text-green-500" />
+                            ATS-friendly & Print-optimized
+                        </span>
                     </div>
                 </div>
 
@@ -917,7 +973,7 @@ const ResumeBuilder = () => {
                                     <div className="space-y-6 pb-10 animate-fadeIn h-full overflow-y-auto no-scrollbar">
                                         {/* Configuration Tabs */}
                                         <div className="flex gap-2 p-1.5 bg-slate-100 dark:bg-white/5 rounded-2xl mb-2">
-                                            {['Typography', 'Spacing', 'Sections'].map((subtab) => (
+                                            {['Typography', 'Spacing', 'MultiPage', 'Sections'].map((subtab) => (
                                                 <button
                                                     key={subtab}
                                                     onClick={() => setActiveSubTab(subtab as any)}
@@ -959,23 +1015,361 @@ const ResumeBuilder = () => {
                                             <div className="space-y-6 animate-fadeIn">
                                                 <div className="bg-white dark:bg-white/5 rounded-3xl p-6 border border-slate-100 dark:border-white/5 shadow-sm">
                                                     <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 mb-6 flex items-center gap-2">
-                                                        <Icon icon="solar:tuning-square-bold-duotone" width="18" /> Vertical Gaps
+                                                        <Icon icon="solar:tuning-square-bold-duotone" width="18" /> Section Spacing Control
                                                     </h4>
+                                                    
+                                                    {/* Global Spacing Control */}
+                                                    <div className="mb-8 p-4 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-500/10 dark:to-blue-500/10 rounded-2xl border border-indigo-100 dark:border-indigo-500/20">
+                                                        <div className="flex justify-between items-center mb-3">
+                                                            <label className="text-[9px] font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Global Spacing</label>
+                                                            <span className="text-indigo-600 dark:text-indigo-400 text-[9px] font-bold">{data.customization?.sectionSpacing || 28}px</span>
+                                                        </div>
+                                                        <input 
+                                                            type="range" 
+                                                            min="0" 
+                                                            max="80" 
+                                                            step="2" 
+                                                            value={data.customization?.sectionSpacing || 28} 
+                                                            onChange={(e) => {
+                                                                const value = parseInt(e.target.value);
+                                                                handleCustomizationChange('sectionSpacing', value);
+                                                                // Apply to all sections
+                                                                ['summarySpacing', 'experienceSpacing', 'projectsSpacing', 'educationSpacing', 'skillsSpacing', 'languagesSpacing'].forEach(spacing => {
+                                                                    handleCustomizationChange(spacing as any, value);
+                                                                });
+                                                            }} 
+                                                            className="w-full h-2 bg-indigo-100 dark:bg-indigo-800 rounded-full appearance-none cursor-pointer accent-indigo-500" 
+                                                        />
+                                                        <p className="text-[8px] text-indigo-500 dark:text-indigo-400 mt-2 italic">Adjust all sections at once</p>
+                                                    </div>
+
+                                                    {/* Individual Section Spacing */}
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                                         {[
-                                                            { id: 'summarySpacing', label: 'Summary' },
-                                                            { id: 'experienceSpacing', label: 'Experience' },
-                                                            { id: 'projectsSpacing', label: 'Projects' },
-                                                            { id: 'educationSpacing', label: 'Education' }
+                                                            { id: 'summarySpacing', label: 'Summary', icon: 'solar:user-bold-duotone', color: 'blue' },
+                                                            { id: 'experienceSpacing', label: 'Experience', icon: 'solar:case-bold-duotone', color: 'green' },
+                                                            { id: 'projectsSpacing', label: 'Projects', icon: 'solar:folder-path-connect-bold-duotone', color: 'purple' },
+                                                            { id: 'educationSpacing', label: 'Education', icon: 'solar:notebook-bold-duotone', color: 'orange' },
+                                                            { id: 'skillsSpacing', label: 'Skills', icon: 'solar:star-bold-duotone', color: 'pink' },
+                                                            { id: 'languagesSpacing', label: 'Languages', icon: 'solar:chat-round-dots-bold-duotone', color: 'cyan' }
                                                         ].map((ctrl) => (
-                                                            <div key={ctrl.id}>
-                                                                <div className="flex justify-between items-center mb-2.5">
-                                                                    <label className="text-[9px] font-black uppercase tracking-widest text-slate-500">{ctrl.label}</label>
-                                                                    <span className="text-indigo-500 text-[9px] font-bold">{data.customization?.[ctrl.id as keyof typeof data.customization] || 28}px</span>
+                                                            <div key={ctrl.id} className="p-4 bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/10">
+                                                                <div className="flex items-center gap-2 mb-3">
+                                                                    <Icon icon={ctrl.icon} width="16" className={`text-${ctrl.color}-500`} />
+                                                                    <div className="flex justify-between items-center flex-1">
+                                                                        <label className="text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400">{ctrl.label}</label>
+                                                                        <span className={`text-${ctrl.color}-500 text-[9px] font-bold`}>{data.customization?.[ctrl.id as keyof typeof data.customization] || 28}px</span>
+                                                                    </div>
                                                                 </div>
-                                                                <input type="range" min="0" max="80" step="2" value={data.customization?.[ctrl.id as keyof typeof data.customization] || 28} onChange={(e) => handleCustomizationChange(ctrl.id as any, parseInt(e.target.value))} className="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full appearance-none cursor-pointer accent-indigo-500" />
+                                                                <input 
+                                                                    type="range" 
+                                                                    min="0" 
+                                                                    max="80" 
+                                                                    step="2" 
+                                                                    value={data.customization?.[ctrl.id as keyof typeof data.customization] || 28} 
+                                                                    onChange={(e) => handleCustomizationChange(ctrl.id as any, parseInt(e.target.value))} 
+                                                                    className={`w-full h-1 bg-${ctrl.color}-100 dark:bg-${ctrl.color}-800 rounded-full appearance-none cursor-pointer accent-${ctrl.color}-500`} 
+                                                                />
                                                             </div>
                                                         ))}
+                                                    </div>
+
+                                                    {/* Quick Presets */}
+                                                    <div className="mt-8 p-4 bg-slate-100 dark:bg-white/5 rounded-2xl">
+                                                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-3">Quick Presets</p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {[
+                                                                { name: 'Compact', value: 16 },
+                                                                { name: 'Normal', value: 28 },
+                                                                { name: 'Comfortable', value: 40 },
+                                                                { name: 'Spacious', value: 56 }
+                                                            ].map((preset) => (
+                                                                <button
+                                                                    key={preset.name}
+                                                                    onClick={() => {
+                                                                        ['sectionSpacing', 'summarySpacing', 'experienceSpacing', 'projectsSpacing', 'educationSpacing', 'skillsSpacing', 'languagesSpacing'].forEach(spacing => {
+                                                                            handleCustomizationChange(spacing as any, preset.value);
+                                                                        });
+                                                                    }}
+                                                                    className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[8px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary transition-all"
+                                                                >
+                                                                    {preset.name}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* AI Spacing Suggestions */}
+                                                    <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-500/10 dark:to-pink-500/10 rounded-2xl border border-purple-100 dark:border-purple-500/20">
+                                                        <div className="flex items-center gap-2 mb-3">
+                                                            <Icon icon="solar:magic-stick-3-bold" width="16" className="text-purple-500" />
+                                                            <p className="text-[9px] font-black uppercase tracking-widest text-purple-600 dark:text-purple-400">AI Spacing Assistant</p>
+                                                        </div>
+                                                        <p className="text-[8px] text-slate-600 dark:text-slate-400 mb-3 italic">Get optimal spacing based on your content length and profession</p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {[
+                                                                { name: 'Tech Resume', spacing: { summary: 24, experience: 32, projects: 28, education: 24, skills: 20, languages: 16 } },
+                                                                { name: 'Executive', spacing: { summary: 32, experience: 40, projects: 24, education: 28, skills: 20, languages: 16 } },
+                                                                { name: 'Academic', spacing: { summary: 28, experience: 32, projects: 32, education: 36, skills: 24, languages: 20 } },
+                                                                { name: 'Creative', spacing: { summary: 36, experience: 36, projects: 40, education: 28, skills: 28, languages: 24 } }
+                                                            ].map((suggestion) => (
+                                                                <button
+                                                                    key={suggestion.name}
+                                                                    onClick={() => {
+                                                                        Object.entries(suggestion.spacing).forEach(([section, value]) => {
+                                                                            const spacingKey = `${section}Spacing` as any;
+                                                                            handleCustomizationChange(spacingKey, value);
+                                                                        });
+                                                                        toast.success(`Applied ${suggestion.name} spacing profile`);
+                                                                    }}
+                                                                    className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-purple-200 dark:border-purple-700 rounded-lg text-[8px] font-black uppercase tracking-wider text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-500/10 transition-all"
+                                                                >
+                                                                    {suggestion.name}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {activeSubTab === 'MultiPage' && (
+                                            <div className="space-y-6 animate-fadeIn">
+                                                <div className="bg-white dark:bg-white/5 rounded-3xl p-6 border border-slate-100 dark:border-white/5 shadow-sm">
+                                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500 mb-6 flex items-center gap-2">
+                                                        <Icon icon="solar:document-text-bold-duotone" width="18" /> Personal & Page Spacing
+                                                    </h4>
+                                                    
+                                                    {/* Personal Info Spacing */}
+                                                    <div className="mb-8 p-4 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-500/10 dark:to-amber-500/10 rounded-2xl border border-orange-100 dark:border-orange-500/20">
+                                                        <div className="flex items-center gap-2 mb-4">
+                                                            <Icon icon="solar:user-bold-duotone" width="16" className="text-orange-500" />
+                                                            <p className="text-[9px] font-black uppercase tracking-widest text-orange-600 dark:text-orange-400">Personal Details Spacing</p>
+                                                        </div>
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                            <div>
+                                                                <div className="flex justify-between items-center mb-2">
+                                                                    <label className="text-[8px] font-black uppercase tracking-widest text-slate-600">Name Top Space</label>
+                                                                    <span className="text-orange-500 text-[8px] font-bold">{data.customization?.personalInfoSpacing || 20}px</span>
+                                                                </div>
+                                                                <input 
+                                                                    type="range" 
+                                                                    min="0" 
+                                                                    max="60" 
+                                                                    step="2" 
+                                                                    value={data.customization?.personalInfoSpacing || 20} 
+                                                                    onChange={(e) => handleCustomizationChange('personalInfoSpacing', parseInt(e.target.value))} 
+                                                                    className="w-full h-1 bg-orange-100 dark:bg-orange-800 rounded-full appearance-none cursor-pointer accent-orange-500" 
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <div className="flex justify-between items-center mb-2">
+                                                                    <label className="text-[8px] font-black uppercase tracking-widest text-slate-600">Header Bottom Space</label>
+                                                                    <span className="text-orange-500 text-[8px] font-bold">{data.customization?.headerSpacing || 30}px</span>
+                                                                </div>
+                                                                <input 
+                                                                    type="range" 
+                                                                    min="0" 
+                                                                    max="80" 
+                                                                    step="2" 
+                                                                    value={data.customization?.headerSpacing || 30} 
+                                                                    onChange={(e) => handleCustomizationChange('headerSpacing', parseInt(e.target.value))} 
+                                                                    className="w-full h-1 bg-orange-100 dark:bg-orange-800 rounded-full appearance-none cursor-pointer accent-orange-500" 
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Page Break Controls */}
+                                                    <div className="mb-8 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-500/10 dark:to-indigo-500/10 rounded-2xl border border-blue-100 dark:border-blue-500/20">
+                                                        <div className="flex items-center gap-2 mb-4">
+                                                            <Icon icon="solar:document-add-bold-duotone" width="16" className="text-blue-500" />
+                                                            <p className="text-[9px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400">Dynamic Page Management</p>
+                                                        </div>
+                                                        
+                                                        {/* Second Page Controls */}
+                                                        <div className="mb-6 p-3 bg-white/50 dark:bg-white/5 rounded-xl">
+                                                            <p className="text-[8px] font-bold text-blue-600 dark:text-blue-400 mb-3 flex items-center gap-1">
+                                                                <Icon icon="solar:document-text-bold" width="12" />
+                                                                Second Page Spacing
+                                                            </p>
+                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                                <div>
+                                                                    <div className="flex justify-between items-center mb-1">
+                                                                        <label className="text-[7px] font-black uppercase tracking-widest text-slate-600">Top Space</label>
+                                                                        <span className="text-blue-500 text-[7px] font-bold">{data.customization?.secondPageTopSpacing || 60}px</span>
+                                                                    </div>
+                                                                    <input 
+                                                                        type="range" 
+                                                                        min="0" 
+                                                                        max="120" 
+                                                                        step="4" 
+                                                                        value={data.customization?.secondPageTopSpacing || 60} 
+                                                                        onChange={(e) => handleCustomizationChange('secondPageTopSpacing', parseInt(e.target.value))} 
+                                                                        className="w-full h-1 bg-blue-100 dark:bg-blue-800 rounded-full appearance-none cursor-pointer accent-blue-500" 
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <div className="flex justify-between items-center mb-1">
+                                                                        <label className="text-[7px] font-black uppercase tracking-widest text-slate-600">Bottom Space</label>
+                                                                        <span className="text-blue-500 text-[7px] font-bold">{data.customization?.secondPageBottomSpacing || 40}px</span>
+                                                                    </div>
+                                                                    <input 
+                                                                        type="range" 
+                                                                        min="0" 
+                                                                        max="100" 
+                                                                        step="4" 
+                                                                        value={data.customization?.secondPageBottomSpacing || 40} 
+                                                                        onChange={(e) => handleCustomizationChange('secondPageBottomSpacing', parseInt(e.target.value))} 
+                                                                        className="w-full h-1 bg-blue-100 dark:bg-blue-800 rounded-full appearance-none cursor-pointer accent-blue-500" 
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Third Page Controls */}
+                                                        <div className="mb-6 p-3 bg-white/50 dark:bg-white/5 rounded-xl">
+                                                            <p className="text-[8px] font-bold text-indigo-600 dark:text-indigo-400 mb-3 flex items-center gap-1">
+                                                                <Icon icon="solar:document-text-bold" width="12" />
+                                                                Third Page Spacing
+                                                            </p>
+                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                                <div>
+                                                                    <div className="flex justify-between items-center mb-1">
+                                                                        <label className="text-[7px] font-black uppercase tracking-widest text-slate-600">Top Space</label>
+                                                                        <span className="text-indigo-500 text-[7px] font-bold">{data.customization?.thirdPageTopSpacing || 60}px</span>
+                                                                    </div>
+                                                                    <input 
+                                                                        type="range" 
+                                                                        min="0" 
+                                                                        max="120" 
+                                                                        step="4" 
+                                                                        value={data.customization?.thirdPageTopSpacing || 60} 
+                                                                        onChange={(e) => handleCustomizationChange('thirdPageTopSpacing', parseInt(e.target.value))} 
+                                                                        className="w-full h-1 bg-indigo-100 dark:bg-indigo-800 rounded-full appearance-none cursor-pointer accent-indigo-500" 
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <div className="flex justify-between items-center mb-1">
+                                                                        <label className="text-[7px] font-black uppercase tracking-widest text-slate-600">Bottom Space</label>
+                                                                        <span className="text-indigo-500 text-[7px] font-bold">{data.customization?.thirdPageBottomSpacing || 40}px</span>
+                                                                    </div>
+                                                                    <input 
+                                                                        type="range" 
+                                                                        min="0" 
+                                                                        max="100" 
+                                                                        step="4" 
+                                                                        value={data.customization?.thirdPageBottomSpacing || 40} 
+                                                                        onChange={(e) => handleCustomizationChange('thirdPageBottomSpacing', parseInt(e.target.value))} 
+                                                                        className="w-full h-1 bg-indigo-100 dark:bg-indigo-800 rounded-full appearance-none cursor-pointer accent-indigo-500" 
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Additional Pages Controls */}
+                                                        <div className="p-3 bg-white/50 dark:bg-white/5 rounded-xl">
+                                                            <p className="text-[8px] font-bold text-purple-600 dark:text-purple-400 mb-3 flex items-center gap-1">
+                                                                <Icon icon="solar:document-text-bold" width="12" />
+                                                                Additional Pages (4+)
+                                                            </p>
+                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                                <div>
+                                                                    <div className="flex justify-between items-center mb-1">
+                                                                        <label className="text-[7px] font-black uppercase tracking-widest text-slate-600">Top Space</label>
+                                                                        <span className="text-purple-500 text-[7px] font-bold">{data.customization?.additionalPageTopSpacing || 50}px</span>
+                                                                    </div>
+                                                                    <input 
+                                                                        type="range" 
+                                                                        min="0" 
+                                                                        max="120" 
+                                                                        step="4" 
+                                                                        value={data.customization?.additionalPageTopSpacing || 50} 
+                                                                        onChange={(e) => handleCustomizationChange('additionalPageTopSpacing', parseInt(e.target.value))} 
+                                                                        className="w-full h-1 bg-purple-100 dark:bg-purple-800 rounded-full appearance-none cursor-pointer accent-purple-500" 
+                                                                    />
+                                                                </div>
+                                                                <div>
+                                                                    <div className="flex justify-between items-center mb-1">
+                                                                        <label className="text-[7px] font-black uppercase tracking-widest text-slate-600">Bottom Space</label>
+                                                                        <span className="text-purple-500 text-[7px] font-bold">{data.customization?.additionalPageBottomSpacing || 30}px</span>
+                                                                    </div>
+                                                                    <input 
+                                                                        type="range" 
+                                                                        min="0" 
+                                                                        max="100" 
+                                                                        step="4" 
+                                                                        value={data.customization?.additionalPageBottomSpacing || 30} 
+                                                                        onChange={(e) => handleCustomizationChange('additionalPageBottomSpacing', parseInt(e.target.value))} 
+                                                                        className="w-full h-1 bg-purple-100 dark:bg-purple-800 rounded-full appearance-none cursor-pointer accent-purple-500" 
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Page Break Spacing */}
+                                                        <div className="mt-4 p-3 bg-gradient-to-r from-cyan-50 to-teal-50 dark:from-cyan-500/10 dark:to-teal-500/10 rounded-xl border border-cyan-100 dark:border-cyan-500/20">
+                                                            <div className="flex justify-between items-center mb-2">
+                                                                <label className="text-[8px] font-black uppercase tracking-widest text-cyan-600 dark:text-cyan-400">Page Break Gap</label>
+                                                                <span className="text-cyan-500 text-[8px] font-bold">{data.customization?.pageBreakSpacing || 40}px</span>
+                                                            </div>
+                                                            <input 
+                                                                type="range" 
+                                                                min="0" 
+                                                                max="100" 
+                                                                step="4" 
+                                                                value={data.customization?.pageBreakSpacing || 40} 
+                                                                onChange={(e) => handleCustomizationChange('pageBreakSpacing', parseInt(e.target.value))} 
+                                                                className="w-full h-1 bg-cyan-100 dark:bg-cyan-800 rounded-full appearance-none cursor-pointer accent-cyan-500" 
+                                                            />
+                                                        </div>
+
+                                                        {/* Multi-Page Quick Presets */}
+                                                        <div className="mt-4 p-3 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-500/10 dark:to-orange-500/10 rounded-xl border border-amber-100 dark:border-amber-500/20">
+                                                            <p className="text-[8px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-3">Multi-Page Presets</p>
+                                                            <div className="grid grid-cols-2 gap-2">
+                                                                {[
+                                                                    { name: 'Compact Pages', config: { secondPageTopSpacing: 40, secondPageBottomSpacing: 20, thirdPageTopSpacing: 40, thirdPageBottomSpacing: 20, additionalPageTopSpacing: 30, additionalPageBottomSpacing: 15 }},
+                                                                    { name: 'Balanced Pages', config: { secondPageTopSpacing: 60, secondPageBottomSpacing: 40, thirdPageTopSpacing: 60, thirdPageBottomSpacing: 40, additionalPageTopSpacing: 50, additionalPageBottomSpacing: 30 }},
+                                                                    { name: 'Spacious Pages', config: { secondPageTopSpacing: 80, secondPageBottomSpacing: 60, thirdPageTopSpacing: 80, thirdPageBottomSpacing: 60, additionalPageTopSpacing: 70, additionalPageBottomSpacing: 50 }},
+                                                                    { name: 'Professional', config: { secondPageTopSpacing: 50, secondPageBottomSpacing: 35, thirdPageTopSpacing: 55, thirdPageBottomSpacing: 35, additionalPageTopSpacing: 45, additionalPageBottomSpacing: 25 }}
+                                                                ].map((preset) => (
+                                                                    <button
+                                                                        key={preset.name}
+                                                                        onClick={() => {
+                                                                            Object.entries(preset.config).forEach(([key, value]) => {
+                                                                                handleCustomizationChange(key as any, value);
+                                                                            });
+                                                                            toast.success(`Applied ${preset.name} layout`);
+                                                                        }}
+                                                                        className="px-2 py-1.5 bg-white dark:bg-slate-800 border border-amber-200 dark:border-amber-700 rounded-lg text-[7px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all text-center"
+                                                                    >
+                                                                        {preset.name}
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Footer Spacing */}
+                                                    <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-500/10 dark:to-pink-500/10 rounded-2xl border border-purple-100 dark:border-purple-500/20">
+                                                        <div className="flex items-center gap-2 mb-3">
+                                                            <Icon icon="solar:document-minimalistic-bold-duotone" width="16" className="text-purple-500" />
+                                                            <p className="text-[9px] font-black uppercase tracking-widest text-purple-600 dark:text-purple-400">Footer Spacing</p>
+                                                        </div>
+                                                        <div className="flex justify-between items-center mb-2">
+                                                            <label className="text-[8px] font-black uppercase tracking-widest text-slate-600">Bottom Margin</label>
+                                                            <span className="text-purple-500 text-[8px] font-bold">{data.customization?.footerSpacing || 20}px</span>
+                                                        </div>
+                                                        <input 
+                                                            type="range" 
+                                                            min="0" 
+                                                            max="80" 
+                                                            step="2" 
+                                                            value={data.customization?.footerSpacing || 20} 
+                                                            onChange={(e) => handleCustomizationChange('footerSpacing', parseInt(e.target.value))} 
+                                                            className="w-full h-1 bg-purple-100 dark:bg-purple-800 rounded-full appearance-none cursor-pointer accent-purple-500" 
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
@@ -1093,24 +1487,64 @@ const ResumeBuilder = () => {
                                 </div>
                             </div>
 
-                            {/* SMART TIP BOX */}
-                            <div className="mt-6 md:mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="bg-primary/5 border border-primary/10 p-4 md:p-5 rounded-[1.5rem] md:rounded-3xl flex items-start gap-3 md:gap-4 transform hover:-translate-y-1 transition-all duration-300">
-                                    <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-xl md:rounded-2xl flex items-center justify-center text-primary shrink-0">
+                            {/* ENHANCED SMART TIP BOXES */}
+                            <div className="mt-6 md:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {/* Pro Tip */}
+                                <div className="group bg-gradient-to-br from-primary/5 via-blue-50 to-primary/5 border border-primary/10 p-4 md:p-5 rounded-[1.5rem] md:rounded-3xl flex items-start gap-3 md:gap-4 transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
+                                    <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-primary to-blue-600 rounded-xl md:rounded-2xl flex items-center justify-center text-white shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg shadow-primary/20">
                                         <Icon icon="solar:lightbulb-bolt-bold-duotone" width="20" className="md:w-[24px]" />
                                     </div>
-                                    <div>
-                                        <h4 className="text-xs md:text-sm font-black text-midnight_text dark:text-white uppercase tracking-tight">Pro Tip</h4>
-                                        <p className="text-[10px] md:text-xs text-slate-500 font-medium mt-1 leading-relaxed">Choose templates based on your target industry for maximum impact.</p>
+                                    <div className="flex-1">
+                                        <h4 className="text-xs md:text-sm font-black text-primary dark:text-white uppercase tracking-tight mb-1">Pro Tip</h4>
+                                        <p className="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">Choose templates based on your target industry for maximum impact.</p>
                                     </div>
                                 </div>
-                                <div className="bg-emerald-500/5 border border-emerald-500/10 p-4 md:p-5 rounded-[1.5rem] md:rounded-3xl flex items-start gap-3 md:gap-4 transform hover:-translate-y-1 transition-all duration-300">
-                                    <div className="w-10 h-10 md:w-12 md:h-12 bg-emerald-500/10 rounded-xl md:rounded-2xl flex items-center justify-center text-emerald-500 shrink-0">
-                                        <Icon icon="solar:cloud-check-bold-duotone" width="20" className="md:w-[24px]" />
+
+                                {/* AI Assistant */}
+                                <div className="group bg-gradient-to-br from-purple/5 via-purple-50 to-purple/5 border border-purple/10 p-4 md:p-5 rounded-[1.5rem] md:rounded-3xl flex items-start gap-3 md:gap-4 transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
+                                    <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl md:rounded-2xl flex items-center justify-center text-white shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg shadow-purple/20">
+                                        <Icon icon="solar:magic-stick-3-bold" width="20" className="md:w-[24px]" />
                                     </div>
-                                    <div>
-                                        <h4 className="text-xs md:text-sm font-black text-midnight_text dark:text-white uppercase tracking-tight">Cloud Save</h4>
-                                        <p className="text-[10px] md:text-xs text-slate-500 font-medium mt-1 leading-relaxed">Your data is synced automatically for uninterrupted progress.</p>
+                                    <div className="flex-1">
+                                        <h4 className="text-xs md:text-sm font-black text-purple-600 dark:text-purple-400 uppercase tracking-tight mb-1">AI Assistant</h4>
+                                        <p className="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">Use AI to generate professional content and optimize your resume.</p>
+                                    </div>
+                                </div>
+
+                                {/* ATS Score */}
+                                <div className="group bg-gradient-to-br from-emerald-500/5 via-emerald-50 to-emerald-500/5 border border-emerald-500/10 p-4 md:p-5 rounded-[1.5rem] md:rounded-3xl flex items-start gap-3 md:gap-4 transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
+                                    <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl md:rounded-2xl flex items-center justify-center text-white shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg shadow-emerald-500/20">
+                                        <Icon icon="solar:shield-check-bold-duotone" width="20" className="md:w-[24px]" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h4 className="text-xs md:text-sm font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-tight mb-1">ATS Optimized</h4>
+                                        <p className="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">All templates are ATS-friendly and tested with real systems.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Quick Actions Bar */}
+                            <div className="mt-6 p-4 bg-gradient-to-r from-slate-50 to-white dark:from-slate-900 dark:to-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center shadow-lg">
+                                            <Icon icon="solar:zap-bold" width="16" className="text-white" />
+                                        </div>
+                                        <div>
+                                            <h5 className="text-[10px] font-black text-slate-800 dark:text-white">Quick Actions</h5>
+                                            <p className="text-[8px] text-slate-500">Common resume tasks</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[8px] font-black text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary transition-all">
+                                            Import LinkedIn
+                                        </button>
+                                        <button className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[8px] font-black text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary transition-all">
+                                            Check Grammar
+                                        </button>
+                                        <button className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-[8px] font-black text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary transition-all">
+                                            Share Link
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -1140,6 +1574,17 @@ const ResumeBuilder = () => {
                     --projects-spacing: ${data.customization?.projectsSpacing || data.customization?.sectionSpacing || 28}px;
                     --education-spacing: ${data.customization?.educationSpacing || data.customization?.sectionSpacing || 28}px;
                     --skills-spacing: ${data.customization?.skillsSpacing || data.customization?.sectionSpacing || 28}px;
+                    --languages-spacing: ${data.customization?.languagesSpacing || data.customization?.sectionSpacing || 28}px;
+                    --personal-info-spacing: ${data.customization?.personalInfoSpacing || 20}px;
+                    --header-spacing: ${data.customization?.headerSpacing || 30}px;
+                    --page-break-spacing: ${data.customization?.pageBreakSpacing || 40}px;
+                    --second-page-top-spacing: ${data.customization?.secondPageTopSpacing || 60}px;
+                    --second-page-bottom-spacing: ${data.customization?.secondPageBottomSpacing || 40}px;
+                    --third-page-top-spacing: ${data.customization?.thirdPageTopSpacing || 60}px;
+                    --third-page-bottom-spacing: ${data.customization?.thirdPageBottomSpacing || 40}px;
+                    --additional-page-top-spacing: ${data.customization?.additionalPageTopSpacing || 50}px;
+                    --additional-page-bottom-spacing: ${data.customization?.additionalPageBottomSpacing || 30}px;
+                    --footer-spacing: ${data.customization?.footerSpacing || 20}px;
                     --line-height: ${data.customization?.lineHeight || 1.5} !important;
                     --letter-spacing: ${data.customization?.letterSpacing || 0}px !important;
                     font-family: ${data.customization?.fontFamily || 'Inter'}, sans-serif !important;
