@@ -49,6 +49,30 @@ const GEMINI_MODEL_CANDIDATES = [
   "gemini-2.0-flash",
 ].filter(Boolean) as string[];
 
+const MAX_RETRY_ATTEMPTS = 2;
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function parseRetryDelayMs(error: unknown) {
+  const fallbackMs = 1_500;
+  const details = (error as { errorDetails?: Array<{ "@type"?: string; retryDelay?: string }> })?.errorDetails;
+  const retryInfo = details?.find((item) => item?.["@type"]?.includes("RetryInfo"));
+  const retryDelay = retryInfo?.retryDelay;
+
+  if (!retryDelay) {
+    return fallbackMs;
+  }
+
+  const seconds = Number.parseFloat(retryDelay.replace("s", ""));
+  if (Number.isFinite(seconds) && seconds > 0) {
+    return Math.min(Math.ceil(seconds * 1000), 2_000);
+  }
+
+  return fallbackMs;
+}
+
 export function getGeminiModel(modelName?: string) {
   const apiKey = process.env.GEMINI_API_KEY;
 
@@ -66,14 +90,28 @@ export async function generateWithGemini(
   let lastError: unknown;
 
   for (const modelName of GEMINI_MODEL_CANDIDATES) {
-    try {
-      const model = getGeminiModel(modelName);
-      return await model.generateContent(prompt);
-    } catch (error) {
-      lastError = error;
-      const message = error instanceof Error ? error.message : String(error);
+    for (let attempt = 0; attempt < MAX_RETRY_ATTEMPTS; attempt += 1) {
+      try {
+        const model = getGeminiModel(modelName);
+        return await model.generateContent(prompt);
+      } catch (error) {
+        lastError = error;
+        const message = error instanceof Error ? error.message : String(error);
+        const status = (error as { status?: number })?.status;
 
-      if (!message.toLowerCase().includes("not found")) {
+        if (message.toLowerCase().includes("not found")) {
+          break;
+        }
+
+        if (status === 429 && attempt < MAX_RETRY_ATTEMPTS - 1) {
+          await sleep(parseRetryDelayMs(error));
+          continue;
+        }
+
+        if (status === 429) {
+          throw new Error("AI rate limit reached. Please wait a few seconds and try again.");
+        }
+
         throw error;
       }
     }

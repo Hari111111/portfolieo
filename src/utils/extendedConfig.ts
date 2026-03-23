@@ -5,8 +5,8 @@ export const extendedConfig = {
   },
 
   boxShadow: {
-    service: "0px 3px 20px 0px #8E9CA90D",
-    detail_shadow: "0px 20px 80px 0px #68758D26",
+    service: "0px 10px 30px 0px rgba(120, 10, 10, 0.16)",
+    detail_shadow: "0px 30px 80px 0px rgba(0, 0, 0, 0.45)",
     "dark-md":
       "rgba(145, 158, 171, 0.2) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px",
   },
@@ -53,17 +53,17 @@ export const extendedConfig = {
   },
 
   colors: {
-    primary: "#2F73F2",
-    secondary: "#547593",
-    midnight_text: "#102D47",
-    grey: "#668199",
-    border: "#CCD7E1",
-    success: "#3CD278",
-    section: "#F8FAFC",
-    darkmode: "#081738",
-    darklight: "#000F30",
-    dark_border: "#224767",
-    skyBlueMist: "#C0D5FB",
+    primary: "#D11F2F",
+    secondary: "#A86A72",
+    midnight_text: "#F6EEEE",
+    grey: "#C9B3B6",
+    border: "#3A171B",
+    success: "#FF5A67",
+    section: "#12090B",
+    darkmode: "#050203",
+    darklight: "#110507",
+    dark_border: "#4A171D",
+    skyBlueMist: "#F0B7BE",
   },
 
   backgroundImage: {

@@ -153,6 +153,8 @@ const ResumeBuilder = () => {
     const [skillInput, setSkillInput] = useState('')
     const [langInput, setLangInput] = useState('')
     const [activeSubTab, setActiveSubTab] = useState<'Typography' | 'Spacing' | 'Sections'>('Typography');
+    const [aiPrompt, setAiPrompt] = useState('')
+    const [aiLoading, setAiLoading] = useState(false)
     const resumeRef = useRef<HTMLDivElement>(null)
     const contentRef = useRef<HTMLDivElement>(null)
     const [selectedCategory, setSelectedCategory] = useState<'All' | 'Classic' | 'Modern' | 'Creative' | 'Specialized'>('All');
@@ -331,6 +333,105 @@ const ResumeBuilder = () => {
                 }))
                 setter(''); // Clear on success
             }
+        }
+    }
+
+    const getCurrentSectionData = () => {
+        if (activeTab === 'personal') {
+            return data.personalInfo
+        }
+        if (activeTab === 'experience') {
+            return data.experience
+        }
+        if (activeTab === 'education') {
+            return data.education
+        }
+        if (activeTab === 'projects') {
+            return data.projects
+        }
+        if (activeTab === 'skills') {
+            return data.skills
+        }
+        if (activeTab === 'languages') {
+            return data.languages
+        }
+        return null
+    }
+
+    const handleAiWrite = async () => {
+        if (activeTab === 'appearance') {
+            toast.error('AI writing is available for resume content sections only');
+            return;
+        }
+
+        if (!aiPrompt.trim()) {
+            toast.error('Write a prompt for the section first');
+            return;
+        }
+
+        setAiLoading(true);
+
+        try {
+            const response = await fetch('/api/ai/resume-write', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    section: activeTab,
+                    prompt: aiPrompt,
+                    resumeData: data,
+                    currentSectionData: getCurrentSectionData(),
+                }),
+            });
+
+            const payload = await response.json();
+
+            if (!response.ok) {
+                throw new Error(payload.error || 'AI writing failed');
+            }
+
+            setData(prev => {
+                if (activeTab === 'personal') {
+                    return {
+                        ...prev,
+                        personalInfo: {
+                            ...prev.personalInfo,
+                            summary: typeof payload.summary === 'string' ? payload.summary : prev.personalInfo.summary,
+                            jobTitle: typeof payload.jobTitle === 'string' && payload.jobTitle ? payload.jobTitle : prev.personalInfo.jobTitle,
+                        }
+                    }
+                }
+
+                if (activeTab === 'experience' && Array.isArray(payload.experience)) {
+                    return { ...prev, experience: payload.experience }
+                }
+
+                if (activeTab === 'education' && Array.isArray(payload.education)) {
+                    return { ...prev, education: payload.education }
+                }
+
+                if (activeTab === 'projects' && Array.isArray(payload.projects)) {
+                    return { ...prev, projects: payload.projects }
+                }
+
+                if (activeTab === 'skills' && Array.isArray(payload.skills)) {
+                    return { ...prev, skills: payload.skills }
+                }
+
+                if (activeTab === 'languages' && Array.isArray(payload.languages)) {
+                    return { ...prev, languages: payload.languages }
+                }
+
+                return prev
+            })
+
+            toast.success('Section updated with AI')
+        } catch (error) {
+            console.error('Resume AI write error:', error)
+            toast.error(error instanceof Error ? error.message : 'AI writing failed')
+        } finally {
+            setAiLoading(false)
         }
     }
     // Use handlePrint from react-to-print instead of manual PDF generation
@@ -521,6 +622,62 @@ const ResumeBuilder = () => {
                             </div>
 
                             <div className="p-5 md:p-10 h-auto md:h-[75vh] 2xl:h-[85vh] overflow-y-auto custom-scrollbar-premium bg-white dark:bg-slate-950">
+                                {activeTab !== 'appearance' && (
+                                    <div className="mb-6 md:mb-8 rounded-[1.5rem] border border-primary/15 bg-gradient-to-br from-primary/5 via-white to-blue-50 p-4 md:p-6 dark:from-primary/10 dark:via-slate-950 dark:to-slate-900">
+                                        <div className="flex items-start justify-between gap-4 mb-4">
+                                            <div>
+                                                <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-primary">AI Resume Writer</p>
+                                                <h4 className="mt-2 text-sm md:text-lg font-black text-slate-900 dark:text-white">
+                                                    Improve the {activeTab} section with one proper prompt
+                                                </h4>
+                                                <p className="mt-2 text-[11px] md:text-sm text-slate-500 dark:text-slate-400">
+                                                    Ask for ATS-friendly summary, bullet points, project descriptions, technical skills, or cleaner resume wording.
+                                                </p>
+                                            </div>
+                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                                                <Icon icon="solar:stars-bold-duotone" width="22" className="md:w-[26px]" />
+                                            </div>
+                                        </div>
+
+                                        <textarea
+                                            value={aiPrompt}
+                                            onChange={(e) => setAiPrompt(e.target.value)}
+                                            rows={4}
+                                            className="resume-input !min-h-[120px] !text-sm md:!text-base"
+                                            placeholder={`Example: Write this ${activeTab} section in a strong, professional style with clear bullet points and ATS-friendly wording.`}
+                                        />
+
+                                        <div className="flex flex-wrap gap-2 mt-4">
+                                            {[
+                                                'Make it ATS-friendly',
+                                                'Write stronger bullet points',
+                                                'Make it more professional',
+                                            ].map((suggestion) => (
+                                                <button
+                                                    key={suggestion}
+                                                    type="button"
+                                                    onClick={() => setAiPrompt(suggestion)}
+                                                    className="px-3 py-2 rounded-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[10px] md:text-xs font-black uppercase tracking-[0.15em] text-slate-500 hover:text-primary hover:border-primary/30 transition-all"
+                                                >
+                                                    {suggestion}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        <div className="mt-4 flex justify-end">
+                                            <button
+                                                type="button"
+                                                onClick={handleAiWrite}
+                                                disabled={aiLoading}
+                                                className="inline-flex items-center gap-2 rounded-2xl bg-primary px-4 md:px-6 py-3 text-[10px] md:text-xs font-black uppercase tracking-[0.2em] text-white hover:bg-blue-600 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                                            >
+                                                <Icon icon={aiLoading ? "solar:refresh-bold" : "solar:magic-stick-3-bold"} className={aiLoading ? 'animate-spin' : ''} />
+                                                {aiLoading ? 'Writing...' : 'Write With AI'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* Personal Info */}
                                 {activeTab === 'personal' && (
                                         <div className="grid grid-cols-2 gap-4 md:gap-5">
