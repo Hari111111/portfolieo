@@ -2,13 +2,13 @@ import { Metadata } from "next";
 import AITools from "@/components/AITools";
 
 export const metadata: Metadata = {
-  title: "AI Writing Tools - Email Writer, Blog Ideas, Resume Builder | Hari Mishra",
+  title: "AI Tools - Chatbot, Content Generator, Resume Analyzer | Hari Mishra",
   description:
-    "Generate high-quality content using Artificial Intelligence. Free AI Email Writer, Blog Title Generator, and Resume Builder powered by Google Gemini AI.",
-  keywords: ["ai email writer", "ai blog title generator", "ai resume builder", "ai writing assistant", "ai content generator", "gemini ai tools"],
+    "Explore real AI features: an AI chatbot, AI content generator, and resume analyzer that extracts resume data into a builder-ready format.",
+  keywords: ["ai chatbot", "ai content generator", "resume analyzer", "ai resume parser", "developer ai tools", "gemini ai tools"],
   openGraph: {
-    title: "AI Writing Assistant - Free Content Generation Tools",
-    description: "Create professional emails, viral headlines, and resume drafts instantly with AI.",
+    title: "AI Tools for Developers - Chatbot, Content Generator, Resume Analyzer",
+    description: "Use practical AI features for resumes, content, and developer workflows.",
     type: "website",
   }
 };

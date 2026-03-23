@@ -2,6 +2,7 @@
 import React, { useState, useRef } from 'react'
 import { Icon } from '@iconify/react'
 import { ResumeData, TemplateId } from '@/types/resume'
+import { RESUME_IMPORT_STORAGE_KEY } from '@/lib/ai'
 import {
     ModernTemplate, ElegantTemplate, MinimalTemplate, ProfessionalTemplate, CreativeTemplate, ExecutiveTemplate,
     TechTemplate, AcademicTemplate, SideSplitTemplate, GeometricTemplate, PastelTemplate, HighImpactTemplate,
@@ -12,6 +13,7 @@ import { useReactToPrint } from 'react-to-print'
 import { toast } from 'react-hot-toast'
 import { useEffect } from 'react'
 import axiosHelper from '@/utils/axiosHelper'
+import ResumeAnalyzer from '@/components/ResumeAnalyzer'
 
 const initialData: ResumeData = {
     personalInfo: {
@@ -125,6 +127,25 @@ const initialData: ResumeData = {
         sectionOrder: ['summary', 'experience', 'projects', 'education', 'skills', 'languages']
     }
 };
+
+const mergeResumeData = (incoming: ResumeData): ResumeData => ({
+    ...initialData,
+    ...incoming,
+    personalInfo: {
+        ...initialData.personalInfo,
+        ...incoming.personalInfo,
+    },
+    education: incoming.education?.length ? incoming.education : [],
+    experience: incoming.experience?.length ? incoming.experience : [],
+    skills: incoming.skills?.length ? incoming.skills : [],
+    projects: incoming.projects?.length ? incoming.projects : [],
+    languages: incoming.languages?.length ? incoming.languages : [],
+    customization: {
+        ...initialData.customization,
+        ...incoming.customization,
+    }
+});
+
 const ResumeBuilder = () => {
     const [data, setData] = useState<ResumeData>(initialData)
     const [activeTemplate, setActiveTemplate] = useState<TemplateId>('modern')
@@ -139,6 +160,27 @@ const ResumeBuilder = () => {
 
     // Load data from DB if user is logged in
     useEffect(() => {
+        const applyImportedResume = () => {
+            const imported = localStorage.getItem(RESUME_IMPORT_STORAGE_KEY);
+            if (!imported) {
+                return false;
+            }
+
+            try {
+                const parsed = JSON.parse(imported);
+                if (parsed?.resumeData) {
+                    setData(mergeResumeData(parsed.resumeData));
+                    toast.success('Imported resume data has been applied');
+                    localStorage.removeItem(RESUME_IMPORT_STORAGE_KEY);
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error applying imported resume data:', error);
+            }
+
+            return false;
+        };
+
         const userInfo = localStorage.getItem('userInfo');
         if (userInfo) {
             const fetchResumeData = async () => {
@@ -146,9 +188,10 @@ const ResumeBuilder = () => {
                 try {
                     const response: any = await axiosHelper.get('/resume');
                     if (response) {
-                        setData(response);
+                        setData(mergeResumeData(response));
                         toast.success('Your resume data has been restored', { id: loadingToast });
                     }
+                    applyImportedResume();
                 } catch (error: any) {
                     if (error.response?.status === 404) {
                         toast.dismiss(loadingToast);
@@ -156,12 +199,12 @@ const ResumeBuilder = () => {
                         console.error('Error fetching resume data:', error);
                         toast.error('Could not sync with your account', { id: loadingToast });
                     }
+                    applyImportedResume();
                 }
             };
             fetchResumeData();
         } else {
-            // Check for locally saved data if guest? 
-            // For now, just stick to DB as requested.
+            applyImportedResume();
         }
     }, []);
 
@@ -383,6 +426,16 @@ const ResumeBuilder = () => {
                             <span className="text-[10px] md:text-sm">Export <span className="hidden xs:inline">PDF</span></span>
                         </button>
                     </div>
+                </div>
+
+                <div className="mb-8">
+                    <ResumeAnalyzer
+                        compact
+                        title="Import Existing Resume"
+                        description="Upload or paste an old resume and let AI extract the data directly into this builder."
+                        showBuilderLink={false}
+                        onImport={(resumeData) => setData(mergeResumeData(resumeData))}
+                    />
                 </div>
 
                 {/* TEMPLATE GALLERY - COMPACT & ELEGANT */}

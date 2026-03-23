@@ -1,13 +1,11 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { Icon } from '@iconify/react'
-import Image from 'next/image'
-import { getImgPath } from '@/utils/image'
 import axiosHelper from '@/utils/axiosHelper'
+import ResumeAnalyzer from '@/components/ResumeAnalyzer'
 
 const Resume = () => {
     const [profile, setProfile] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -18,8 +16,6 @@ const Resume = () => {
                 }
             } catch (error) {
                 console.error("Failed to fetch resume profile:", error);
-            } finally {
-                setLoading(false);
             }
         };
         fetchProfile();
@@ -299,6 +295,15 @@ const Resume = () => {
                             ))}
                         </div>
                     </div>
+                </div>
+
+                <div className='mt-20' data-aos='fade-up'>
+                    <ResumeAnalyzer
+                        compact
+                        title='Import Any Resume Into The Builder'
+                        description='Upload a resume and let AI extract the data into a fresh builder-ready format. This is perfect for rebuilding an old CV into a cleaner new version.'
+                        showBuilderLink
+                    />
                 </div>
 
                 {/* Download Resume Button */}
