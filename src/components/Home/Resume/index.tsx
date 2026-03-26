@@ -11,7 +11,7 @@ const Resume = () => {
         const fetchProfile = async () => {
             try {
                 const data: any = await axiosHelper.get('/profile');
-                if (data && data.name && data.name !== 'Your Name') {
+                if (data && data.name) {
                     setProfile(data);
                 }
             } catch (error) {
@@ -317,7 +317,7 @@ const Resume = () => {
                         return (
                             <a
                                 href={downloadUrl}
-                                download="Resume.pdf"
+                                download="hari_updated_resume.pdf"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className='inline-flex items-center gap-4 px-12 py-5 bg-primary text-white rounded-2xl font-black uppercase tracking-[0.3em] hover:bg-blue-700 transition-all duration-300 shadow-2xl shadow-blue-500/30 hover:scale-105 active:scale-95 text-xs'
