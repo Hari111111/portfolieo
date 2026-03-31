@@ -163,6 +163,27 @@ const mergeResumeData = (incoming: ResumeData): ResumeData => ({
     }
 });
 
+const getResumeDensity = (resume: ResumeData): 'normal' | 'dense' | 'compact' => {
+    const summaryLength = resume.personalInfo.summary?.length || 0;
+    const experienceLength = resume.experience.reduce((total, item) => total + (item.description?.length || 0), 0);
+    const projectLength = resume.projects.reduce((total, item) => total + (item.description?.length || 0), 0);
+    const educationLength = resume.education.reduce((total, item) => total + (item.description?.length || 0), 0);
+    const skillsLength = resume.skills.join(', ').length;
+    const languagesLength = resume.languages.join(', ').length;
+
+    const totalLength = summaryLength + experienceLength + projectLength + educationLength + skillsLength + languagesLength;
+    const totalItems =
+        resume.experience.length +
+        resume.projects.length +
+        resume.education.length +
+        resume.skills.length +
+        resume.languages.length;
+
+    if (totalLength > 5200 || totalItems > 28) return 'compact';
+    if (totalLength > 3400 || totalItems > 18) return 'dense';
+    return 'normal';
+};
+
 const ResumeBuilder = () => {
     const [data, setData] = useState<ResumeData>(initialData)
     const [activeTemplate, setActiveTemplate] = useState<TemplateId>('modern')
@@ -179,6 +200,7 @@ const ResumeBuilder = () => {
     const [livePreviewMode, setLivePreviewMode] = useState(true)
     const [autoSaveEnabled, setAutoSaveEnabled] = useState(true)
     const handlePrint = useReactToPrint({ contentRef });
+    const exportDensity = getResumeDensity(data);
 
     // Load data from DB if user is logged in
     useEffect(() => {
@@ -1554,7 +1576,12 @@ const ResumeBuilder = () => {
             </div>
 
             {/* PRINT NODE - ZERO MARGIN OPTIMIZED */}
-            <div className="print-only" ref={contentRef} style={{ fontFamily: `${data.customization?.fontFamily || 'Inter'}, sans-serif` }}>
+            <div
+                className="print-only resume-export-shell"
+                data-export-density={exportDensity}
+                ref={contentRef}
+                style={{ fontFamily: `${data.customization?.fontFamily || 'Inter'}, sans-serif` }}
+            >
                 {renderTemplate()}
             </div>
 
@@ -1631,29 +1658,114 @@ const ResumeBuilder = () => {
                         display: none;
                     }
                 }
+
+                .resume-export-shell {
+                    background: white;
+                }
+
+                .resume-export-shell[data-export-density="dense"] #resume-content {
+                    --base-font-size: calc(${data.customization?.fontSize || 14}px - 1px) !important;
+                    --section-spacing: calc((${data.customization?.sectionSpacing || 28}px) * 0.88) !important;
+                    --summary-spacing: calc((${data.customization?.summarySpacing || data.customization?.sectionSpacing || 28}px) * 0.86) !important;
+                    --experience-spacing: calc((${data.customization?.experienceSpacing || data.customization?.sectionSpacing || 28}px) * 0.88) !important;
+                    --projects-spacing: calc((${data.customization?.projectsSpacing || data.customization?.sectionSpacing || 28}px) * 0.88) !important;
+                    --education-spacing: calc((${data.customization?.educationSpacing || data.customization?.sectionSpacing || 28}px) * 0.88) !important;
+                    --skills-spacing: calc((${data.customization?.skillsSpacing || data.customization?.sectionSpacing || 28}px) * 0.84) !important;
+                    --languages-spacing: calc((${data.customization?.languagesSpacing || data.customization?.sectionSpacing || 28}px) * 0.84) !important;
+                    --header-spacing: calc((${data.customization?.headerSpacing || 30}px) * 0.85) !important;
+                    --footer-spacing: calc((${data.customization?.footerSpacing || 20}px) * 0.85) !important;
+                    --line-height: ${Math.max((data.customization?.lineHeight || 1.5) - 0.08, 1.3)} !important;
+                }
+
+                .resume-export-shell[data-export-density="compact"] #resume-content {
+                    --base-font-size: calc(${data.customization?.fontSize || 14}px - 2px) !important;
+                    --section-spacing: calc((${data.customization?.sectionSpacing || 28}px) * 0.75) !important;
+                    --summary-spacing: calc((${data.customization?.summarySpacing || data.customization?.sectionSpacing || 28}px) * 0.72) !important;
+                    --experience-spacing: calc((${data.customization?.experienceSpacing || data.customization?.sectionSpacing || 28}px) * 0.74) !important;
+                    --projects-spacing: calc((${data.customization?.projectsSpacing || data.customization?.sectionSpacing || 28}px) * 0.74) !important;
+                    --education-spacing: calc((${data.customization?.educationSpacing || data.customization?.sectionSpacing || 28}px) * 0.74) !important;
+                    --skills-spacing: calc((${data.customization?.skillsSpacing || data.customization?.sectionSpacing || 28}px) * 0.7) !important;
+                    --languages-spacing: calc((${data.customization?.languagesSpacing || data.customization?.sectionSpacing || 28}px) * 0.7) !important;
+                    --header-spacing: calc((${data.customization?.headerSpacing || 30}px) * 0.72) !important;
+                    --footer-spacing: calc((${data.customization?.footerSpacing || 20}px) * 0.72) !important;
+                    --line-height: ${Math.max((data.customization?.lineHeight || 1.5) - 0.16, 1.22)} !important;
+                    --letter-spacing: ${Math.max((data.customization?.letterSpacing || 0) - 0.1, -0.2)}px !important;
+                }
+
                 @media print {
                     @page {
                         size: A4;
-                        margin: 0;
+                        margin: 8mm 7mm 8mm 7mm;
                     }
+                    html,
                     body {
                         margin: 0;
+                        padding: 0;
+                        background: white !important;
                         -webkit-print-color-adjust: exact !important;
                         print-color-adjust: exact !important;
                     }
                     .print-only {
                         display: block !important;
-                        width: 210mm;
+                        width: 100% !important;
                         height: auto;
-                        min-height: 297mm;
+                        min-height: auto;
                         background: white !important;
                     }
-                    /* Smooth Auto Page Breaking */
+                    .resume-export-shell,
+                    .resume-export-shell * {
+                        box-sizing: border-box !important;
+                    }
+                    .resume-export-shell #resume-content {
+                        width: 100% !important;
+                        max-width: none !important;
+                        min-height: auto !important;
+                        height: auto !important;
+                        margin: 0 auto !important;
+                        box-shadow: none !important;
+                        overflow: visible !important;
+                        page-break-after: auto;
+                    }
+                    .resume-export-shell #resume-content > *:last-child {
+                        margin-bottom: 0 !important;
+                    }
+                    .resume-export-shell a {
+                        color: inherit !important;
+                        text-decoration: none !important;
+                    }
+                    .resume-export-shell img,
+                    .resume-export-shell svg {
+                        max-width: 100% !important;
+                    }
+                    /* Smoother auto page breaking for long resumes */
                     #resume-content section, 
                     #resume-content .experience-item,
-                    #resume-content .education-item {
+                    #resume-content .education-item,
+                    #resume-content .project-item,
+                    #resume-content header,
+                    #resume-content article,
+                    #resume-content li,
+                    #resume-content h1,
+                    #resume-content h2,
+                    #resume-content h3,
+                    #resume-content p,
+                    #resume-content ul,
+                    #resume-content ol,
+                    #resume-content aside,
+                    #resume-content main {
                         break-inside: avoid;
                         page-break-inside: avoid;
+                    }
+                    #resume-content h1,
+                    #resume-content h2,
+                    #resume-content h3 {
+                        break-after: avoid;
+                        page-break-after: avoid;
+                    }
+                    #resume-content p,
+                    #resume-content li {
+                        orphans: 3;
+                        widows: 3;
                     }
                 }
             `}</style>

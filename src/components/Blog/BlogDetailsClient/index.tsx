@@ -1,6 +1,5 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import HeroSub from '@/components/SharedComponent/HeroSub'
 import { Icon } from '@iconify/react'
 import { getBlogBySlug, getBlogs } from '@/app/api/users/blog.services'
 import { Blog } from '@/types/blog'
@@ -67,15 +66,9 @@ const BlogDetailsClient = ({ details, slug: propSlug }: { details?: any, slug?: 
         </div>
     );
 
-    const breadcrumbLinks = [
-        { href: '/', text: 'Home' },
-        { href: '/blog', text: 'Blog' },
-        { href: `/blog/${blog.slug}`, text: blog.title },
-    ]
-
     return (
         <>
-            <article className="container mx-auto max-w-4xl px-4 py-8 mb-20 relative z-10">
+            <article className="container mx-auto max-w-[1500px] px-4 md:px-6 py-8 md:py-10 mb-20 relative z-10">
                 <div className="bg-white dark:bg-darklight rounded-3xl shadow-2xl border border-border dark:border-dark_border overflow-hidden">
                     {/* Blog Cover Image */}
                     <div className="relative w-full aspect-video group overflow-hidden">
@@ -99,7 +92,7 @@ const BlogDetailsClient = ({ details, slug: propSlug }: { details?: any, slug?: 
                         </div>
                     </div>
 
-                    <div className="p-8 md:p-12">
+                    <div className="p-6 md:p-10 lg:p-12 xl:p-14">
                         {/* Meta Info */}
                         <div className="flex items-center gap-4 mb-6 text-grey dark:text-white/60">
                             <div className="flex items-center gap-2">
@@ -116,7 +109,7 @@ const BlogDetailsClient = ({ details, slug: propSlug }: { details?: any, slug?: 
                         </div>
 
                         {/* Heading */}
-                        <h1 className="text-3xl md:text-5xl font-black text-midnight_text dark:text-white leading-tight mb-8">
+                        <h1 className="text-3xl md:text-5xl xl:text-6xl font-black text-midnight_text dark:text-white leading-tight mb-8">
                             {blog.title}
                         </h1>
 

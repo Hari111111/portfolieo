@@ -54,7 +54,7 @@ const BlogList: React.FC = () => {
     if (selectedBlog) {
         return (
             <div className="animate-fadeIn">
-                <div className="container mx-auto max-w-4xl px-4 py-8">
+                <div className="container mx-auto max-w-[1600px] px-4 md:px-6 py-8">
                     <button 
                         onClick={() => setSelectedBlog(null)}
                         className="flex items-center gap-2 px-6 py-2 bg-primary/10 text-primary font-bold rounded-xl hover:bg-primary hover:text-white transition-all mb-8 group"
@@ -69,14 +69,14 @@ const BlogList: React.FC = () => {
     }
 
     return (
-        <section className='pt-8 pb-16 dark:bg-darkmode' id='blog'>
-            <div className='container mx-auto max-w-6xl px-4'>
+        <section className='pt-12 md:pt-16 pb-16 dark:bg-darkmode' id='blog'>
+            <div className='container mx-auto max-w-[1700px] px-4 md:px-6'>
                 {blogs.length > 0 ? (
-                    <div className='grid grid-cols-12 gap-7'>
+                    <div className='grid grid-cols-12 gap-6 xl:gap-8'>
                         {blogs.map((blog, i) => (
                             <div
                                 key={i}
-                                className='w-full lg:col-span-4 md:col-span-6 col-span-12'
+                                className='w-full xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12'
                                 data-aos='fade-up'
                                 data-aos-delay={i * 100}
                                 data-aos-duration='1000'>

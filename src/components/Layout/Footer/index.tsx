@@ -4,9 +4,15 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getImgPath } from '@/utils/image'
 import axiosHelper from '@/utils/axiosHelper'
+import { toast } from 'react-hot-toast'
+import { validateEmail } from '@/utils/validateEmail'
+
+const NEWSLETTER_STORAGE_KEY = 'portfolio_newsletter_subscribers';
 
 const Footer: FC = () => {
   const [profile, setProfile] = useState<any>(null);
+  const [subscriberEmail, setSubscriberEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -27,6 +33,44 @@ const Footer: FC = () => {
   const displayGithub = profile?.socials?.github || "#";
   const displayLinkedin = profile?.socials?.linkedin || "#";
   const displayWebsite = profile?.socials?.website || "/";
+
+  const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const email = subscriberEmail.trim().toLowerCase();
+
+    if (!email) {
+      toast.error('Please enter your email address');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    setIsSubscribing(true);
+
+    try {
+      const existingSubscribers = JSON.parse(localStorage.getItem(NEWSLETTER_STORAGE_KEY) || '[]');
+
+      if (existingSubscribers.includes(email)) {
+        toast('You are already subscribed');
+        setSubscriberEmail('');
+        return;
+      }
+
+      const updatedSubscribers = [...existingSubscribers, email];
+      localStorage.setItem(NEWSLETTER_STORAGE_KEY, JSON.stringify(updatedSubscribers));
+      toast.success('Subscribed successfully. You will hear from us soon.');
+      setSubscriberEmail('');
+    } catch (error) {
+      console.error('Newsletter subscription failed:', error);
+      toast.error('Subscription failed. Please try again.');
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
 
   return (
     <footer className='bg-section dark:bg-darkmode relative z-1 border-t border-border dark:border-dark_border px-6'>
@@ -132,16 +176,21 @@ const Footer: FC = () => {
               <p className='text-MistyBlue text-base pb-7 text-grey dark:text-white/50'>
                 Stay updated with the latest web development trends and tips
               </p>
-              <form className='newsletter-form flex rounded-lg sm:w-full w-3/4 sm:mx-0 mx-auto'>
+              <form onSubmit={handleSubscribe} className='newsletter-form flex rounded-lg sm:w-full w-3/4 sm:mx-0 mx-auto'>
                 <input
                   type='email'
                   placeholder='Email*'
+                  value={subscriberEmail}
+                  onChange={(e) => setSubscriberEmail(e.target.value)}
+                  disabled={isSubscribing}
+                  aria-label='Newsletter email'
                   className='p-4 text-sm font-bold rounded-s-2xl rounded-e-none outline-0 w-[calc(100%_-_137px)] flex bg-white dark:bg-midnight_text text-midnight_text dark:text-white border border-border dark:border-dark_border focus:border-primary dark:focus:border-primary'
                 />
                 <button
                   type='submit'
+                  disabled={isSubscribing}
                   className='text-xs font-black uppercase tracking-widest bg-primary text-white border-none cursor-pointer rounded-e-2xl outline-0 text-center w-[8.5625rem] hover:bg-blue-700 hover:shadow-none transition-all'>
-                  Subscribe
+                  {isSubscribing ? 'Saving...' : 'Subscribe'}
                 </button>
               </form>
             </div>
