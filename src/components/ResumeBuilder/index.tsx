@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useRef } from 'react'
+import React, { useMemo, useState, useRef } from 'react'
 import { Icon } from '@iconify/react'
 import { ResumeData, TemplateId } from '@/types/resume'
 import { RESUME_IMPORT_STORAGE_KEY } from '@/lib/ai'
@@ -14,6 +14,7 @@ import { toast } from 'react-hot-toast'
 import { useEffect } from 'react'
 import axiosHelper from '@/utils/axiosHelper'
 import ResumeAnalyzer from '@/components/ResumeAnalyzer'
+import { analyzeResumeDataForATS } from '@/lib/resumeAts'
 
 const initialData: ResumeData = {
     personalInfo: {
@@ -184,6 +185,33 @@ const getResumeDensity = (resume: ResumeData): 'normal' | 'dense' | 'compact' =>
     return 'normal';
 };
 
+const getContentDrivenVisibleSections = (resume: ResumeData) => {
+    const requestedSections = resume.customization?.visibleSections || ['summary', 'experience', 'projects', 'education', 'skills', 'languages'];
+    const hasContent: Record<string, boolean> = {
+        summary: Boolean(resume.personalInfo.summary?.trim()),
+        experience: resume.experience.some((item) => item.position || item.company || item.description),
+        projects: resume.projects.some((item) => item.name || item.link || item.description),
+        education: resume.education.some((item) => item.degree || item.school || item.startDate || item.endDate),
+        skills: resume.skills.some(Boolean),
+        languages: resume.languages.some(Boolean),
+    };
+
+    return requestedSections.filter((section) => hasContent[section]);
+};
+
+const preparePreviewData = (resume: ResumeData): ResumeData => ({
+    ...resume,
+    skills: resume.skills.filter(Boolean),
+    languages: resume.languages.filter(Boolean),
+    experience: resume.experience.filter((item) => item.position || item.company || item.description),
+    education: resume.education.filter((item) => item.degree || item.school || item.startDate || item.endDate),
+    projects: resume.projects.filter((item) => item.name || item.link || item.description),
+    customization: {
+        ...resume.customization,
+        visibleSections: getContentDrivenVisibleSections(resume),
+    }
+});
+
 const ResumeBuilder = () => {
     const [data, setData] = useState<ResumeData>(initialData)
     const [activeTemplate, setActiveTemplate] = useState<TemplateId>('modern')
@@ -201,6 +229,11 @@ const ResumeBuilder = () => {
     const [autoSaveEnabled, setAutoSaveEnabled] = useState(true)
     const handlePrint = useReactToPrint({ contentRef });
     const exportDensity = getResumeDensity(data);
+    const previewData = useMemo(() => preparePreviewData(data), [data]);
+    const atsAnalysis = useMemo(
+        () => analyzeResumeDataForATS(data, data.personalInfo.jobTitle),
+        [data]
+    );
 
     // Load data from DB if user is logged in
     useEffect(() => {
@@ -479,31 +512,31 @@ const ResumeBuilder = () => {
     // Use handlePrint from react-to-print instead of manual PDF generation
     const renderTemplate = () => {
         switch (activeTemplate) {
-            case 'elegant': return <ElegantTemplate data={data} />
-            case 'minimal': return <MinimalTemplate data={data} />
-            case 'professional': return <ProfessionalTemplate data={data} />
-            case 'creative': return <CreativeTemplate data={data} />
-            case 'executive': return <ExecutiveTemplate data={data} />
-            case 'tech': return <TechTemplate data={data} />
-            case 'academic': return <AcademicTemplate data={data} />
-            case 'sidebar': return <SideSplitTemplate data={data} />
-            case 'geometric': return <GeometricTemplate data={data} />
-            case 'pastel': return <PastelTemplate data={data} />
-            case 'high_impact': return <HighImpactTemplate data={data} />
-            case 'compact': return <CompactTemplate data={data} />
-            case 'functional': return <FunctionalTemplate data={data} />
-            case 'chrono': return <ChronoTemplate data={data} />
-            case 'hybrid': return <HybridTemplate data={data} />
-            case 'retro': return <RetroTemplate data={data} />
-            case 'glassy': return <GlassyTemplate data={data} />
-            case 'dark': return <DarkTemplate data={data} />
-            case 'infographic': return <InfographicTemplate data={data} />
-            case 'startup': return <StartupTemplate data={data} />
-            case 'minimalist_pro': return <MinimalistProTemplate data={data} />
-            case 'gradient': return <GradientTemplate data={data} />
-            case 'board': return <BoardTemplate data={data} />
-            case 'journal': return <JournalTemplate data={data} />
-            default: return <ModernTemplate data={data} />
+            case 'elegant': return <ElegantTemplate data={previewData} />
+            case 'minimal': return <MinimalTemplate data={previewData} />
+            case 'professional': return <ProfessionalTemplate data={previewData} />
+            case 'creative': return <CreativeTemplate data={previewData} />
+            case 'executive': return <ExecutiveTemplate data={previewData} />
+            case 'tech': return <TechTemplate data={previewData} />
+            case 'academic': return <AcademicTemplate data={previewData} />
+            case 'sidebar': return <SideSplitTemplate data={previewData} />
+            case 'geometric': return <GeometricTemplate data={previewData} />
+            case 'pastel': return <PastelTemplate data={previewData} />
+            case 'high_impact': return <HighImpactTemplate data={previewData} />
+            case 'compact': return <CompactTemplate data={previewData} />
+            case 'functional': return <FunctionalTemplate data={previewData} />
+            case 'chrono': return <ChronoTemplate data={previewData} />
+            case 'hybrid': return <HybridTemplate data={previewData} />
+            case 'retro': return <RetroTemplate data={previewData} />
+            case 'glassy': return <GlassyTemplate data={previewData} />
+            case 'dark': return <DarkTemplate data={previewData} />
+            case 'infographic': return <InfographicTemplate data={previewData} />
+            case 'startup': return <StartupTemplate data={previewData} />
+            case 'minimalist_pro': return <MinimalistProTemplate data={previewData} />
+            case 'gradient': return <GradientTemplate data={previewData} />
+            case 'board': return <BoardTemplate data={previewData} />
+            case 'journal': return <JournalTemplate data={previewData} />
+            default: return <ModernTemplate data={previewData} />
         }
     }
 
@@ -599,7 +632,7 @@ const ResumeBuilder = () => {
                     <ResumeAnalyzer
                         compact
                         title="Import Existing Resume"
-                        description="Upload or paste an old resume and let AI extract the data directly into this builder."
+                        description="Paste existing resume text or upload a TXT/MD file to run a static ATS scan and import the extracted sections into this builder."
                         showBuilderLink={false}
                         onImport={(resumeData) => setData(mergeResumeData(resumeData))}
                     />
@@ -1539,8 +1572,20 @@ const ResumeBuilder = () => {
                                         <Icon icon="solar:shield-check-bold-duotone" width="20" className="md:w-[24px]" />
                                     </div>
                                     <div className="flex-1">
-                                        <h4 className="text-xs md:text-sm font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-tight mb-1">ATS Optimized</h4>
-                                        <p className="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">All templates are ATS-friendly and tested with real systems.</p>
+                                        <div className="flex items-center justify-between gap-3 mb-1">
+                                            <h4 className="text-xs md:text-sm font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-tight">ATS Score</h4>
+                                            <span className="text-lg md:text-2xl font-black text-emerald-600 dark:text-emerald-400">
+                                                {atsAnalysis.score}
+                                            </span>
+                                        </div>
+                                        <p className="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
+                                            {atsAnalysis.executiveSummary}
+                                        </p>
+                                        {atsAnalysis.improvementTips[0] && (
+                                            <p className="mt-2 text-[10px] md:text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                                                Tip: {atsAnalysis.improvementTips[0]}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -1619,12 +1664,12 @@ const ResumeBuilder = () => {
                 #resume-content section { line-height: var(--line-height); letter-spacing: var(--letter-spacing); }
                 #resume-content h1, #resume-content h2, #resume-content h3 { letter-spacing: var(--letter-spacing); }
                 
-                #resume-content section[data-sec="summary"] { display: ${data.customization?.visibleSections?.includes('summary') ? 'block' : 'none'}; }
-                #resume-content section[data-sec="experience"] { display: ${data.customization?.visibleSections?.includes('experience') ? 'block' : 'none'}; }
-                #resume-content section[data-sec="projects"] { display: ${data.customization?.visibleSections?.includes('projects') ? 'block' : 'none'}; }
-                #resume-content section[data-sec="education"] { display: ${data.customization?.visibleSections?.includes('education') ? 'block' : 'none'}; }
-                #resume-content section[data-sec="skills"] { display: ${data.customization?.visibleSections?.includes('skills') ? 'block' : 'none'}; }
-                #resume-content section[data-sec="languages"] { display: ${data.customization?.visibleSections?.includes('languages') ? 'block' : 'none'}; }
+                #resume-content section[data-sec="summary"] { display: ${previewData.customization?.visibleSections?.includes('summary') ? 'block' : 'none'}; }
+                #resume-content section[data-sec="experience"] { display: ${previewData.customization?.visibleSections?.includes('experience') ? 'block' : 'none'}; }
+                #resume-content section[data-sec="projects"] { display: ${previewData.customization?.visibleSections?.includes('projects') ? 'block' : 'none'}; }
+                #resume-content section[data-sec="education"] { display: ${previewData.customization?.visibleSections?.includes('education') ? 'block' : 'none'}; }
+                #resume-content section[data-sec="skills"] { display: ${previewData.customization?.visibleSections?.includes('skills') ? 'block' : 'none'}; }
+                #resume-content section[data-sec="languages"] { display: ${previewData.customization?.visibleSections?.includes('languages') ? 'block' : 'none'}; }
                 
                 #resume-content .text-primary { color: var(--primary) !important; }
                 #resume-content .bg-primary { background-color: var(--primary) !important; }

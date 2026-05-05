@@ -3,12 +3,20 @@ import { useState, useContext } from "react";
 import Logo from "@/components/Layout/Header/Logo";
 import { Toaster } from "react-hot-toast";
 import { Icon } from "@iconify/react";
-import axios from "axios";
 import AuthDialogContext from "@/app/context/AuthDialogContext";
 import Loader from "@/components/Common/Loader";
 import axiosHelper from "@/utils/axiosHelper";
+import { storeUser } from "@/utils/authStorage";
 
-const Signin = ({ signInOpen, toggleSignUp }: { signInOpen?: any; toggleSignUp?: () => void }) => {
+const Signin = ({
+  signInOpen,
+  toggleSignUp,
+  onSuccess,
+}: {
+  signInOpen?: (value: boolean) => void;
+  toggleSignUp?: () => void;
+  onSuccess?: (user: any) => void;
+}) => {
   const [email, setEmail] = useState("admin@example.com");
   const [password, setPassword] = useState("admin123");
   const [loading, setLoading] = useState(false);
@@ -19,15 +27,18 @@ const Signin = ({ signInOpen, toggleSignUp }: { signInOpen?: any; toggleSignUp?:
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axiosHelper.post(`/users/login`, { email, password }, { withCredentials: true });
+      const res: any = await axiosHelper.post(`/users/login`, { email, password }, { withCredentials: true });
 
-      if (res.status === 200) {
-        localStorage.setItem("userInfo", JSON.stringify(res.data));
+      if (res?._id || res?.email) {
+        storeUser(res);
         setIsSuccessDialogOpen(true);
+        if (signInOpen) signInOpen(false);
+        if (onSuccess) onSuccess(res);
         setTimeout(() => {
           setIsSuccessDialogOpen(false);
-          if (signInOpen) signInOpen(false);
         }, 2000);
+      } else {
+        throw new Error("Login response missing user details");
       }
     } catch (err: any) {
       console.error(err);

@@ -23,8 +23,8 @@ interface ResumeAnalyzerProps {
 const acceptedFileTypes = ".pdf,.txt,.md";
 
 const ResumeAnalyzer = ({
-  title = "AI Resume Analyzer",
-  description = "Upload a PDF resume or paste resume text. AI will extract the data, suggest improvements, and prepare it for the resume builder.",
+  title = "Static ATS Resume Analyzer",
+  description = "Upload a PDF resume or paste resume text. Resume data extraction/import still works, and ATS scoring now uses static rule-based checks.",
   onImport,
   showBuilderLink = true,
   compact = false,
@@ -54,7 +54,7 @@ const ResumeAnalyzer = ({
 
   const handleAnalyze = async () => {
     if (!resumeText.trim() && !resumeFile) {
-      toast.error("Add resume text or upload a PDF first.");
+      toast.error("Add resume text or upload a supported file first.");
       return;
     }
 
@@ -80,13 +80,24 @@ const ResumeAnalyzer = ({
       const payload = await response.json();
 
       if (!response.ok) {
+        if (payload?.partial) {
+          setResult(payload.partial);
+          saveImport(payload.partial);
+          onImport?.(payload.partial.resumeData, payload.partial.analysis);
+          toast.error(payload.error || "Resume analysis partially failed.");
+          return;
+        }
         throw new Error(payload.error || "Resume analysis failed.");
       }
 
       setResult(payload);
       saveImport(payload);
       onImport?.(payload.resumeData, payload.analysis);
-      toast.success("Resume parsed and ready for the builder.");
+      if (payload.analysis?.extractionStatus !== "success" || payload.analysis?.atsStatus !== "success") {
+        toast.success("Partial results are ready.");
+      } else {
+        toast.success("Resume scored and prepared for the builder.");
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Resume analysis failed.";
       toast.error(message);
@@ -194,14 +205,54 @@ const ResumeAnalyzer = ({
                 <Icon icon="solar:file-text-bold" className="text-3xl" />
               </div>
               <h4 className="text-lg font-black uppercase tracking-tight text-midnight_text dark:text-white">
-                Builder-Ready Resume Data
+                Builder-Ready ATS Review
               </h4>
               <p className="mt-3 max-w-sm text-sm text-grey dark:text-white/70">
-                Extracted skills, experience, education, and suggestions will appear here after analysis.
+                Static score, extracted sections, and improvement tips will appear here after analysis.
               </p>
             </div>
           ) : (
             <div className="space-y-5">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/60">
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Data Extraction</p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className={`inline-block h-2.5 w-2.5 rounded-full ${
+                      result.analysis.extractionStatus === "success"
+                        ? "bg-emerald-500"
+                        : result.analysis.extractionStatus === "partial"
+                          ? "bg-amber-500"
+                          : "bg-red-500"
+                    }`} />
+                    <span className="text-sm font-black uppercase text-midnight_text dark:text-white">
+                      {result.analysis.extractionStatus || "success"}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs text-grey dark:text-white/70">
+                    {result.analysis.extractionMessage || "Resume data extracted for the builder."}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/60">
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">ATS Engine</p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className={`inline-block h-2.5 w-2.5 rounded-full ${
+                      result.analysis.atsStatus === "success"
+                        ? "bg-emerald-500"
+                        : result.analysis.atsStatus === "partial"
+                          ? "bg-amber-500"
+                          : "bg-red-500"
+                    }`} />
+                    <span className="text-sm font-black uppercase text-midnight_text dark:text-white">
+                      {result.analysis.atsStatus || "success"}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs text-grey dark:text-white/70">
+                    {result.analysis.atsMessage || "Static ATS score calculated from available resume content."}
+                  </p>
+                </div>
+              </div>
+
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Suggested Role</p>
                 <h4 className="mt-2 text-xl font-black uppercase tracking-tight text-midnight_text dark:text-white">
@@ -210,6 +261,21 @@ const ResumeAnalyzer = ({
                 <p className="mt-3 text-sm leading-6 text-grey dark:text-white/70">
                   {result.analysis.executiveSummary || result.resumeData.personalInfo.summary || "The analyzer extracted resume information successfully."}
                 </p>
+              </div>
+
+              <div className="rounded-[1.5rem] border border-emerald-200 bg-emerald-50/80 p-4 dark:border-emerald-900/60 dark:bg-emerald-950/30">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 dark:text-emerald-400">ATS Score</p>
+                    <p className="mt-1 text-sm text-grey dark:text-white/70">Rule-based check using section coverage, keywords, and impact signals.</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400">
+                      {result.analysis.atsScore || 0}
+                    </div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600/80 dark:text-emerald-300/80">out of 100</div>
+                  </div>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -222,6 +288,28 @@ const ResumeAnalyzer = ({
                   </div>
                 ))}
               </div>
+
+              {result.analysis.breakdown && result.analysis.breakdown.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Score Breakdown</p>
+                  <div className="mt-3 space-y-3">
+                    {result.analysis.breakdown.slice(0, 5).map((item) => (
+                      <div key={item.label}>
+                        <div className="mb-1 flex items-center justify-between text-[11px] font-bold text-midnight_text dark:text-white">
+                          <span>{item.label}</span>
+                          <span>{item.score}/{item.maxScore}</span>
+                        </div>
+                        <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-800">
+                          <div
+                            className="h-2 rounded-full bg-primary"
+                            style={{ width: `${item.maxScore ? (item.score / item.maxScore) * 100 : 0}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Top Strengths</p>
@@ -248,6 +336,22 @@ const ResumeAnalyzer = ({
                       </li>
                     ))}
                   </ul>
+                </div>
+              )}
+
+              {result.analysis.missingKeywords && result.analysis.missingKeywords.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Missing Keywords</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {result.analysis.missingKeywords.slice(0, 6).map((item) => (
+                      <span
+                        key={item}
+                        className="rounded-full border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-bold text-amber-700 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-300"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

@@ -14,6 +14,7 @@ import { SuccessfullLogin } from '@/components/Auth/AuthDialog/SuccessfulLogin'
 import { FailedLogin } from '@/components/Auth/AuthDialog/FailedLogin'
 import { UserRegistered } from '@/components/Auth/AuthDialog/UserRegistered'
 import AuthDialogContext from '@/app/context/AuthDialogContext'
+import { AUTH_STATE_EVENT, clearStoredUser, getStoredUser } from '@/utils/authStorage'
 
 const Header: React.FC = () => {
   const pathUrl = usePathname()
@@ -57,35 +58,53 @@ const Header: React.FC = () => {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('userInfo')
+    clearStoredUser()
     setUser(null)
-    window.location.reload()
+    setIsSignInOpen(false)
+    setIsSignUpOpen(false)
+    setNavbarOpen(false)
   }
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll)
     document.addEventListener('mousedown', handleClickOutside)
 
-    const userInfo = localStorage.getItem('userInfo')
-    if (userInfo) {
-      setUser(JSON.parse(userInfo))
+    const syncUser = () => {
+      setUser(getStoredUser())
     }
+
+    const handleAuthStateChange = () => {
+      syncUser()
+    }
+
+    syncUser()
+    window.addEventListener(AUTH_STATE_EVENT, handleAuthStateChange)
+    window.addEventListener('storage', handleAuthStateChange)
 
     // First-time visitor popup logic
     if (typeof window !== 'undefined') {
       const hasSeenPopup = localStorage.getItem('hasSeenAuthPopup');
-      if (!hasSeenPopup && !userInfo) {
+      const storedUser = getStoredUser();
+      if (!hasSeenPopup && !storedUser) {
         const timer = setTimeout(() => {
           setIsSignInOpen(true);
           localStorage.setItem('hasSeenAuthPopup', 'true');
         }, 3000); // Show popup after 3 seconds
-        return () => clearTimeout(timer);
+        return () => {
+          clearTimeout(timer)
+          window.removeEventListener('scroll', handleScroll)
+          document.removeEventListener('mousedown', handleClickOutside)
+          window.removeEventListener(AUTH_STATE_EVENT, handleAuthStateChange)
+          window.removeEventListener('storage', handleAuthStateChange)
+        };
       }
     }
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
       document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener(AUTH_STATE_EVENT, handleAuthStateChange)
+      window.removeEventListener('storage', handleAuthStateChange)
     }
   }, [navbarOpen, isSignInOpen, isSignUpOpen])
 
@@ -316,6 +335,11 @@ const Header: React.FC = () => {
                 setIsSignUpOpen(true);
               }}
               signInOpen={(value: boolean) => setIsSignInOpen(value)}
+              onSuccess={(loggedInUser: any) => {
+                setUser(loggedInUser)
+                setIsSignInOpen(false)
+                setIsSignUpOpen(false)
+              }}
             />
           </div>
         </div>
@@ -341,6 +365,11 @@ const Header: React.FC = () => {
                 setIsSignInOpen(true);
               }}
               signUpOpen={(value: boolean) => setIsSignUpOpen(value)}
+              onSuccess={(loggedInUser: any) => {
+                setUser(loggedInUser)
+                setIsSignInOpen(false)
+                setIsSignUpOpen(false)
+              }}
             />
           </div>
         </div>

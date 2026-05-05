@@ -26,6 +26,7 @@ const Hero = () => {
   const displayName = profile?.name || "Hari Mishra";
   const displayTitle = profile?.title || "Full Stack MERN Developer";
   const displayAbout = profile?.about || "MERN Stack Expert & Professional UI Designer crafting next-gen digital experiences.";
+  const displayProfileImage = profile?.profileImage || getImgPath('/images/hero/hero-image.jpg');
 
   return (
     <section className='relative py-12 md:py-24 bg-white dark:bg-darklight overflow-hidden'>
@@ -84,8 +85,8 @@ const Hero = () => {
             <div className='absolute inset-0 bg-primary/20 rounded-[3rem] blur-2xl group-hover:bg-primary/30 transition-all'></div>
             <div className='relative z-10 p-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-[3.5rem] overflow-hidden shadow-2xl'>
                 <Image
-                  src={getImgPath('/images/hero/hero-image.jpg')}
-                  alt='hero-image'
+                  src={displayProfileImage}
+                  alt={displayName}
                   width={500}
                   height={500}
                   quality={100}

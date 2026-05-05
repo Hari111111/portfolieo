@@ -6,6 +6,24 @@ interface TemplateProps {
     data: ResumeData
 }
 
+const getNameParts = (fullName: string) => {
+    const parts = fullName.trim().split(/\s+/).filter(Boolean);
+    const firstName = parts[0] || '';
+    const remainingName = parts.slice(1).join(' ');
+    return {
+        firstName,
+        remainingName,
+        fallbackName: fullName || 'Full Name'
+    };
+};
+
+const getInitial = (fullName: string) => {
+    const normalized = fullName.trim();
+    return normalized ? normalized.charAt(0).toUpperCase() : 'R';
+};
+
+const formatList = (items: string[], separator: string) => items.filter(Boolean).join(separator);
+
 // 1. MODERN TEMPLATE
 export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
     return (
@@ -353,8 +371,7 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
 
 // 5. CREATIVE TEMPLATE (Bold & Modern)
 export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
-    const firstName = data.personalInfo.fullName.split(' ')[0] || ''
-    const lastName = data.personalInfo.fullName.split(' ')[1] || ''
+    const { firstName, remainingName, fallbackName } = getNameParts(data.personalInfo.fullName)
 
     return (
         <div id="resume-content" className="bg-[#1a1a1a] text-white p-0 h-auto min-h-[1123px] w-[794px] mx-auto shadow-2xl flex flex-col font-sans">
@@ -362,7 +379,10 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
             <div className="bg-primary p-16 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20"></div>
                 <div className="relative z-10">
-                    <h1 className="text-6xl font-black italic uppercase tracking-tighter leading-none mb-2">{firstName}<br />{lastName}</h1>
+                    <h1 className="text-6xl font-black italic uppercase tracking-tighter leading-none mb-2">
+                        {firstName || fallbackName}
+                        {remainingName ? <><br />{remainingName}</> : null}
+                    </h1>
                     <p className="text-xl font-bold bg-black text-white px-4 py-1 inline-block uppercase tracking-widest">{data.personalInfo.jobTitle}</p>
                 </div>
             </div>
@@ -812,6 +832,7 @@ export const SideSplitTemplate: React.FC<TemplateProps> = ({ data }) => {
 
 // 10. GEOMETRIC TEMPLATE (Abstract/Modern)
 export const GeometricTemplate: React.FC<TemplateProps> = ({ data }) => {
+    const { firstName, remainingName, fallbackName } = getNameParts(data.personalInfo.fullName)
     return (
         <div id="resume-content" className="bg-[#fdfcfb] text-[#2d3436] p-0 min-h-[1123px] w-[794px] mx-auto shadow-2xl relative overflow-hidden font-sans">
             {/* Background Accents */}
@@ -820,7 +841,10 @@ export const GeometricTemplate: React.FC<TemplateProps> = ({ data }) => {
 
             <header className="p-16 pb-12 relative flex justify-between items-end">
                 <div>
-                    <h1 className="text-6xl font-black text-[#2d3436] leading-none tracking-tighter uppercase">{data.personalInfo.fullName.split(' ')[0]}<br /><span className="text-indigo-600 italic font-serif lowercase border-b-8 border-rose-400 leading-[0.8]">{data.personalInfo.fullName.split(' ')[1]}</span></h1>
+                    <h1 className="text-6xl font-black text-[#2d3436] leading-none tracking-tighter uppercase">
+                        {firstName || fallbackName}
+                        {remainingName ? <><br /><span className="text-indigo-600 italic font-serif lowercase border-b-8 border-rose-400 leading-[0.8]">{remainingName}</span></> : null}
+                    </h1>
                     <p className="text-lg font-bold text-grey mt-6 uppercase tracking-[0.3em]">{data.personalInfo.jobTitle}</p>
                 </div>
                 <div className="text-right text-[11px] font-black uppercase tracking-widest text-[#2d3436]/60 leading-relaxed border-l-4 border-rose-400 pl-6 h-fit">
@@ -964,12 +988,16 @@ export const PastelTemplate: React.FC<TemplateProps> = ({ data }) => {
 
 // 12. HIGH IMPACT TEMPLATE (Bold & Large)
 export const HighImpactTemplate: React.FC<TemplateProps> = ({ data }) => {
+    const { firstName, remainingName, fallbackName } = getNameParts(data.personalInfo.fullName)
     return (
         <div id="resume-content" className="bg-white text-[#1a1c1e] p-0 min-h-[1123px] w-[794px] mx-auto shadow-2xl font-sans">
             <header className="bg-[#1a1c1e] text-white p-16 pb-12">
                 <div className="flex justify-between items-start">
                     <div>
-                        <h1 className="text-7xl font-black uppercase tracking-tighter leading-[0.85]">{data.personalInfo.fullName.split(' ')[0]}<br /><span className="text-primary">{data.personalInfo.fullName.split(' ')[1]}</span></h1>
+                        <h1 className="text-7xl font-black uppercase tracking-tighter leading-[0.85]">
+                            {firstName || fallbackName}
+                            {remainingName ? <><br /><span className="text-primary">{remainingName}</span></> : null}
+                        </h1>
                         <p className="text-xl font-bold mt-8 flex items-center gap-4">
                             <span className="w-12 h-1 bg-primary"></span>
                             {data.personalInfo.jobTitle}
@@ -1240,11 +1268,12 @@ export const ChronoTemplate: React.FC<TemplateProps> = ({ data }) => {
 
 // 16. HYBRID TEMPLATE (Modern Balanced)
 export const HybridTemplate: React.FC<TemplateProps> = ({ data }) => {
+    const { fallbackName } = getNameParts(data.personalInfo.fullName)
     return (
         <div id="resume-content" className="bg-white text-[#444] p-12 min-h-[1123px] w-[794px] mx-auto shadow-2xl font-sans">
             <header className="flex items-center gap-10 mb-16 px-6">
                 <div className="w-32 h-32 bg-primary rounded-full flex-shrink-0 flex items-center justify-center text-white text-5xl font-black">
-                    {data.personalInfo.fullName[0]}
+                    {getInitial(fallbackName)}
                 </div>
                 <div>
                     <h1 className="text-5xl font-black uppercase tracking-tight text-midnight_text">{data.personalInfo.fullName}</h1>
@@ -1904,12 +1933,16 @@ export const BoardTemplate: React.FC<TemplateProps> = ({ data }) => {
 
 // 25. JOURNAL TEMPLATE (Creative/Designer)
 export const JournalTemplate: React.FC<TemplateProps> = ({ data }) => {
+    const { firstName, remainingName, fallbackName } = getNameParts(data.personalInfo.fullName)
     return (
         <div id="resume-content" className="bg-[#fafafa] text-[#333] p-16 min-h-[1123px] w-[794px] mx-auto shadow-2xl font-serif">
             <header className="mb-20 grid grid-cols-12 gap-10 items-end">
                 <div className="col-span-8">
                     <span className="text-[10px] font-black uppercase tracking-[0.8em] text-rose-400 mb-6 block font-sans">Creatives Journal Vol. 01</span>
-                    <h1 className="text-7xl font-light italic leading-[0.85] tracking-tighter">{data.personalInfo.fullName.split(' ')[0]}<br /><span className="text-8xl font-black not-italic -mt-4 block">{data.personalInfo.fullName.split(' ')[1]}</span></h1>
+                    <h1 className="text-7xl font-light italic leading-[0.85] tracking-tighter">
+                        {firstName || fallbackName}
+                        {remainingName ? <><br /><span className="text-8xl font-black not-italic -mt-4 block">{remainingName}</span></> : null}
+                    </h1>
                 </div>
                 <div className="col-span-4 text-sm font-medium italic opacity-60 flex flex-col gap-1 border-l border-rose-200 pl-8 pb-2">
                     <p>{data.personalInfo.email}</p>

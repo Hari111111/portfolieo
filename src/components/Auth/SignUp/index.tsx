@@ -3,11 +3,19 @@ import { useState, useContext } from "react";
 import Logo from "@/components/Layout/Header/Logo";
 import { Icon } from "@iconify/react";
 import Loader from "@/components/Common/Loader";
-import axios from "axios";
 import AuthDialogContext from "@/app/context/AuthDialogContext";
 import axiosHelper from "@/utils/axiosHelper";
+import { storeUser } from "@/utils/authStorage";
 
-const SignUp = ({ signUpOpen, toggleSignIn }: { signUpOpen?: any; toggleSignIn?: () => void }) => {
+const SignUp = ({
+  signUpOpen,
+  toggleSignIn,
+  onSuccess,
+}: {
+  signUpOpen?: (value: boolean) => void;
+  toggleSignIn?: () => void;
+  onSuccess?: (user: any) => void;
+}) => {
   const [loading, setLoading] = useState(false);
 
   const { setIsFailedDialogOpen, setIsUserRegistered } = useContext(AuthDialogContext)!;
@@ -22,14 +30,18 @@ const SignUp = ({ signUpOpen, toggleSignIn }: { signUpOpen?: any; toggleSignIn?:
     const password = formData.get("password");
 
     try {
-      const res = await axiosHelper.post(`/users`, { name, email, password });
+      const res: any = await axiosHelper.post(`/users`, { name, email, password });
 
-      if (res.status === 201 || res.status === 200) {
+      if (res?._id || res?.email) {
+        storeUser(res);
         setIsUserRegistered(true);
+        if (signUpOpen) signUpOpen(false);
+        if (onSuccess) onSuccess(res);
         setTimeout(() => {
           setIsUserRegistered(false);
-          if (toggleSignIn) toggleSignIn();
         }, 2000);
+      } else {
+        throw new Error("Signup response missing user details");
       }
     } catch (err: any) {
       console.error(err);

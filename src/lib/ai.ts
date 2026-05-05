@@ -7,6 +7,18 @@ export interface ResumeAnalysis {
   strengths: string[];
   gaps: string[];
   improvementTips: string[];
+  extractionStatus?: "success" | "failed" | "partial";
+  extractionMessage?: string;
+  atsStatus?: "success" | "failed" | "partial";
+  atsMessage?: string;
+  atsScore?: number;
+  matchedKeywords?: string[];
+  missingKeywords?: string[];
+  breakdown?: Array<{
+    label: string;
+    score: number;
+    maxScore: number;
+  }>;
 }
 
 export interface ResumeAnalyzerResult {
@@ -177,6 +189,23 @@ export function normalizeResumeResult(input: Partial<ResumeAnalyzerResult> | nul
       strengths: Array.isArray(input?.analysis?.strengths) ? input.analysis.strengths.filter(Boolean) : [],
       gaps: Array.isArray(input?.analysis?.gaps) ? input.analysis.gaps.filter(Boolean) : [],
       improvementTips: Array.isArray(input?.analysis?.improvementTips) ? input.analysis.improvementTips.filter(Boolean) : [],
+      extractionStatus: input?.analysis?.extractionStatus || "success",
+      extractionMessage: input?.analysis?.extractionMessage || "",
+      atsStatus: input?.analysis?.atsStatus || "success",
+      atsMessage: input?.analysis?.atsMessage || "",
+      atsScore: typeof input?.analysis?.atsScore === "number" ? input.analysis.atsScore : 0,
+      matchedKeywords: Array.isArray(input?.analysis?.matchedKeywords) ? input.analysis.matchedKeywords.filter(Boolean) : [],
+      missingKeywords: Array.isArray(input?.analysis?.missingKeywords) ? input.analysis.missingKeywords.filter(Boolean) : [],
+      breakdown: Array.isArray(input?.analysis?.breakdown)
+        ? input.analysis.breakdown
+            .filter(Boolean)
+            .map((item) => ({
+              label: item?.label || "",
+              score: Number(item?.score || 0),
+              maxScore: Number(item?.maxScore || 0),
+            }))
+            .filter((item) => item.label)
+        : [],
     },
   };
 }

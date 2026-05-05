@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { extractJson, getGeminiModel, normalizeResumeResult, ResumeAnalyzerResult } from "@/lib/ai";
+import { analyzeResumeDataForATS, parseResumeTextToData } from "@/lib/resumeAts";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -7,7 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const targetRole = String(formData.get("targetRole") || "").trim();
-    const resumeText = String(formData.get("resumeText") || "").trim();
+    let resumeText = String(formData.get("resumeText") || "").trim();
     const resumeFile = formData.get("resumeFile");
 
     if (!resumeText && !(resumeFile instanceof File)) {
@@ -24,8 +25,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const model = getGeminiModel();
-    const prompt = `Analyze the provided resume and convert it into structured JSON for a resume builder.
+    let extractionStatus: "success" | "failed" | "partial" = "success";
+    let extractionMessage = "";
+    let atsStatus: "success" | "failed" | "partial" = "success";
+    let atsMessage = "";
+
+    if (resumeFile instanceof File) {
+      const fileType = (resumeFile.type || "").toLowerCase();
+      const fileName = resumeFile.name.toLowerCase();
+      const isTextFile =
+        fileType.includes("text/") ||
+        fileName.endsWith(".txt") ||
+        fileName.endsWith(".md");
+
+      if (isTextFile && !resumeText) {
+        resumeText = await resumeFile.text();
+      }
+    }
+
+    let normalized: ResumeAnalyzerResult = normalizeResumeResult(
+      (resumeText
+        ? { resumeData: parseResumeTextToData(resumeText, targetRole), analysis: {} }
+        : { analysis: {} }) as Partial<ResumeAnalyzerResult>
+    );
+
+    if (resumeFile instanceof File) {
+      try {
+        const model = getGeminiModel();
+        const prompt = `Analyze the provided resume and convert it into structured JSON for a resume builder.
 
 Rules:
 - Return JSON only.
@@ -97,36 +124,104 @@ Return this exact shape:
   }
 }`;
 
-    const parts: Array<
-      { text: string } | { inlineData: { data: string; mimeType: string } }
-    > = [{ text: prompt }];
+        const parts: Array<
+          { text: string } | { inlineData: { data: string; mimeType: string } }
+        > = [{ text: prompt }];
 
-    if (resumeText) {
-      parts.push({
-        text: `Resume content:\n${resumeText}`,
-      });
+        if (resumeText) {
+          parts.push({
+            text: `Resume content:\n${resumeText}`,
+          });
+        }
+
+        const buffer = Buffer.from(await resumeFile.arrayBuffer());
+        parts.push({
+          inlineData: {
+            data: buffer.toString("base64"),
+            mimeType: resumeFile.type || "application/pdf",
+          },
+        });
+
+        const response = await model.generateContent({
+          contents: [{ role: "user", parts }],
+          generationConfig: {
+            temperature: 0.2,
+          },
+        });
+
+        const rawText = response.response.text();
+        const parsed = extractJson<ResumeAnalyzerResult>(rawText);
+        normalized = normalizeResumeResult(parsed);
+        extractionStatus = "success";
+        extractionMessage = "Resume data extracted successfully.";
+      } catch (error) {
+        console.error("Resume extraction error:", error);
+        extractionStatus = resumeText ? "partial" : "failed";
+        extractionMessage = resumeText
+          ? "AI extraction failed, but fallback text parsing still prepared resume data."
+          : "AI extraction failed for the uploaded file.";
+      }
+    } else if (resumeText) {
+      extractionStatus = "success";
+      extractionMessage = "Resume data prepared from pasted text.";
     }
 
-    if (resumeFile instanceof File) {
-      const buffer = Buffer.from(await resumeFile.arrayBuffer());
-      parts.push({
-        inlineData: {
-          data: buffer.toString("base64"),
-          mimeType: resumeFile.type || "application/pdf",
+    try {
+      const hasResumeContent =
+        normalized.resumeData.personalInfo.summary ||
+        normalized.resumeData.skills.length ||
+        normalized.resumeData.experience.length ||
+        normalized.resumeData.education.length ||
+        normalized.resumeData.projects.length;
+
+      if (!hasResumeContent) {
+        throw new Error("Not enough resume content was available for ATS scoring.");
+      }
+
+      const ats = analyzeResumeDataForATS(normalized.resumeData, targetRole);
+      normalized = normalizeResumeResult({
+        ...normalized,
+        analysis: {
+          ...normalized.analysis,
+          executiveSummary: ats.executiveSummary,
+          suggestedJobTitle: normalized.analysis.suggestedJobTitle || ats.suggestedJobTitle,
+          strengths: ats.strengths.length ? ats.strengths : normalized.analysis.strengths,
+          gaps: ats.gaps,
+          improvementTips: ats.improvementTips,
+          atsScore: ats.score,
+          matchedKeywords: ats.matchedKeywords,
+          missingKeywords: ats.missingKeywords,
+          breakdown: ats.breakdown,
         },
       });
+      atsStatus = "success";
+      atsMessage = "ATS score calculated successfully.";
+    } catch (error) {
+      console.error("ATS scoring error:", error);
+      atsStatus = "failed";
+      atsMessage = error instanceof Error ? error.message : "ATS scoring failed.";
     }
 
-    const response = await model.generateContent({
-      contents: [{ role: "user", parts }],
-      generationConfig: {
-        temperature: 0.2,
+    normalized = normalizeResumeResult({
+      ...normalized,
+      analysis: {
+        ...normalized.analysis,
+        extractionStatus,
+        extractionMessage,
+        atsStatus,
+        atsMessage,
       },
     });
 
-    const rawText = response.response.text();
-    const parsed = extractJson<ResumeAnalyzerResult>(rawText);
-    const normalized = normalizeResumeResult(parsed);
+    if (extractionStatus === "failed" && atsStatus === "failed") {
+      return NextResponse.json(
+        {
+          error: "Resume data extraction and ATS scoring both failed. Please try pasted text or another file.",
+          partial: normalized,
+        },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(normalized);
   } catch (error) {
