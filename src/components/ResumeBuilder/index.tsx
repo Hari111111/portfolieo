@@ -214,6 +214,7 @@ const preparePreviewData = (resume: ResumeData): ResumeData => ({
 
 const ResumeBuilder = () => {
     const [data, setData] = useState<ResumeData>(initialData)
+    const [view, setView] = useState<'selection' | 'editor'>('selection')
     const [activeTemplate, setActiveTemplate] = useState<TemplateId>('modern')
     const [activeTab, setActiveTab] = useState('personal')
     const [skillInput, setSkillInput] = useState('')
@@ -510,8 +511,9 @@ const ResumeBuilder = () => {
         }
     }
     // Use handlePrint from react-to-print instead of manual PDF generation
-    const renderTemplate = () => {
-        switch (activeTemplate) {
+    const renderTemplate = (id: TemplateId = activeTemplate) => {
+        const tId = id || activeTemplate;
+        switch (tId) {
             case 'elegant': return <ElegantTemplate data={previewData} />
             case 'minimal': return <MinimalTemplate data={previewData} />
             case 'professional': return <ProfessionalTemplate data={previewData} />
@@ -539,6 +541,15 @@ const ResumeBuilder = () => {
             default: return <ModernTemplate data={previewData} />
         }
     }
+    
+    const tabIcons = {
+        personal: "solar:user-bold-duotone",
+        experience: "solar:case-bold-duotone",
+        education: "solar:notebook-bold-duotone",
+        skills: "solar:star-bold-duotone",
+        languages: "solar:chat-round-dots-bold-duotone",
+        projects: "solar:folder-path-connect-bold-duotone"
+    };
 
     const fonts = [
         "Inter", "Roboto", "Poppins", "Montserrat", "Playfair Display",
@@ -550,17 +561,127 @@ const ResumeBuilder = () => {
         "#db2777", "#0d9488", "#1e293b", "#000000", "#7c3aed"
     ];
 
-    const tabIcons = {
-        personal: "solar:user-bold-duotone",
-        experience: "solar:case-bold-duotone",
-        education: "solar:notebook-bold-duotone",
-        skills: "solar:star-bold-duotone",
-        languages: "solar:chat-round-dots-bold-duotone",
-        projects: "solar:folder-path-connect-bold-duotone"
-    };
+    const [hoveredTemplate, setHoveredTemplate] = useState<TemplateId>(activeTemplate);
+
+    if (view === 'selection') {
+        return (
+            <div className="min-h-screen bg-[#f8fafc] flex flex-col lg:flex-row overflow-hidden animate-fadeIn">
+                {/* LEFT SIDE: SELECTION LIST (40%) */}
+                <div className="w-full lg:w-[450px] xl:w-[500px] h-screen bg-white border-r border-slate-200 flex flex-col shadow-2xl z-10">
+                    <div className="p-8 border-b border-slate-100">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest mb-4">
+                            <Icon icon="solar:sparkles-bold" />
+                            Premium Templates
+                        </div>
+                        <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-2">
+                            Resume <span className="text-primary">Gallery</span>
+                        </h1>
+                        <p className="text-slate-400 text-sm font-medium">Choose a format to begin your journey</p>
+                    </div>
+
+                    <div className="p-4 bg-slate-50 border-b border-slate-100 overflow-x-auto no-scrollbar">
+                        <div className="flex gap-2 min-w-max">
+                            {['All', 'Classic', 'Modern', 'Creative', 'Specialized'].map(cat => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setSelectedCategory(cat as any)}
+                                    className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${selectedCategory === cat ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-white text-slate-500 hover:text-slate-800'}`}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto p-6 custom-scrollbar-premium bg-slate-50/50">
+                        <div className="grid grid-cols-2 gap-4">
+                            {filteredTemplates.map(t => (
+                                <div 
+                                    key={t} 
+                                    onMouseEnter={() => setHoveredTemplate(t)}
+                                    onClick={() => { setActiveTemplate(t); setView('editor'); window.scrollTo(0,0); }}
+                                    className={`group cursor-pointer p-3 rounded-[1.8rem] border-2 transition-all duration-300 ${hoveredTemplate === t ? 'bg-white border-primary shadow-2xl shadow-primary/20 scale-[1.03]' : 'bg-white/50 border-slate-100 hover:border-primary/30 hover:bg-white'}`}
+                                >
+                                    <div className="aspect-[210/297] bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 relative mb-4">
+                                        <div className="absolute inset-0 bg-white origin-top-left scale-[0.25] w-[400%] h-[400%] pointer-events-none transition-all duration-500 overflow-hidden">
+                                            <div className="w-[794px] h-[1123px] bg-white">
+                                                {renderTemplate(t)}
+                                            </div>
+                                        </div>
+                                        <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300"></div>
+                                        {hoveredTemplate === t && (
+                                            <div className="absolute top-3 right-3">
+                                                <div className="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center shadow-lg animate-bounce-subtle">
+                                                    <Icon icon="solar:check-circle-bold" width="14" />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="px-1">
+                                        <h3 className="text-[12px] font-black text-slate-800 capitalize truncate mb-0.5">{t.replace('_', ' ')}</h3>
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                            <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Ready to Use</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="p-6 border-t border-slate-100 bg-white">
+                        <button 
+                            onClick={() => { setActiveTemplate(hoveredTemplate); setView('editor'); window.scrollTo(0,0); }}
+                            className="w-full bg-primary hover:bg-blue-600 text-white font-black py-4 rounded-2xl shadow-xl shadow-primary/25 flex items-center justify-center gap-3 transition-all active:scale-[0.98] group"
+                        >
+                            <span>Use Selected Template</span>
+                            <Icon icon="solar:arrow-right-bold" className="group-hover:translate-x-1 transition-transform" />
+                        </button>
+                    </div>
+                </div>
+
+                {/* RIGHT SIDE: LARGE PREVIEW (60%) */}
+                <div className="hidden lg:flex flex-1 h-screen bg-slate-200/50 items-center justify-center p-12 overflow-hidden relative">
+                    <div className="absolute top-8 left-8 text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] flex items-center gap-2">
+                        <span className="w-8 h-px bg-slate-300"></span>
+                        Live Visual Preview
+                    </div>
+                    
+                    <div className="w-full h-full flex items-center justify-center animate-fadeInScale">
+                        <div className="bg-white shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] rounded-lg overflow-hidden transform transition-all duration-700 scale-[0.6] xl:scale-[0.75] 2xl:scale-[0.85] origin-center hover:scale-[0.8] xl:hover:scale-[0.85] 2xl:hover:scale-[0.95]">
+                            <div className="w-[794px] h-[1123px] relative bg-white">
+                                {renderTemplate(hoveredTemplate)}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="absolute bottom-12 right-12 text-right">
+                        <div className="text-slate-900 font-black text-4xl capitalize mb-2">{hoveredTemplate.replace('_', ' ')}</div>
+                        <div className="text-primary font-bold tracking-[0.2em] uppercase text-xs">Standard A4 Format Layout</div>
+                    </div>
+                </div>
+
+                <style jsx>{`
+                    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+                    @keyframes fadeInScale { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+                    .animate-fadeIn { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+                    .animate-fadeInScale { animation: fadeInScale 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+                `}</style>
+            </div>
+        )
+    }
 
     return (
         <section className="min-h-screen bg-slate-50 dark:bg-slate-950 py-4 px-3 md:px-6 selection:bg-primary/20 overflow-x-hidden">
+            <div className="max-w-[1920px] mx-auto mb-4">
+                <button 
+                    onClick={() => setView('selection')}
+                    className="flex items-center gap-2 text-slate-400 hover:text-primary font-black uppercase text-[10px] tracking-widest transition-colors"
+                >
+                    <Icon icon="solar:arrow-left-bold" />
+                    Back to Templates
+                </button>
+            </div>
             <div className="max-w-[1920px] mx-auto">
                 {/* ENHANCED TOP BAR */}
                 <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[2rem] md:rounded-3xl shadow-2xl shadow-slate-200/50 dark:shadow-none border border-white/50 dark:border-slate-800 p-4 mb-6 flex flex-col lg:flex-row items-center justify-between gap-6 sticky top-4 z-40 transition-all duration-300">
@@ -617,7 +738,6 @@ const ResumeBuilder = () => {
                             <span className="hidden md:inline">Save Progress</span>
                             <span className="md:hidden">Save</span>
                         </button>
-
                         <button
                             onClick={onExportPDF}
                             className="bg-gradient-to-r from-primary to-blue-600 hover:from-blue-600 hover:to-indigo-700 text-white font-black px-5 md:px-8 py-2.5 md:py-3 rounded-xl md:rounded-2xl shadow-xl shadow-primary/25 flex items-center gap-2 md:gap-3 transform active:scale-95 transition-all duration-300 group"
@@ -636,75 +756,6 @@ const ResumeBuilder = () => {
                         showBuilderLink={false}
                         onImport={(resumeData) => setData(mergeResumeData(resumeData))}
                     />
-                </div>
-
-                {/* ENHANCED TEMPLATE GALLERY */}
-                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-md rounded-[2rem] md:rounded-[2.5rem] border border-white dark:border-slate-800 p-4 md:p-8 mb-8 group/gallery animate-fadeIn">
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 md:gap-8 mb-6 md:mb-8">
-                        <div className="space-y-1">
-                            <h3 className="text-xl md:text-3xl font-black text-slate-800 dark:text-white flex items-center gap-3 md:gap-4">
-                                <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-primary to-blue-600 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                                    <Icon icon="solar:widget-bold-duotone" width="20" className="text-white md:w-[24px]" />
-                                </div>
-                                Template Gallery
-                            </h3>
-                            <p className="text-[10px] md:text-sm text-slate-500 dark:text-slate-400 font-medium pl-11 md:pl-14 italic max-w-xl">Choose from 27+ professional templates designed for every industry</p>
-                        </div>
-
-                        <div className="flex flex-wrap gap-1.5 md:gap-2 p-1.5 md:p-2 bg-slate-200/50 dark:bg-slate-800/50 rounded-xl md:rounded-2xl w-full sm:w-fit backdrop-blur-sm shadow-inner">
-                            {['All', 'Classic', 'Modern', 'Creative', 'Specialized'].map(cat => (
-                                <button
-                                    key={cat}
-                                    onClick={() => setSelectedCategory(cat as any)}
-                                    className={`flex-1 sm:flex-none px-3 md:px-6 py-2 md:py-2.5 rounded-lg md:rounded-xl text-[9px] md:text-[11px] font-black uppercase tracking-wider transition-all duration-300 ${selectedCategory === cat ? 'bg-gradient-to-r from-primary to-blue-600 text-white shadow-lg transform scale-105' : 'text-slate-500 hover:text-slate-800 dark:hover:text-white hover:bg-white/50'}`}
-                                >
-                                    {cat}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-3 md:gap-4 max-h-[180px] md:max-h-[250px] overflow-y-auto pr-2 md:pr-4 custom-scrollbar">
-                        {filteredTemplates.map(t => (
-                            <button
-                                key={t}
-                                onClick={() => setActiveTemplate(t)}
-                                className={`group relative p-1.5 md:p-2 rounded-xl md:rounded-2xl transition-all duration-500 border-2 ${activeTemplate === t ? 'border-primary bg-gradient-to-br from-primary/5 to-blue-50 scale-[1.02] shadow-lg shadow-primary/20' : 'border-transparent hover:bg-slate-50 dark:hover:bg-white/5 hover:border-primary/30'}`}
-                            >
-                                <div className={`aspect-[3/4] rounded-lg md:rounded-xl overflow-hidden transition-all duration-500 shadow-sm group-hover:shadow-md ${activeTemplate === t ? 'shadow-primary/20 ring-2 md:ring-4 ring-primary/10 bg-gradient-to-br from-primary/10 to-blue-50' : 'bg-slate-100 dark:bg-black/20'}`}>
-                                    <div className="w-full h-full flex items-center justify-center relative">
-                                        <Icon
-                                            icon={activeTemplate === t ? "solar:check-read-linear" : "solar:file-text-bold-duotone"}
-                                            width="24"
-                                            className={`md:w-[32px] transition-all duration-500 ${activeTemplate === t ? 'text-primary scale-110' : 'text-slate-300 group-hover:text-primary/40 group-hover:scale-110'}`}
-                                        />
-                                        {activeTemplate === t && (
-                                            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-blue-50 flex items-center justify-center">
-                                                <div className="w-6 h-6 md:w-8 md:h-8 bg-primary text-white rounded-full flex items-center justify-center shadow-lg animate-bounce-subtle">
-                                                    <Icon icon="solar:check-circle-bold" className="text-xs md:text-base" />
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                                <span className={`mt-2 md:mt-3 text-[8px] md:text-[10px] font-black uppercase tracking-widest block text-center truncate px-1 transition-colors duration-300 ${activeTemplate === t ? 'text-primary font-bold' : 'text-slate-400 group-hover:text-midnight_text dark:group-hover:text-white'}`}>
-                                    {t.replace('_', ' ')}
-                                </span>
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Template Stats */}
-                    <div className="mt-6 flex items-center justify-between text-[8px] md:text-[10px] text-slate-500">
-                        <span className="flex items-center gap-2">
-                            <Icon icon="solar:sparkles-bold" width="12" className="text-primary" />
-                            {filteredTemplates.length} templates available
-                        </span>
-                        <span className="flex items-center gap-2">
-                            <Icon icon="solar:clock-circle-bold" width="12" className="text-green-500" />
-                            ATS-friendly & Print-optimized
-                        </span>
-                    </div>
                 </div>
 
                 <div className="grid grid-cols-12 gap-6 md:gap-8 items-start">
